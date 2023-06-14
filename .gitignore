@@ -8,6 +8,7 @@
 **/main.pdf
 **/*.synctex.gz
 **/OCME
+**/OCF
 **/tmp.txt
 **/obj/*
 **/__pycache__/*
