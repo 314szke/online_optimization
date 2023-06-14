@@ -1,0 +1,19 @@
+%!TEX root = ./main.tex
+
+%\section*{Appendix}
+\section{Counter example for tight online expert solutions} \label{appix-tight-solutions}
+
+The following example shows that we cannot expect online expert solutions (in the sense of online algorithms)
+to be tight on the arriving constraints. In the example below, we display the experts' solutions after each constraint.
+
+\begin{align*}
+    \min\ \ \ \ x_{1} + \ \ \ x_{2} & \\
+    x_{1} + \frac{1}{2}\ x_{2} & \ge 1 \\
+    \textnormal{Expert}_{1}: \ \ \ \ \ \ \ \ \ \ \ 1 \ \ \ \ \ \ \ \ 0 & \\
+    \textnormal{Expert}_{2}: \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ \ \ 2 & \\
+    x_{2} & \ge 1 \\
+    \textnormal{Expert}_{1}: \ \ \ \ \ \ \ \ \ \ \ 1 \ \ \ \ \ \ \ \ 1 & \\
+    {\color{red}\textnormal{Expert}_{2}:} \ \ \ \ \ \ \ \ \ \ \ \ {\color{red} 0} \ \ \ \ \ \ \ \ {\color{red} 2} & \\
+\end{align*}
+%
+To have tight a suggestion from Expert$_2$ on the second constraint, Expert$_2$ not only has to decrease its value of $x_{2}$ (which is not allowed), but even increase the value of $x_{1}$ for the first constraint. In other words, Expert$_2$ has to completely modify its past decisions.
