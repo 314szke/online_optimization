@@ -1,0 +1,107 @@
+\documentclass[11pt,a4paper]{article}
+%\usepackage[pdftex]{graphicx,color}
+\usepackage{graphicx,color}
+\usepackage{amsmath,amssymb,dsfont,fullpage,epsfig,multirow,longtable}
+\usepackage{epsfig,epstopdf,hhline}
+\usepackage{cases}
+\usepackage{wrapfig}
+\usepackage{algorithm}
+%\usepackage[noend]{algorithmic}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\usepackage[numbers]{natbib}
+\usepackage[top=1 in, bottom=1 in, left=1 in, right=1 in, letterpaper]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,decorations.pathreplacing,shapes}
+
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage{enumerate}
+
+% Ours
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{setspace}
+\setlength{\textfloatsep}{8pt}
+
+%\declaretheorem[name=Theorem]{thm}
+
+% for affiliation
+\usepackage{authblk}
+
+%%%%%%%%%% Start TeXmacs macrosÆ’
+\newenvironment{proof}{\noindent\emph{Proof\ }}{\hspace*{\fill}$\Box$\medskip}
+\newenvironment{claimproof}{\noindent\emph{Proof of claim\ }}{\hspace*{\fill}$\Box$\medskip}
+\newenvironment{plainproof}{\noindent\emph{Proof\ }}{}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{claim}{Claim}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\usepackage{amsmath}
+\usepackage{paralist}
+\usepackage{framed}
+
+%%comment in algorithms
+\renewcommand{\algorithmiccomment}[1]{\hfill  {\small  \tt \# #1}}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newcommand{\pred}{\texttt{pred}}
+\newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\one}{\ensuremath{\mathds{1}}}
+\newcommand{\PoA}{\text{PoA}}
+\newcommand{\E}{\ensuremath{\mathbb{E}}}
+% bullet dot
+\newcommand\sbullet[1][.75]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
+
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T5]{fontenc} % Output font encoding for international characters
+
+\usepackage{color, colortbl}
+\usepackage{hyperref}
+\hypersetup{colorlinks,
+            linkcolor=blue,
+            citecolor=blue,
+            urlcolor=magenta,
+            linktocpage,
+            plainpages=false}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+
+
+\newcommand{\comment}[1]{\textcolor{blue}{{\footnotesize
+#1}}\marginpar{\raggedright\tiny \textcolor{blue}{Comment}}}
+
+\begin{document}
+
+\title{Online Non-linear Covering with Multiple Experts}
+
+\author{The authors}
+%\affil{LIG, University Grenoble-Alpes, France }
+
+\maketitle
+
+\input{01_introduction}
+\input{02_covering}
+\input{03_experiments}
+\input{04_conclusion}
+
+\clearpage
+
+\bibliographystyle{plainurl}
+\bibliography{references}
+
+\clearpage
+
+\appendix
+\input{05_appendix}
+
+\end{document}

@@ -1,0 +1,225 @@
+%!TEX root = ../main.tex
+
+\section{Online non-linear covering with multiple experts}
+
+
+\begin{figure}[ht]
+	\begin{mdframed}
+		\begin{align*}
+			&& \min \sum_{t = 1}^{T} \sum_{S} & c_S y_S^t \\
+			%
+			(\alpha^{t}) \qquad && \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
+			%
+			(\beta_{i}^{t}) \qquad && \sum_{S: i \in S} z_{S}^{t} = x_{i}^{t} &\geq \sum_{k=1}^{K} s_{k,i}^{t} w_{k}^{t}   &\forall\ i,t\\
+			%
+			(\gamma^{t}) \qquad && \sum_{S} z_{S}^{t} &= 1   &\forall\ t\\
+			%
+			(\xi_{S}^{t}) \qquad && y_{S}^{t} &\geq z_{S}^{t} - z_{S}^{t-1}   &\forall\ S,t\\
+			%
+			&& w_{k}^{t}, y_{S}^{t}, z_{S}^{t} & \ge 0 & \forall\ k,S,t
+		\end{align*}
+		%\vspace{5pt}
+	\end{mdframed}
+	\caption{Formulation of the relaxation of the \texttt{LIN-COMB} benchmark}
+	\label{fig:relaxation}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{mdframed}
+		\begin{align*}
+			&& \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
+		%
+			(w_{k}^{t}) \qquad && \alpha^{t} - \sum_{i=1}^{n} s_{i,k}^{t} \beta_{i}^{t}  &\leq 0  &\forall\ k,t\\
+		%
+			(y_{S}^{t}) \qquad && \xi_{S}^{t}   &\leq c_{S}  &\forall\ S,t \\
+		%
+			(z_{S}^{t}) \qquad && \sum_{i \in S}\beta_{i}^{t} + \gamma^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq 0  &\forall\ S,t \\
+		%
+			&& \alpha^{t}, \beta_{i}^{t}, \xi_{S}^{t} & \ge 0 & \forall\ i,t
+		\end{align*}
+		%\vspace{5pt}
+	\end{mdframed}
+	\caption{Dual formulation of the relaxation of the \texttt{LIN-COMB} benchmark}
+	\label{fig:dual}
+\end{figure}
+
+
+\paragraph{Algorithm.}
+
+At the arrival of the $t^{\text{th}}$ constraint,
+\begin{enumerate}
+	\item find a local minimum $w^t$ of the following non-linear program
+
+\begin{align*}
+\min_{w} \biggl\{\sum_{i=1}^{n}
+	\nabla_{i} & f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
+					 \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k} + \delta_{i}^{t-1}}\right)
+									- \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k} \biggr] \\
+			%
+			&+ \frac{L}{2}\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr) \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t} \biggr)
+				\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}  + \delta_{i}^{t-1}}\right) \\
+			%
+			&- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr)^{2}
+		\biggr\}
+\end{align*}
+%
+\noindent subject to:
+%
+\begin{align*}
+    (\theta^{t})  && \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k} \biggr) &\geq 1 && \forall\ t\\
+%
+    (\chi_{i}^{t}) && \sum_{k=1}^{K}  w_{i,k} &\geq 1 && \forall\ i\\
+%
+    (\nu_{i}^{t}) && \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} &\geq 0 && \forall\ i,t
+\end{align*}
+%
+where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$.
+Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint.
+Moreover, for every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the convex program.
+(We can set $w_{i,k} = 0$ for all $k$ beforehand.)
+	%
+	\item For all $i$, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set the solution $x_{i}^{t} \gets \sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t}$;
+otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
+\end{enumerate}
+
+
+\subsection{Analysis}
+As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i}^{t},\ \mu_{i}^{t}$) is the optimal solution of the dual of the convex program, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
+%
+\begin{align*}
+   \biggl[ \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k}  \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) - 1 \biggr] \theta^{t} &= 0 \qquad \forall t \\
+   \biggl[ \sum_{k=1}^{K}  w_{i,k}^{t}  - 1 \biggr] \xi_{i}^{t} &= 0 \qquad \forall i, t \\
+   \biggl[ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} \biggr] \nu_{i}^{t} &= 0 \qquad \forall i, t \\
+%
+ s_{ik}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    	- a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} - s_{i,k}^{t} \nu_{i}^{t} &= 0	\qquad \forall i,k,t \\
+	%
+	\gamma^{t}, \lambda_{i}^{t}, \mu_{i}^{t} &\geq 0 \qquad \forall i, t
+\end{align*}
+
+Moreover, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\mu_{i}^{t} = 0$, then
+\begin{align}	\label{eq:KKT}
+ s_{ik}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
+    	- a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} = 0
+\end{align}
+
+
+\paragraph{Dual variables and feasibility.} We set the dual variables of the linear program relaxation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm.
+%
+\begin{align*}
+    \alpha^{t} &= \frac{1}{\lambda}  \biggl( \theta^{t} + \sum_{i} \chi_{i}^{t} \biggr), \\
+    %
+    \beta_{i}^{t} &= \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    %
+    \xi_{S}^{t} &= \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) - \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t})\\
+    %
+    \gamma^{t} &= - \frac{2}{\lambda} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    	& \quad - \frac{1}{\lambda} \sum_{i} \bigl[ \nabla_{i} f(x^{t}) -  \nabla_{i} f(x^{t-1}) \bigr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) \\
+	& \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t})
+\end{align*}
+%
+Recall that $\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
+
+\begin{lemma} \label{lem:covering-feasibility}
+The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem and the dual variables $(\alpha^{t}, \beta_{i}^{t})$ of the \texttt{LIN-COMB} benchmark's linear program relaxation are feasible.
+\end{lemma}
+%
+\begin{proof}
+We first prove that the $x_{i}^{t}$ variables satisfy the covering constraints by induction. At time 0, no constraint has been released yet, and every variable is set to 0. This all-zero solution is feasible. Let us assume that the algorithm provides feasible solutions up to time $t-1$. At time $t$, the algorithm maintains the inequality $x_{i}^{t} \geq x_{i}^{t-1}$, so all constraints $t'$ where $t' < t$ are satisfied. Besides, $x_{i}^{t}$ is always at least
+$\sum_{k} w_{i,k}^{t} s_{i,k}^{t}$, which is larger than $\sum_{k} w_{i,k}^{t} \hat{s}_{i,k}^{t}$ since $s_{i,k}^{t} \geq \hat{s}_{i,k}^{t}$
+for all $i,k$ by the preprocessing step. Hence, the constraint $t$ is also satisfied, formally,
+$$
+\sum_{i=1}^{n} a_{i}^{t} x_{i}^{t}  \geq \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k} \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) \geq 1.
+$$
+
+In the remaining part of the proof, we show the feasibility of the dual solution.
+The first constraint is by KKT conditions.
+The second constraint reads
+%
+\begin{align*}
+\chi_{S}^{t} &= \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t})  \\
+&\leq \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln(K\rho)  - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t})
+\leq  \ln(K\rho) c(S)
+\end{align*}
+%
+where the last inequality is due to the $(\lambda,\mu)$-smoothness. By scaling the objective by a factor of $\ln (K\rho)$, the second dual constraint holds.
+The last constraint holds by the definition of dual variables.
+
+\end{proof}
+
+
+\begin{theorem} \label{covering-theorem}
+The algorithm's cost, up to some fixed constant, is at most $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive in the \texttt{LIN-COMB} benchmark.
+\end{theorem}
+%
+\begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the dual problem of the \texttt{LIN-COMB} benchmark relaxation and for the original covering problem. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark - the best linear combination of the experts' solutions.
+\begin{align}
+&f(x^{t}) - f(x^{t-1}) \leq \nabla f(x^{t-1}) (x^{t} - x^{t-1}) + \frac{2L}{2} \|x^{t} - x^{t-1} \|^{2} \\
+%
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] (x_{i}^{t} - x_{i}^{t-1}) &&  \notag \\
+%
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr](x_{i}^{t} + \delta_{i}^{t}) \ln \frac{x_{i}^{t-1} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t}} \\
+%
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] (x_{i}^{t} + \delta_{i}^{t}) \ln \frac{x_{i}^{t-1} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}} \\
+%
+&= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] \left[ \left(\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \frac{1}{K} \sum_{k=1}^{K} s_{i,k}^{t} \right)
+			\ln \left(\frac{ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}}  \right) \right]\\
+%
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] \left[ \left(\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \frac{1}{K} \sum_{k=1}^{K} s_{i,k}^{t} \right)
+			\ln \left(\frac{ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}  \right) \right]\\
+%
+&= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) s_{i,k}^{t} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr]
+			\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \notag \\
+%
+&=  \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} + \chi_{i}^{t} \biggr)  \\
+%
+&\leq \sum_{i=1}^{n} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} + \chi_{i}^{t} \biggr) \notag \\
+%
+&= \sum_{i=1}^{n} a_{i}^{t} \biggl(\sum_{k=1}^{K} w_{i,k}^{t} \hat{s}_{i,k}^{t} \biggr) \theta^t + \sum_{i=1}^{n} \bigg( \sum_{k=1}^{K} w_{i,k}^{t} \biggr) \chi_{i}^{t}
++ \frac{1}{K}  \sum_{k=1}^{K} \biggl( \sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t}  \biggr) \theta^t + \frac{1}{K} \sum_{k=1}^{K} \sum_{i=1}^{n} \chi_{i}^{t} 		\notag \\
+%
+&= 2 \theta^{t} + 2\sum_{i=1}^{n} \chi_{i}^{t} \\
+%
+&= 2\lambda \cdot \alpha^{t}	\notag
+\end{align}
+%
+The above corresponding transformations hold since:
+\begin{compactenum}[(1)]
+	\setcounter{enumi}{1}
+	\item holds as $f$ is $2L$-smooth;
+	\item follows from the inequality $a - b \leq a \ln(a/b)$ for all $0 < b \leq a$;
+	\item holds since $\delta_{i}^{t} \geq \delta_{i}^{t-1}$ (because $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i,k,t$);
+	\item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$;
+	\item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
+	\setcounter{enumi}{5}
+	\item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$
+	(so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT}) applies;
+	\item is true due to the complementary slackness conditions
+		and that $\sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
+\end{compactenum}
+
+In the remaining, we are bounding $\sum_{t} \gamma^{t}$. Observe that
+%
+\begin{align*}
+2\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
+\leq \ln(K\rho) (x_{i}^{t} - x_{i}^{t-1})
+\end{align*}
+%
+and
+\begin{align*}
+\sum_{i} (\nabla_{i} f(x^{t}) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)
+\leq \ln(K\rho) 2L\sqrt{n} \sum_{i} (x_{i}^{t} - x_{i}^{t-1})
+\end{align*}
+since $f$ is $2L$-smooth w.r.t $\ell_{2}$-norm.
+Therefore,
+\begin{align*}
+\sum_{t=1}^{T} \gamma^{t} &\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{t} \sum_{i} (x_{i}^{t} - x_{i}^{t-1}) \\
+&\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i} x_{i}^{T}
+\end{align*}
+Summing up, the dual objective is bounded as follows.
+\begin{align*}
+\sum_{t} (\alpha^{t} + \gamma^{t}) \geq \frac{1/2-\mu\ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i} x_{i}^{T}
+\end{align*}
+In $0-1$ optimization, $x_{i}^{T} \leq 1$.
+Hence, the theorem follows.
+\end{proof}
