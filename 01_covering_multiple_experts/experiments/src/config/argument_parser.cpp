@@ -46,7 +46,7 @@ bool ArgumentParser::modeIsGeneration() const
 void ArgumentParser::displayUsage()
 {
     std::stringstream message;
-    message << std::endl << std::endl << "Usage: ./OCF <test_name>" << std::endl;
+    message << std::endl << std::endl << "Usage: ./OCME <test_name>" << std::endl;
     message << "1) If the test name exists in the data/ config/ and experts/ folders, the test is executed." << std::endl;
     message << "2) If 1) fails, if the test name exists in generation/ folder, the test is generated." << std::endl;
     message << "3) Otherwise ERROR!" << std::endl;
