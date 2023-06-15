@@ -34,104 +34,161 @@ In the primal program, the first constraints are knapsack-constraints (\cite{Car
 The third constraint guarantees that \emph{one} solution is selected.
 
 \paragraph{Algorithm.}
-In our proposed algorithm, $\vect{x} \in [0, 1]^{|\mathcal{E}|}$ corresponds to the current solution of the algorithm. During the execution, we rely on the objective function's multilinear extension $F$, parametrized by $\lambda$ and $\mu$. We assume, that $F(\vect{x})$ is $(\lambda, C \mu)$-locally-smooth, where $C$ is a constant that arises from the algorithm's analysis (see Lemma~\ref{lem:prim-dual-feasible}). Algorithm~\ref{algo:covering} follows the scheme of \cite{Thang20:Online-Primal-Dual}, which uses both the primal and dual variables to solve the problem. At each time step $t$, when a new primal constraint arrives, the current dual variable $\alpha^{t}_{A^*}$ increases at a constant rate (line \ref{algo-covering:alpha}), while the $\beta_e$ variables are updated according to the partial derivative of the mulitlinear extension (line \ref{algo-covering:beta}). We note a subtle point here: if $\beta_e < \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ then we set
+In our proposed algorithm, $\vect{x} \in [0, 1]^{|\mathcal{E}|}$ corresponds to the current solution of the algorithm. During the execution, we rely on the objective function's multilinear extension $F$, parametrized by $\lambda$ and $\mu$. We assume, that $F(\vect{x})$ is $(\lambda, C \mu)$-locally-smooth, where $C$ is a constant that arises from the algorithm's analysis (see Lemma~\ref{lem:prim-dual-feasible}). Algorithm~\ref{algo:covering} follows the scheme of \cite{Thang20:Online-Primal-Dual}, which uses both the primal and dual variables to solve the problem.
+
+We have two notions of time in our algorithm. First, at each discrete time step $t$, a new primal constraint arrives. Second, we have a continuous time $\tau$ throughout the execution. The solution of the algorithm increases gradually with time $\tau$.  To simplify the notations, when the context only uses the current time of the execution, $\vect{x}$ refers to $\vect{x}(\tau)$, the current solution at time $\tau$.
+
+\begin{algorithm}[!ht]
+	\begin{algorithmic}[1]
+	\STATE Initially, set $A^* \gets \emptyset$ \ \ \texttt{(where $A^*$ is the solution set and $\forall e \in A^* : x_{e} = 1$)}
+	\STATE All primal and dual variables are initially set to 0
+	\STATE During every step, for each feasible solution $S$, $z_{S} = \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e})$ is maintained.
+	\STATE Let $\tau$ be the continuous timer during the execution of the algorithm.
+	\FOR{each time $t$, for the new primal constraint $\sum_{e} a_{e}^{t} x_{e} \geq 1$
+	and dual variable $\alpha^{t}_{A^*}$}
+		\WHILE[\texttt{Increase primal, dual variables}]{$\sum_{e \notin A^{*}} b^{t}_{e}(A^{*})\ x_{e} < 1$}
+			\STATE Increase $\tau$ with a rate of $1$.
+			\STATE Increase $\alpha^{t}_{A^{*}}$ at rate $1\ /\ (\lambda \ \ln(1+2d^{2}/\eta))$
+			%(Note that $c_{k,A^{*}} > 0$ by the condition of the while loop.)
+			\label{algo-covering:alpha}
+			\FOR{$e \notin A^{*}$ such that $b^{t}_{e}(A^{*}) > 0$}
+				\STATE \textbf{if} $\beta_{e} <  \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ \textbf{then}
+				$\beta_{e} \gets \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
+				\label{algo-covering:beta}
+				\STATE Increase $x_{e}$ at a rate according to the following
+				\begin{align*}
+					\frac{\partial x_{e}}{\partial \tau}	\gets
+					\frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda \beta_{e}} + \frac{\eta}{\lambda \beta_{e} d}
+					+ \frac{(1 - \eta) \cdot \one_{\{pred(x_{e}) = 1\}}}{\nabla_{e} F(\vect{x}) \cdot |\{e': pred(x_{e'}) = 1,\ b^{t}_{e'}(A^{*}) > 0\}| }
+				\end{align*}
+				\label{algo-covering:x}
+			\ENDFOR
+			\STATE \textbf{if} $x_{e} = 1$ \textbf{then} $A^{*} \gets A^{*} \cup \{e\}$
+			\FOR[\texttt{Decrease dual variables}]{$e : e \notin A^*$} \label{algo-decrease}
+				\WHILE{
+					$\sum_{t'=1}^{t} \sum_{A: e \notin A} b^{t'}_{e}(A) \ \alpha^{t'}_{A} > \beta_{e}$}
+						\FOR{$(t_{e}^{*}, A) \textnormal{ such that } b^{t_{e}^{*}}_{e}(A) =  \max \{b^{t'}_{e}(A)\ |\ \forall A: e \notin A \textnormal{ and }\forall t' \leq t \textnormal{ s.t. } \alpha^{t'}_{A} > 0\}$} \label{algo-covering:bmax}
+							\STATE Decrease $\alpha^{t_{e}^{*}}_{A}$ continuously with a rate of
+							$\frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \cdot\frac{1}{\lambda \cdot \ln(1+2d^{2}/\eta)}$
+							\label{algo-covering:decrease}
+					\ENDFOR
+				\ENDWHILE
+			\ENDFOR
+		\ENDWHILE
+	\ENDFOR
+	\end{algorithmic}
+	\caption{Online Algorithm for Non-Linear Covering Problems.}
+	\label{algo:covering}
+\end{algorithm}
+
+When a new primal constraint arrives, the current dual variable $\alpha^{t}_{A^*}$ increases at a constant rate (line \ref{algo-covering:alpha}), while the $\beta_e$ variables are updated according to the partial derivative of the mulitlinear extension (line \ref{algo-covering:beta}). We note a subtle point here: if $\beta_e < \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ then we set
 $\beta_e = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$, but if $\beta_e > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ then we do not change the value of $\beta_e$. This update preserves the following invariants during the execution of the algorithm: $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ and $\beta_{e}$ is non-decreasing. (Remark: if $\nabla_{e} F(\vect{x})$ is monotone on every coordinate $e$, then it is sufficient to always set $\beta_{e} \gets \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.)
+
 The update on line \ref{algo-covering:x} is inspired by the multiplicative weight update method (where the increasing rate of $x_{e}$
 is inversely proportional to $\beta_{e}$) and the updating approach of \cite{BamasMaggiori20:The-Primal-Dual-method}.
 Starting from line \ref{algo-decrease}, the algorithm decreases some of the dual variables using a similar idea as in
 \cite{AzarBuchbinder16:Online-Algorithms}. This decrease is necessary to maintain the feasibility of the dual solution.
 
 
-\begin{algorithm}[ht]
-\begin{algorithmic}[1]
-\STATE Initially, set $A^* \gets \emptyset$ \ \ \texttt{(where $A^*$ is the solution set and $\forall e \in A^* : x_{e} = 1$)}
-\STATE All primal and dual variables are initially set to 0
-\STATE During every step, for each feasible solution $S$, $z_{S} = \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e})$ is maintained.
-\STATE Let $\tau$ be the continuous timer during the execution of the algorithm.
-\FOR{each time $t$, for the new primal constraint $\sum_{e} a_{e}^{t} x_{e} \geq 1$
-and dual variable $\alpha^{t}_{A^*}$}
-	\WHILE[\texttt{Increase primal, dual variables}]{$\sum_{e \notin A^{*}} b^{t}_{e}(A^{*})\ x_{e} < 1$}
-		\STATE Increase $\tau$ with a rate of $1$.
-		\STATE Increase $\alpha^{t}_{A^{*}}$ at rate $1\ /\ (\lambda \ \ln(1+2d^{2}/\eta))$
-		%(Note that $c_{k,A^{*}} > 0$ by the condition of the while loop.)
-		\label{algo-covering:alpha}
-		\FOR{$e \notin A^{*}$ such that $b^{t}_{e}(A^{*}) > 0$}
-			\STATE \textbf{if} $\beta_{e} <  \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ \textbf{then}
-			$\beta_{e} \gets \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
-			\label{algo-covering:beta}
-			\STATE Increase $x_{e}$ at a rate according to the following
-			\begin{align*}
-				\frac{\partial x_{e}}{\partial \tau}	\gets
-				\frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda \beta_{e}} + \frac{\eta}{\lambda \beta_{e} d}
-				+ \frac{(1 - \eta) \cdot \one_{\{pred(x_{e}) = 1\}}}{\nabla_{e} F(\vect{x}) \cdot |\{e': pred(x_{e'}) = 1,\ b^{t}_{e'}(A^{*}) > 0\}| }
-			\end{align*}
-			\label{algo-covering:x}
-		\ENDFOR
-		\STATE \textbf{if} $x_{e} = 1$ \textbf{then} $A^{*} \gets A^{*} \cup \{e\}$
-		\FOR[\texttt{Decrease dual variables}]{$e : e \notin A^*$} \label{algo-decrease}
-			\WHILE{
-				$\sum_{t'=1}^{t} \sum_{A: e \notin A} b^{t'}_{e}(A) \ \alpha^{t'}_{A} > \beta_{e}$}
-				    \FOR{$(t_{e}^{*}, A) \textnormal{ such that } b^{t_{e}^{*}}_{e}(A) =  \max \{b^{t'}_{e}(A)\ |\ \forall A: e \notin A \textnormal{ and }\forall t' \leq t \textnormal{ s.t. } \alpha^{t'}_{A} > 0\}$}
-						\STATE Decrease $\alpha^{t_{e}^{*}}_{A}$ continuously with a rate of
-						$\frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \cdot\frac{1}{\lambda \cdot \ln(1+2d^{2}/\eta)}$
-						\label{algo-covering:decrease}
-				\ENDFOR
-			\ENDWHILE
-		\ENDFOR
-	\ENDWHILE
-\ENDFOR
-\end{algorithmic}
-\caption{Online Algorithm for Non-Linear Covering Problems.}
-\label{algo:covering}
-\end{algorithm}
-
-
 \paragraph{Primal and dual variables.}
-Let $\vect{x}^{t}$ be the algorithm's primal solution at time $t$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}^t)$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t'})$, for some primal solution $\vect{x}^{t'}$, where $t' \le t$. Moreover, $\vect{x}^t \geq \bigvee_{t' \le t} \vect{x}^{t'}$ (each coordinate $x^{t}_{e} = \max_{t' \le t}\{x^{t'}_{e}\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}^t)$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $x^{t}$.
-The proof is available in Appendix~\ref{appendix:main}, but we highlight here that it does \emph{not} require the gradient of $F$ to be monotone.
-(When this assumption is present, the algorithm can simply set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x^{t}})$ at each step $t$ of the execution.)
+Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau'))$, for some primal solution $\vect{x}(\tau')$, where $\tau' \le \tau$. Moreover, $\vect{x}(\tau) \geq \bigvee_{\tau' \le \tau} \vect{x}(\tau')$ (each coordinate $x_{e}(\tau) = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $\vect{x}(\tau)$. We highlight that the proof if this lemma does \emph{not} require the gradient of $F$ to be monotone.
+(When this assumption is present, the algorithm can simply set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
 
 
 \begin{restatable}{lemma}{BoundX}
 \label{lem:bound-x}
 Let $e$ be an arbitrary resource.
-At any moment during the execution of the algorithm,
+At any moment $\tau$ during the execution of the algorithm,
 when $t$ constraints have already been released, it always holds that
 $$
-x_{e}	\geq  \frac{\eta}{\max \{b^{t'}_{e}(A)\} \cdot d}
+x_{e}	\geq  \frac{\eta}{b^{t_{e}^{*}}_{e}(A) \ d}
 		\left[ \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
 				\cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A) \cdot \alpha^{t'}_{A} \biggr) - 1 \right]
 $$
-where $\max \{b^{t'}_{e}(A)\} := \max \{b^{t'}_{e}(A) > 0\ |\ \forall A: e \notin A \textnormal{ and }\forall t' \leq t \textnormal{ such that } \alpha^{t'}_{A} > 0\}$.
+where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-covering:bmax}.
 \end{restatable}
+\begin{proof}
+	Let us fix a resource $e$ and prove the lemma by induction. At the beginning of the execution, when no constraint has been released yet, both sides of the lemma are 0.
+	Let us assume that the lemma holds until the release of the $t^{\text{th}}$ constraint $\sum_{e} a^{t}_{e} x_{e} \geq 1$.
+	Consider a moment $\tau$ during the algorithm's execution
+	and let $A^{*}$ be the current set of resources $e'$ such that $x_{e'} = 1$.
+	If at time~$\tau$, $x_{e} = 1$ then by the algorithm's design, the set $A^{*}$ has been updated such that
+	$e \in A^{*}$. Consequently, the increasing rates of both sides in the lemma inequality are 0.
+	In the remaining part of the proof, let us assume that  $x_{e} < 1$.
+	We recall that by the algorithm's design, $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
+	We consider two cases $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
+	and $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
 
+	\paragraph{Case 1: $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
+	In this case, by the algorithm's design, the value of $\beta_{e}$ remains unchanged at time~$\tau$ (line \ref{algo-covering:beta}) ($\frac{\partial \beta_{e}}{\partial \tau} = 0$).
+	The lemma's right-hand side's derivative according to $\tau$ is
+	\begin{align*}
+	&\sum_{t' \le t} \frac{\partial \alpha^{t'}_{A^{*}}}{\partial \tau} \cdot
+		\frac{b^{t'}_{e}(A^{*}) \ \eta }{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
+			\cdot \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e} } \cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \biggr) \\
+	%
+	&\leq \frac{\partial \alpha^{t}_{A^{*}}}{\partial \tau} \cdot
+		\frac{b^{t}_{e}(A^{*}) \ \eta }{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}} \cdot \left( \frac{b^{t_{e}^{*}}_{e}(A) \ d}{\eta}\ x_{e} + 1 \right) \\
+	%
+	&= \frac{1}{\lambda \ln(1+2d^{2}/\eta)} \cdot
+		\frac{b^{t}_{e}(A^{*}) \ \eta }{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}} \cdot \left( \frac{b^{t_{e}^{*}}_{e}(A) \ d}{\eta}\ x_{e} + 1 \right) \\
+	%
+	&\leq  \frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda\ \beta_{e}} + \frac{\eta}{\lambda\ \beta_{e}\ d} \\
+	%
+	&\leq \frac{\partial x_{e}}{\partial \tau}
+	\end{align*}
+	%
+	In the first inequality, we use the induction hypothesis and $\frac{\partial \alpha^{t}_{A^{*}}}{\partial \tau} > 0$
+	and $\frac{\partial \alpha^{t'}_{A^{*}}}{\partial \tau} \leq 0$ for $t' < t$ and $\frac{\partial \beta_{e}}{\partial \tau} = 0$.
+	The equality follows the increasing rate of $\alpha^{t}_{A^{*}}$.
+	The last inequality is due to the increasing rate of $x_{e}$.
+	The rate on the left-hand side is always larger than on the right-hand side, so the lemma inequality holds.
+
+	\paragraph{Case 2: $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
+	In this case, by the algorithm's design, $\frac{1}{\lambda} \nabla_{e} F(\vect{x})$ is locally non-decreasing at $\tau$ (since otherwise,
+	by line \ref{algo-covering:beta}, $\beta_{e}$ is not maintained to be equal to $\frac{1}{\lambda} \nabla_{e} F(\vect{x})$).
+	Therefore, $\frac{\partial \beta_{e}}{\partial \tau} \geq 0$ and so $\partial \bigl(\frac{1}{\beta_{e}}\bigr)/\partial \tau \leq 0$.
+	Hence, the derivative of the right-hand side of the lemma inequality according to $\tau$ is upper bounded by
+	\begin{align*}
+	\sum_{t' \le t} \frac{\partial \alpha^{t}_{A^{*}}}{\partial \tau} \cdot
+		\frac{b^{t'}_{e}(A^{*}) \ \eta}{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
+			\cdot \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e} } \cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \biggr)
+	\end{align*}
+	which is bounded by $\frac{\partial x_{e}}{\partial \tau}$ by the same argument as the previous case. The lemma follows.
+\end{proof}
 
 \begin{lemma} \label{lem:prim-dual-feasible}
 The primal and dual variables are feasible.
 \end{lemma}
 %
 \begin{proof}
+
+\textbf{Primal feasibility.}
 While a primal covering constraint is unsatisfied, the $x_e$-variables are increasing. At the end of the first iteration, the first primal covering constraint is satisfied. Afterwards, the new constraints are
 also satisfied, since the algorithms maintains $z_{S} = \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e})$.
-In particular, if we choose an element $e$ with probability $x_{e}$, then $z_{S}$ is the probability
-that the set of selected items is $S$. Therefore, the total probability $\sum_{S} z_{S} = 1$.
-Similarly, $\sum_{S: e \in S} z_{S} = x_{e} \sum_{S' \subseteq E \setminus \{e\}} \prod_{e' \in S'} x_{e'} \prod_{e' \notin S'} (1 - x_{e'}) = x_{e}$
-since $\sum_{S' \subseteq E \setminus \{e\}} \prod_{e' \in S'} x_{e'} \prod_{e' \notin S'} (1 - x_{e'}) = 1$ (by the same argument).
+If we choose an element $e$ with probability $x_{e}$, then $z_{S}$ is the probability
+that the set of selected items is $S$. Therefore, the total probability $\sum_{S} z_{S} = 1$. By a similar argument, we get the following:
+$
+	\sum_{S: e \in S} z_{S} = x_{e} \sum_{S' \subseteq E \setminus \{e\}} \prod_{e' \in S'} x_{e'} \prod_{e' \notin S'} (1 - x_{e'}) = x_{e}
+$
+since
+$
+	\sum_{S' \subseteq E \setminus \{e\}} \prod_{e' \in S'} x_{e'} \prod_{e' \notin S'} (1 - x_{e'}) = 1
+$.
 
-
-Let us now prove that the first dual constraint is always satisfied during the execution. The algorithm maintains $\sum_{t' \le t} \sum_{A: e \notin A} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \leq \beta_{e}$. % (strict inequality happens only if $x_{e} = 1$).
+\textbf{Dual feasibility.} Let us now prove that the first dual constraint is always satisfied during the execution. The algorithm maintains $\sum_{t' \le t} \sum_{A: e \notin A} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \leq \beta_{e}$. % (strict inequality happens only if $x_{e} = 1$).
 Whenever this inequality is violated, the algorithm decreases (see line \ref{algo-covering:decrease}) some of the $\alpha$-variables in a way that the increasing rate of $\sum_{t' \le t} \sum_{A: e \notin A} b^{t'}_{e}(A)\ \alpha^{t'}_{A}$ is at most 0. By the $\beta$-variables' definition, the first dual constraint holds.
 
-Finally, let us consider the second dual constraint. Let $\vect{x}^T$ be the final solution of the algorithm. For each fixed resource $e$, the value $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t_e})$ for some previous solution $\vect{x}^{t_e}$ where $t_e \le T$ and where $x^{t_e}_{e} \leq x^{T}_{e}$ for all $e$.
-Let $\vect{y} := \bigvee_{t \le T} \vect{x}^{t} \leq \vect{x}^{T}$, so for each coordinate $e$ of $\vect{y}$, we have $y_{e} = \max_{t \le T}\{x^{t}_{e}\}$.
+Let us consider the second dual constraint. Let $\vect{x}(\tau)$ be the final solution of the algorithm. For each fixed resource $e$, the value $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau_e))$ for some previous solution $\vect{x}(\tau_e)$ where $\tau_e \le \tau$ and where $x_{e}(\tau_e) \leq x_{e}(\tau)$ for all $e$.
+Let $\vect{y} := \bigvee_{\tau' \le \tau} \vect{x}(\tau') \leq \vect{x}(\tau)$, so for each coordinate $e$ of $\vect{y}$, we have $y_{e} = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$.
 By definition of the dual variables, the second dual constraint (after rearranging the terms) reads
 \begin{align*}
-	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}^{t_e}) \leq F(\vect{1}_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}^{T}) \ \ \ \ \forall\ S \subseteq \mathcal{E}
+	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}(\tau_e)) \leq F(\vect{1}_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau)) \quad \quad \forall\ S \subseteq \mathcal{E}
 \end{align*}
-since we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}^{T})$, and $\vect{x}^{t_e}$ corresponds to the solution during the execution where $\beta_e$ was set to $\frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t_e})$.
-Since $F$ is monotone, $F(\vect{x}^{T}) \geq F(\vect{y})$. To prove that the above inequality holds, it is sufficient to show that
+since we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$, and $\vect{x}(\tau_e)$ corresponds to the solution during the execution where $\beta_e$ was set to $\frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau_e))$.
+Since $F$ is monotone, $F(\vect{x}(\tau)) \geq F(\vect{y})$. To prove that the above inequality holds, it is sufficient to show that
 \begin{align*}
-	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}^{e}) \leq F(\vect{1}_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{y})
+	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}(\tau_e)) \leq F(\vect{1}_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{y})
 \end{align*}
 which means that $F$ needs to be  $\bigl(\lambda, \frac{\mu}{4\ln(1+2d^{2}/\eta)}\bigr)$-locally-smooth. Our initial assumption was that $F$ is $(\lambda, C \mu)$-locally-smooth. By setting $C := \frac{1}{4\ln(1+2d^{2}/\eta)}$, the lemma holds.
 \end{proof}
@@ -143,7 +200,8 @@ which means that $F$ needs to be  $\bigl(\lambda, \frac{\mu}{4\ln(1+2d^{2}/\eta)
 	Assuming that $F$ is $\bigl(\lambda, \frac{\mu}{\ln(1+2d^{2}/\eta)}\bigr)$-locally-smooth
 	for some parameters ($\lambda > 0$, $\mu < 1$ and $0 < \eta \leq 1$), there exists an $O\bigl( \frac{1}{1 - \eta} \bigr)$-consistent and $O\bigl( \frac{\lambda}{1 - \mu}  \cdot \ln \frac{d}{\eta} \bigr)$-robust algorithm for any $\eta \in (0,1]$ which produces a fractional solution for the given problem.
 \end{theorem}
-\begin{proof} \\
+\begin{proof}
+
 \textbf{Robustness.}
 By bounding the increases of the primal and dual objective values at any time $\tau$ during the execution of
 Algorithm~\ref{algo:covering}, we can determine the robustness. Upon the release of the $t^{\text{th}}$ constraint,
@@ -152,39 +210,41 @@ let $A^{*}$ be the current solution with the chosen set of resources $e$ such th
 \noindent The derivative of the primal objective function with respect to $\tau$ is:
 %
 \begin{align}	\label{eq:covering-primal}
-\sum_{e \in \mathcal{E}} & \nabla_{e} F(\vect{x}^{\tau}) \cdot \frac{\partial x_{e}}{ \partial \tau} \notag \\
-&= \sum_{e\ :\ b^{t}_{e}(A^{*})\ >\ 0} \nabla_{e} F(\vect{x}^{\tau})
+\sum_{e \in \mathcal{E}} & \nabla_{e} F(\vect{x}) \cdot \frac{\partial x_{e}}{ \partial \tau} \notag \\
+&= \sum_{e\ :\ b^{t}_{e}(A^{*})\ >\ 0} \nabla_{e} F(\vect{x})
 	\ \left( \frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda\ \beta_{e}} + \frac{\eta}{\lambda\ \beta_{e}\ d}
-		 + \frac{(1 - \eta) \ \one_{\{pred(x_{e})\ =\ 1\}}}{\nabla_{e} F(\vect{x}^{\tau}) \cdot |\{e': pred(x_{e'})\ =\ 1,\ b^{t}_{e'}(A^{*}) > 0\}| }
+		 + \frac{(1 - \eta) \ \one_{\{pred(x_{e})\ =\ 1\}}}{\nabla_{e} F(\vect{x}) \cdot |\{e': pred(x_{e'})\ =\ 1,\ b^{t}_{e'}(A^{*}) > 0\}| }
  \right)	\notag \\
 %
 &\leq  \sum_{e\ :\ b^{t}_{e}(A^{*})\ >\ 0} \biggl( b^{t}_{e}(A^{*}) \ x_{e} + \frac{\eta}{d} \biggr)
 	+ \sum_{e\ :\ pred(x_e)\ =\ 1 \atop b^{t}_{e}(A^{*})\ >\ 0} \frac{(1 - \eta)}{ |\{e': pred(x_{e'}) = 1,\ b^{t}_{e'}(A^{*}) > 0\}|  } \notag \\
 & \leq 2
 \end{align}
-The first inequality follows $\nabla_{e} F(\vect{x}^{\tau}) \leq \lambda \  \beta_{e}$. The second inequality is
+The first inequality follows $\nabla_{e} F(\vect{x}) \leq \lambda \  \beta_{e}$. The second inequality is
 due to the definition of $d$ and  the fact that
 $\sum_{e \notin A^{*}} b^{t}_{e}(A^{*}) \ x_{e} \leq 1$ always holds during the algorithm. (The number of $b^{t}_{e}(A^{*})$ values which are strictly greater than 0, is at most $d$.)
 
-For a time $\tau$, let $U(\tau)$ be the set of resources $e$ such that
+At any time $\tau$, let $U(\tau)$ be the set of resources $e$ such that
 $\sum_{t' \le t} \sum_{A: e \notin A} b^{t'}_{e}(A)\ \alpha^{t'}_{A} = \beta_{e}$ and $b^{t}_{e}(A^*) > 0$.
 Note that $|U(\tau)| \leq d$ by definition of $d$.
 As long as $\sum_{e \notin A^{*}} b^{t}_{e}(A^*)\ x_{e}  < 1$,
 using Lemma~\ref{lem:bound-x} we get that for every $e \in U(\tau)$,
 %
 \begin{align*}
-\frac{1}{b^{t}_{e}(A^*)} > x_{e} \geq \frac{\eta}{\max \{b^{t'}_{e}(A)\} \cdot d}
+\frac{1}{b^{t}_{e}(A^*)} > x_{e} \geq \frac{\eta}{b^{t_{e}^{*}}_{e}(A) \ d}
 				\left[ \exp\biggl(\ln(1+2d^{2}/\eta) \biggr) - 1 \right]
-				= \frac{2 d}{\max \{b^{t'}_{e}(A)\}}.
+				= \frac{2 d}{b^{t_{e}^{*}}_{e}(A)}
 \end{align*}
-Therefore, $\frac{b^{t}_{e}(A^{*})}{\max \{b^{t'}_{e}(A)\}} \leq \frac{1}{2d}$. Following the definition of $U(\tau)$, we can bound the increase of the dual at time $\tau$.
-The derivative of the dual with respect to $t$ is:
+where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-covering:bmax}.
+Therefore, $\frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \leq \frac{1}{2d}$. Following the definition of $U(\tau)$, we can bound the increase of the dual at time $\tau$.
+
+\noindent The derivative of the dual with respect to $t$ is:
 \begin{align*}
 \frac{\partial D}{\partial \tau}
-&=  \sum_{t' \le t} \sum_{A} \frac{\partial \alpha^{t'}_{A}}{\partial \tau} + \frac{\partial \gamma}{\partial \tau}
-	= \sum_{t' \le t} c^{t'}(A^{*})  \frac{\partial \alpha^{t'}_{A^{*}}}{\partial \tau} + \frac{\partial \gamma}{\partial \tau} \\
-&= \frac{1}{\lambda \cdot \ln(1 + 2d^{2}/\eta)} \biggl(1 - \sum_{e \in U(\tau)} \frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \biggr)
-	- \frac{\mu}{4\lambda \cdot \ln(1 + 2d^{2}/\eta)} \sum_{e} \nabla_{e} F(\vect{x}^{\tau}) \frac{\partial x_{e}}{\partial \tau} \\
+&=  \sum_{t' \le t} \sum_{A : e \notin A} \frac{\partial \alpha^{t'}_{A}}{\partial \tau} + \frac{\partial \gamma}{\partial \tau} \\
+&= \sum_{t' \le t} c^{t'}(A^{*}) \cdot \frac{\partial \alpha^{t'}_{A^{*}}}{\partial \tau} + \frac{\partial \gamma}{\partial \tau} \\
+&= \frac{1}{\lambda \cdot \ln(1 + 2d^{2}/\eta)} \cdot \biggl(1 - \sum_{e \in U(\tau)} \frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \biggr)
+	- \frac{\mu}{4\lambda \cdot \ln(1 + 2d^{2}/\eta)} \cdot \sum_{e} \nabla_{e} F(\vect{x}) \frac{\partial x_{e}}{\partial \tau} \\
 %
 &\geq \frac{1}{\lambda \cdot \ln(1 + 2d^{2}/\eta)} \biggl(1 - \sum_{e \in U(\tau)} \frac{1}{2d} \biggr)
 	- \frac{\mu}{2 \lambda \cdot \ln(1 + 2d^{2}/\eta)} \\
@@ -192,30 +252,30 @@ The derivative of the dual with respect to $t$ is:
 &\geq \frac{1 - \mu}{2 \lambda \cdot \ln(1 + 2d^{2}/\eta)}.
 \end{align*}
 The third equality holds since $\alpha^{t}_{A^{*}}$ is increased and other $\alpha$-variables in
-$U(\tau)$ are decreased. The first inequality uses the fact that $\frac{b^{t}_{e}(A^{*})}{\max \{b^{t'}_{e}(A)\}} \leq \frac{1}{2d}$
+$U(\tau)$ are decreased. The first inequality uses the fact that $\frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \leq \frac{1}{2d}$
 and Inequality~(\ref{eq:covering-primal}).
 The last inequality holds since $|U(\tau)| \leq d$.
 Hence, the robustness is at least $\frac{4 \lambda}{1 - \mu} \cdot \ln(1 + 2d^{2}/\eta)$.
 
-\paragraph{Consistency.} We establish consistency with a similar argument as \cite{BamasMaggiori20:The-Primal-Dual-method}.
-Considering an arbitrary moment $t$ during the algorithm's execution, let $S_{1} = S_{1}(t)$ be the set of resources selected by the prediction. Formally, $\forall\ e \in S_{1} : pred(x_{e}) = 1$ up to time $t$. Let $S_{2} = S_{2}(t)$ contain the remaining resources.
+\textbf{Consistency.} We establish consistency with a similar argument as \cite{BamasMaggiori20:The-Primal-Dual-method}.
+Considering an arbitrary moment $\tau$ during the algorithm's execution, let $S_{1} = S_{1}(\tau)$ be the set of resources selected by the prediction. Formally, $\forall\ e \in S_{1} : pred(x_{e}) = 1$ up to time $\tau$. Let $S_{2} = S_{2}(\tau)$ contain the remaining resources.
 The primal objective increase due to $S_{1}$ and $S_{2}$:
 
 \begin{align*}
-\sum_{e \in S_{1}} \nabla_{e} F(\vect{x}^{t})\ \frac{\partial x_{e}}{ \partial t}
-&= \sum_{e \in S_{1}} \nabla_{e} F(\vect{x}^{t})
+\sum_{e \in S_{1}} \nabla_{e} F(\vect{x})\ \frac{\partial x_{e}}{ \partial \tau}
+&= \sum_{e \in S_{1}} \nabla_{e} F(\vect{x})
 	\ \left( \frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda\ \beta_{e}} + \frac{\eta}{\lambda\ \beta_{e}\ d}
-		 + \frac{(1 - \eta)}{\nabla_{e} F(\vect{x}^{t}) \cdot |\{e': pred(x_{e'}) = 1\}| }
+		 + \frac{(1 - \eta)}{\nabla_{e} F(\vect{x}) \cdot |\{e': pred(x_{e'}) = 1\}| }
  \right)\\
- &\geq 1 - \eta \\
+ &\geq 1 - \eta \\ \\
  %
- \sum_{e \in S_{2}} \nabla_{e} F(\vect{x}^{t})\ \frac{\partial x_{e}}{ \partial t}
-&= \sum_{e \in S_{2}} \nabla_{e} F(\vect{x}^{t})
+ \sum_{e \in S_{2}} \nabla_{e} F(\vect{x})\ \frac{\partial x_{e}}{ \partial \tau}
+&= \sum_{e \in S_{2}} \nabla_{e} F(\vect{x})
 	\ \left( \frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda\ \beta_{e}} + \frac{\eta}{\lambda\ \beta_{e}\ d} \right)\\
 &\leq 1 + \eta
 \end{align*}
 Therefore, the primal objective increase is at most $\bigl(1 +  \frac{1 + \eta}{1 - \eta} \bigr)$ time the increase restricted to
-the set $S_{1}$. Moreover, the algorithm's primal objective value restricted to $S_{1}$ is smaller than
+the set~$S_{1}$. Moreover, the algorithm's primal objective value restricted to $S_{1}$ is smaller than
 the prediction's, since $\forall e \in S_{1} : x_{e} \leq 1 = pred(x_{e}$).
 We can deduce that the algorithm is $O\bigl( \frac{1}{1 - \eta} \bigr)$-consistent with the prediction.
 \end{proof}

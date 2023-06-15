@@ -2,63 +2,6 @@
 
 \section*{Appendix}
 
-\section{Proof of Lemma~\ref{lem:bound-x}}
-\label{appendix:main}
-
-\setcounter{theorem}{3}
-\BoundX*
-\begin{proof}
-Fix a resource $e$.
-We prove the lemma by induction. At the beginning of the instance, while no constraint has been released yet,
-both sides of the lemma are 0. Let us assume that the lemma holds until the release of the $t^{\text{th}}$ constraint $\sum_{e} a^{t}_{e} x_{e} \geq 1$.
-Consider this moment $t$ during the execution of the algorithm
-and let $A^{*}$ be the current set of resources $e'$ such that $x_{e'} = 1$.
-If at time $t$, $x_{e} = 1$ then by the algorithm, the set $A^{*}$ has been updated so that
-$e \in A^{*}$. So the increasing rates of both sides in the lemma inequality are 0.
-In the remaining, assume that  $x_{e} < 1$.
-Recall that by the algorithm, $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$.
-We consider two cases $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$
-and $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$.
-
-\paragraph{Case 1: $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$.}
-In this case, by the algorithm, the value of $\beta_{e}$ remains unchanged at time $a$ (Step \ref{algo-covering:beta}) ($\frac{\partial \beta_{e}}{\partial t} = 0$).
-The derivative of the right-hand side of the lemma inequality according to $t$ is
-\begin{align*}
-&\sum_{t' \le t} \frac{\partial \alpha^{t'}_{A^{*}}}{\partial t} \cdot
-	\frac{b^{t'}_{e}(A^{*}) \ \eta }{\max \{b^{t'}_{e}(A)\} \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
-		\cdot \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e} } \cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A) \alpha^{t'}_{A} \biggr) \\
-%
-&\leq \frac{\partial \alpha^{t}_{A^{*}}}{\partial t} \cdot
-	\frac{b^{t}_{e}(A^{*}) \ \eta }{\max \{b^{t'}_{e}(A)\} \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}} \cdot \left( \frac{\max \{b^{t'}_{e}(A)\} \ d}{\eta}\ x_{e} + 1 \right) \\
-%
-&= \frac{1}{\lambda \ln(1+2d^{2}/\eta)} \cdot
-	\frac{b^{t}_{e}(A^{*}) \ \eta }{\max \{b^{t'}_{e}(A)\} \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}} \cdot \left( \frac{\max \{b^{t'}_{e}(A)\} \ d}{\eta}\ x_{e} + 1 \right) \\
-%
-&\leq  \frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda\ \beta_{e}} + \frac{\eta}{\lambda\ \beta_{e}\ d}
-\leq \frac{\partial x_{e}}{\partial t}
-\end{align*}
-%
-In the first inequality, we use the induction hypothesis and $\frac{\partial \alpha^{t}_{A^{*}}}{\partial t} > 0$
-and $\frac{\partial \alpha^{t'}_{A^{*}}}{\partial t} \leq 0$ for $t' < t$ and $\frac{\partial \beta_{e}}{\partial t} = 0$.
-The equality follows the increasing rate of $\alpha^{t}_{A^{*}}$.
-The last inequality is due to the increasing rate of $x_{e}$.
-The rate on the left-hand side is always larger than on the right-hand side. Hence, the lemma inequality holds.
-
-\paragraph{Case 2: $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$.}
-In this case, by the algorithm, $\frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$ is locally non-decreasing at $t$ (since otherwise,
-by Step \ref{algo-covering:beta}, $\beta_{e}$ is not maintained to be equal to $\frac{1}{\lambda} \nabla_{e} F(\vect{x}^{t})$).
-Therefore, $\frac{\partial \beta_{e}}{\partial t} \geq 0$ and so $\partial \bigl(\frac{1}{\beta_{e}}\bigr)/\partial t \leq 0$.
-Hence, the derivative of the right-hand side of the lemma inequality according to $t$ is upper bounded by
-\begin{align*}
-\sum_{t' \le t} \frac{\partial \alpha^{t}_{A^{*}}}{\partial t} \cdot
-	\frac{b^{t'}_{e}(A^{*}) \ \eta}{\max \{b^{t'}_{e}(A)\} \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
-		\cdot \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e} } \cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A) \alpha^{t'}_{A} \biggr)
-\end{align*}
-which is bounded by $\frac{\partial x_{e}}{\partial t}$ by the same argument as the previous case.
-The lemma follows.
-\end{proof}
-
-
 \section{Applications in Section~\ref{sec:covering}}
 To apply Theorem \ref{thm:covering-formal} on specific problems, we need to determine the local-smoothness parameters for the multilinear extension.
 \cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, in particular for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
