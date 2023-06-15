@@ -4,10 +4,12 @@
 #include<regex>
 #include<string>
 
+#include "config/argument_parser.h"
+
 
 class InputGenerator {
 public:
-    InputGenerator(const std::string& config_file);
+    InputGenerator(const ArgumentParser& arg_parser);
     void generate();
 private:
     template<typename T>

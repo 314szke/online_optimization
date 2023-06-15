@@ -6,7 +6,7 @@
 static const std::string OUTPUT_FILENAME = "new_input.lp";
 
 
-InputGenerator::InputGenerator(const std::string& config_file) :
+InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
     nb_vertices(0),
     nb_edges(0),
     nb_requests(0),
@@ -18,10 +18,10 @@ InputGenerator::InputGenerator(const std::string& config_file) :
     line_counter(0),
     config_pattern("[a-zA-Z_]+\\s+=\\s+([0-9\\.]*)\\s+[\\S\\s]*")
 {
-    f_in.open(config_file);
+    f_in.open(arg_parser.config_file);
     if (! f_in.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << config_file << " could not be open!" << std::endl;
+        message << "ERROR: File " << arg_parser.config_file << " could not be open!" << std::endl;
         throw std::runtime_error(message.str());
     }
 

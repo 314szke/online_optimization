@@ -5,13 +5,10 @@
 #include "visualization/print.hpp"
 
 
-GreedySolver::GreedySolver(Model& model) :
+GreedySolver::GreedySolver(Model& model, const Config& config) :
+    _config(config),
     _model(model)
 {
-    _config.time_horizon = 40;
-    _config.max_search_iter = 10;
-    _config.max_distance = 0.001;
-
     costs.resize(_model.getNbRequests());
     solution.resize(_model.getNbRequests());
     temp.push_back(DoubleVec_t(_model.getNbEdges(), 0.0));

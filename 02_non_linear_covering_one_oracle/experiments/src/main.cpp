@@ -23,14 +23,13 @@ int main(int argc, char** argv)
     ArgumentParser arg_parser = ArgumentParser(argc, argv);
     arg_parser.parse();
 
-    if (! arg_parser.generator_file.empty()) {
-        InputGenerator input_generator(arg_parser.generator_file);
+    if (arg_parser.modeIsGeneration()) {
+        InputGenerator input_generator(arg_parser);
         input_generator.generate();
         return 0;
     }
 
-    Config config;
-    config.parse(arg_parser.config_file);
+    Config config(arg_parser.config_file);
 
     Model model;
     model.parse(arg_parser.data_file);
@@ -51,7 +50,7 @@ int main(int argc, char** argv)
     std::cout << "offline_solution = " << offline_objective_value << std::endl << std::flush;
 
     // Calculate the online solution with a greedy algorithm
-    GreedySolver greedy_solver(model);
+    GreedySolver greedy_solver(model, config);
     DoubleMat_t& greedy_solution = greedy_solver.solve(requests[0]);
 
     for (uint32_t idx = 1; idx < requests.size(); idx++) {
@@ -96,9 +95,7 @@ int main(int argc, char** argv)
 
         double eta = 1.0;
         while (eta > 0) {
-            config.eta = eta;
-            config.calculateLambda();
-            config.calculateMu();
+            config.update(eta);
             eta_values[k].push_back(eta);
 
             std::cout << "eta = " << eta << std::endl;

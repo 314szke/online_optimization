@@ -7,10 +7,10 @@
 
 class GreedySolver {
 public:
-    GreedySolver(Model& model);
+    GreedySolver(Model& model, const Config& config);
     DoubleMat_t& solve(const Request& request);
 private:
-    Config _config;
+    const Config& _config;
     Model& _model;
 
     DoubleMat_t costs;
