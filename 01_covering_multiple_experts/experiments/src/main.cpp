@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 
 
     // Generate model
-    if (! arg_parser.generator_file.empty()) {
-        InputGenerator input_generator(arg_parser.generator_file);
+    if (arg_parser.modeIsGeneration()) {
+        InputGenerator input_generator(arg_parser);
         input_generator.generate();
         return 0;
     }

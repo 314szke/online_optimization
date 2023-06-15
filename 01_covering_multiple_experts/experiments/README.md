@@ -22,10 +22,17 @@ Run the following command:
 
 ## Execution
 
-Run the following command with the experiment name (here we used instance_1) you wish to run:
+Navigate to the **experiments/** folder!
 
-    ./OCME data/instance_1.lp config/instance_1.conf experts/instance_1.pred
+Run the following command with the experiment name you wish to run:
 
+    ./OCME <test_name>
+
+For example:
+
+    ./OCME instance_1
+
+If you want to generate a new test instance, create a generator file in the generator folder and then run the same command as before to create the necessary files.
 ## Result
 
 The program prints out the objective values of the optimal offline solution (OPT Offline), the multiplicative weight update algorithm (MWA Online), our algorithm (Our Algo) and the average of the experts (Avg of experts). For the first three, the solutions are displayed as well.

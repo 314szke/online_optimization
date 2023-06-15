@@ -3,15 +3,19 @@
 #include <string>
 
 #include "base/configured_object.h"
+#include "config/argument_parser.h"
 
 
 class InputGenerator : private ConfiguredObject {
 public:
-    InputGenerator(const std::string& config_file);
+    InputGenerator(const ArgumentParser& arg_parser);
     void generate();
 private:
     void generateModel();
     void generateExperts();
+    void generateConfigFile();
+
+    const ArgumentParser& _arg_parser;
 
     uint32_t nb_variables;
     uint32_t nb_constraints;

@@ -5,55 +5,58 @@
 #include <stdexcept>
 #include <string>
 
-#define GEN_NB_ARGS 2
-#define RUN_NB_ARGS 4
-
 
 ArgumentParser::ArgumentParser(int argc, char** argv) :
     _argc(argc),
-    _argv(argv)
+    _argv(argv),
+    mode_generation(false)
 {}
 
 void ArgumentParser::parse()
 {
-    if (!(_argc == GEN_NB_ARGS || _argc == RUN_NB_ARGS)) {
-        std::stringstream message;
-        message << std::endl << "Usage1: ./OCF <data_file>.lp <config_file>.conf <expert_file>.pred" << std::endl;
-        message << "Usage2: ./OCF <generator_file>.gen" << std::endl;
-        message << "ERROR: Inappropriate amount of arguments!" << std::endl;
-        throw std::runtime_error(message.str());
+    if (_argc != 2) {
+        displayUsage();
     }
 
-    if (_argc == GEN_NB_ARGS) {
-        generator_file = std::string(_argv[1]);
-        verify(generator_file, ".gen");
-    } else {
-        data_file = std::string(_argv[1]);
-        config_file = std::string(_argv[2]);
-        expert_file = std::string(_argv[3]);
+    test_name = std::string(_argv[1]);
+    data_file = "data/" + test_name + ".lp";
+    config_file = "config/" + test_name + ".conf";
+    expert_file = "experts/" + test_name + ".pred";
+    generator_file = "generation/" + test_name + ".gen";
 
-        verify(data_file, ".lp");
-        verify(config_file, ".conf");
-        verify(expert_file, ".pred");
+    try {
+        checkIfFileExists(data_file);
+        checkIfFileExists(config_file);
+        checkIfFileExists(expert_file);
+    } catch(...) {
+        mode_generation = true;
+        try {
+            checkIfFileExists(generator_file);
+        } catch(...) {
+            displayUsage();
+        }
     }
 }
 
-void ArgumentParser::verify(std::string& filename, std::string file_format)
+bool ArgumentParser::modeIsGeneration() const
 {
-    if (file_format.size() > filename.size()) {
-        std::stringstream message;
-        message << "ERROR: Invalid filename: " << filename << std::endl;
-        throw std::runtime_error(message.str());
-    } else if (! std::equal(file_format.rbegin(), file_format.rend(), filename.rbegin())) {
-        std::stringstream message;
-        message << "ERROR: File: " << filename << " has invalid format!" << std::endl;
-        throw std::runtime_error(message.str());
-    }
+    return mode_generation;
+}
 
+void ArgumentParser::displayUsage()
+{
+    std::stringstream message;
+    message << std::endl << std::endl << "Usage: ./OCF <test_name>" << std::endl;
+    message << "1) If the test name exists in the data/ config/ and experts/ folders, the test is executed." << std::endl;
+    message << "2) If 1) fails, if the test name exists in generation/ folder, the test is generated." << std::endl;
+    message << "3) Otherwise ERROR!" << std::endl;
+    throw std::runtime_error(message.str());
+}
+
+void ArgumentParser::checkIfFileExists(std::string& filename)
+{
     std::filesystem::path file_path(filename);
     if (! std::filesystem::exists(file_path)) {
-        std::stringstream message;
-        message << "ERROR: File: " << filename << " does not exist!" << std::endl;
-        throw std::runtime_error(message.str());
+        throw std::runtime_error("file does not exist");
     }
 }

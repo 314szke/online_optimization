@@ -12,11 +12,8 @@
 #include "types/local_types.h"
 
 
-static const std::string MODEL_FILENAME = "new_input.lp";
-static const std::string EXPERT_FILENAME = "new_experts.pred";
-
-
-InputGenerator::InputGenerator(const std::string& config_file) :
+InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
+    _arg_parser(arg_parser),
     nb_variables(0),
     nb_constraints(0),
     minimization(1),
@@ -39,11 +36,11 @@ InputGenerator::InputGenerator(const std::string& config_file) :
     min_random_increase(0.0),
     max_random_increase(0.0)
 {
-    f_in.open(config_file);
+    f_in.open(_arg_parser.generator_file);
 
     if (! f_in.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << config_file << " could not be open!" << std::endl;
+        message << "ERROR: File " << _arg_parser.generator_file << " could not be open!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
@@ -76,15 +73,16 @@ void InputGenerator::generate()
 {
     generateModel();
     generateExperts();
+    generateConfigFile();
 }
 
 void InputGenerator::generateModel()
 {
-    std::ofstream f_out(MODEL_FILENAME);
+    std::ofstream f_out(_arg_parser.data_file);
 
     if (! f_out.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << MODEL_FILENAME << " could not be created!" << std::endl;
+        message << "ERROR: File " << _arg_parser.data_file << " could not be created!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
@@ -146,18 +144,18 @@ void InputGenerator::generateModel()
 
 void InputGenerator::generateExperts()
 {
-    std::ofstream f_out(EXPERT_FILENAME);
+    std::ofstream f_out(_arg_parser.expert_file);
 
     if (! f_out.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << EXPERT_FILENAME << " could not be created!" << std::endl;
+        message << "ERROR: File " << _arg_parser.expert_file << " could not be created!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
     f_out << std::fixed << std::setprecision(15);
     f_out << nb_experts << std::endl;
 
-    OfflineModel off_model(MODEL_FILENAME);
+    OfflineModel off_model(_arg_parser.data_file);
     LP_Solver off_solver(off_model, 0);
     DoubleVec_t optimal_solution = off_solver.solve();
     Solution::RoundSolutionIfNeeded(off_model, optimal_solution, off_model.getNbConstraints());
@@ -251,6 +249,25 @@ void InputGenerator::generateExperts()
             f_out << random_solution[k][(nb_variables - 1)] << std::endl;
         }
     }
+
+    f_out.close();
+}
+
+void InputGenerator::generateConfigFile()
+{
+    std::ofstream f_out(_arg_parser.config_file);
+
+    if (! f_out.is_open()) {
+        std::stringstream message;
+        message << "ERROR: File " << _arg_parser.config_file << " could not be created!" << std::endl;
+        throw std::runtime_error(message.str());
+    }
+
+    f_out << "time_horizon = 20                                # number of iterations in the Frank-Wolfe algorithm" << std::endl;
+    f_out << "max_search_iter = 15                             # the maximum number of eta search steps in the Frank-Wolfe algorithm" << std::endl;
+    f_out << "max_distance = 0.000001                          # maximum distance between x and v before terminating the Frank-Wolfe algorithm" << std::endl;
+    f_out << "gurobi_verbosity = 0                             # if set to 1 gurobi will print a lot of messages" << std::endl;
+    f_out << "epsilon = 0.001                                  # used inside the expert file to set tight solutions" << std::endl;
 
     f_out.close();
 }
