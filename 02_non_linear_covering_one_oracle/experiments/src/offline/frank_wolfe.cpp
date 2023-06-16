@@ -8,7 +8,6 @@ FrankWolfe::FrankWolfe(const Config& config, Model& model, const Model::RequestV
     T(config.time_horizon),
     max_search_iter(config.max_search_iter),
     max_dist(config.max_distance),
-    eta(0),
     lp_solver(model, requests),
     _model(model),
     _requests(requests)
@@ -50,42 +49,31 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
         }
     }
 
-    // Optimize through T steps
     double obj_value = 0.0;
+    double eta = 0.0;
+    double euclid_norm = 0.0;
+
+    // Optimize through T steps
     for (uint32_t t = 0; t < T; t++) {
         // Calculate v
         obj_value = lp_solver.solve(x, v, extra_cost);
 
         // Calculate the distance
-        double e_norm = 0.0;
+        euclid_norm = 0.0;
         for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
             for (uint32_t r = 0; r < _requests.size(); r++) {
                 d[r][e] = v[r][e] - x[r][e];
-                e_norm += d[r][e] * d[r][e];
+                euclid_norm += d[r][e] * d[r][e];
             }
         }
 
-        // If the distance between the solutions is 0, terminate
-        if (e_norm  < max_dist) {
+        // If the distance between the solutions is less than the limit, terminate
+        if (euclid_norm  < max_dist) {
             return x;
         }
 
         // Update eta
-        double min_eta = 0.0;
-        double max_eta = 1.0;
-        double best_value = getFunctionValue(max_eta);
-        double current_value;
-
-        for (uint32_t it = 0; it < (max_search_iter + t); it++) {
-            eta = min_eta + ((max_eta - min_eta) / 2.0);
-            current_value = getFunctionValue(eta);
-            if (current_value < best_value) {
-                best_value = current_value;
-                max_eta = eta;
-            } else {
-                min_eta = eta;
-            }
-        }
+        eta = computeNewEta();
 
         // Update x
         for (uint32_t r = 0; r < _requests.size(); r++) {
@@ -106,7 +94,29 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
     return x;
 }
 
-double FrankWolfe::getFunctionValue(const double eta)
+double FrankWolfe::computeNewEta()
+{
+    double min_eta = 0.0;
+    double max_eta = 1.0;
+    double best_value = getObjectiveValue(max_eta);
+    double current_value;
+    double current_eta;
+
+    for (uint32_t it = 0; it < max_search_iter; it++) {
+        current_eta = min_eta + ((max_eta - min_eta) / 2.0);
+        current_value = getObjectiveValue(current_eta);
+        if (current_value < best_value) {
+            best_value = current_value;
+            max_eta = current_eta;
+        } else {
+            min_eta = current_eta;
+        }
+    }
+
+    return current_eta;
+}
+
+double FrankWolfe::getObjectiveValue(double eta)
 {
     for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
         for (uint32_t r = 0; r < _requests.size(); r++) {

@@ -10,7 +10,8 @@ public:
     FrankWolfe(const Config& config, Model& model, const Model::RequestVec_t& requests);
     DoubleMat_t& solve(const DoubleVec_t& extra_cost);
 private:
-    double getFunctionValue(const double eta);
+    double computeNewEta();
+    double getObjectiveValue(double eta);
 
     uint32_t T;
     uint32_t max_search_iter;
@@ -21,8 +22,6 @@ private:
     DoubleMat_t d;
 
     DoubleMat_t temp;
-
-    double eta;
 
     LP_Solver lp_solver;
     Model& _model;
