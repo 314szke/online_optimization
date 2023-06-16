@@ -3,10 +3,9 @@
 #include<fstream>
 #include<random>
 
-static const std::string OUTPUT_FILENAME = "new_input.lp";
-
 
 InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
+    _arg_parser(arg_parser),
     nb_vertices(0),
     nb_edges(0),
     nb_requests(0),
@@ -14,14 +13,13 @@ InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
     min_degree(0),
     max_degree(0),
     min_coeff(0.0),
-    max_coeff(0.0),
-    line_counter(0),
-    config_pattern("[a-zA-Z_]+\\s+=\\s+([0-9\\.]*)\\s+[\\S\\s]*")
+    max_coeff(0.0)
 {
-    f_in.open(arg_parser.config_file);
+    f_in.open(_arg_parser.generator_file);
+
     if (! f_in.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << arg_parser.config_file << " could not be open!" << std::endl;
+        message << "ERROR: File " << _arg_parser.generator_file << " could not be open!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
@@ -38,11 +36,17 @@ InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
 
 void InputGenerator::generate()
 {
+    generateData();
+    generateConfig();
+}
 
-    std::ofstream f_out(OUTPUT_FILENAME);
+void InputGenerator::generateData()
+{
+    std::ofstream f_out(_arg_parser.data_file);
+
     if (! f_out.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << OUTPUT_FILENAME << " could not be created!" << std::endl;
+        message << "ERROR: File " << _arg_parser.data_file << " could not be created!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
@@ -98,27 +102,23 @@ void InputGenerator::generate()
     f_out.close();
 }
 
-template<typename T>
-void InputGenerator::readParameter(T& parameter)
+void InputGenerator::generateConfig()
 {
-    line.resize(0);
-    std::getline(f_in, line);
-    line_counter++;
+    std::ofstream f_out(_arg_parser.config_file);
 
-    if (line.empty()) {
+    if (! f_out.is_open()) {
         std::stringstream message;
-        message << "ERROR: line " << line_counter << " should not be empty!" << std::endl;
+        message << "ERROR: File " << _arg_parser.config_file << " could not be created!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
-    if (std::regex_match(line, matches, config_pattern)) {
-        match = matches[1];
-        std::stringstream ss;
-        ss << match.str();
-        ss >> parameter;
-    } else {
-        std::stringstream message;
-        message << "ERROR: the parameter on line " << line_counter << " has invalid format!" << std::endl;
-        throw std::runtime_error(message.str());
-    }
+    f_out << "time_horizon = 60          # number of iterations in the Frank-Wolfe algorithm" << std::endl;
+    f_out << "max_search_iter = 15       # the maximum number of eta search steps in the Frank-Wolfe algorithm" << std::endl;
+    f_out << "max_distance = 0.001       # maximum distance between x and v before terminating the Frank-Wolfe algorithm" << std::endl;
+    f_out << "epsilon = 0.0001           # variables need to reach (1-eps) value to be selected in the solver" << std::endl;
+    f_out << "cost_degree = 4            # the maximum degree of the polynomial used for edge costs" << std::endl;
+    f_out << "random_iteration = 10      # number of random iterations to estimate the value of the partial derivative of F(x)" << std::endl;
+    f_out << "eta_step = 0.099           # the step size in the range of (0, 1] for eta in the experiments" << std::endl;
+
+    f_out.close();
 }
