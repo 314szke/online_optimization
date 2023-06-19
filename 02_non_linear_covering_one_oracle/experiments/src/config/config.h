@@ -1,6 +1,6 @@
 #pragma once
 
-#include<string>
+#include <string>
 
 #include "base/configured_object.h"
 

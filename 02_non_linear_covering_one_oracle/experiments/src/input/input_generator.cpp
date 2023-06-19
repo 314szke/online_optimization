@@ -1,7 +1,7 @@
 #include "input/input_generator.h"
 
-#include<fstream>
-#include<random>
+#include <fstream>
+#include <random>
 
 
 InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
