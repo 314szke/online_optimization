@@ -16,7 +16,7 @@ LP_Solver::LP_Solver(Model& model, const Model::RequestVec_t& requests) :
     // Add variables
     for (uint32_t r = 0; r < _requests.size(); r++) {
         variables.push_back(VarVec_t());
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             std::stringstream ss;
             ss << "x_" << r << "_" << e;
             GRBVar var = lp_model->addVar(0, 1, 0, GRB_CONTINUOUS, ss.str());
@@ -28,11 +28,11 @@ LP_Solver::LP_Solver(Model& model, const Model::RequestVec_t& requests) :
     const Model::Graph_t& A =_model.getAdjacencyMatrix();
 
     for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t i = 0; i < _model.getNbVertices(); i++) {
+        for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
             if (i != _requests[r].source && i != _requests[r].target) {
                 GRBLinExpr flow_const;
                 uint32_t counter = 0;
-                for (uint32_t j = 0; j < _model.getNbVertices(); j++) {
+                for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
                     if (A[i][j] != -1) {
                         flow_const += 1 * variables[r][A[i][j]];
                         counter++;

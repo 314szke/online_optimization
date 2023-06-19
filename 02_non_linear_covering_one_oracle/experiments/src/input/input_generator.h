@@ -1,8 +1,8 @@
 #pragma once
 
-#include<fstream>
-#include<regex>
-#include<string>
+#include <fstream>
+#include <regex>
+#include <string>
 
 #include "base/configured_object.h"
 #include "config/argument_parser.h"

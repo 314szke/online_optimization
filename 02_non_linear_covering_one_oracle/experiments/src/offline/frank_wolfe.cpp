@@ -18,11 +18,11 @@ FrankWolfe::FrankWolfe(const Config& config, Model& model, const Model::RequestV
     temp.resize(_requests.size());
 
     for (uint32_t r = 0; r < _requests.size(); r++) {
-        x[r].resize(_model.getNbEdges());
-        v[r].resize(_model.getNbEdges());
-        d[r].resize(_model.getNbEdges());
-        temp[r].resize(_model.getNbEdges());
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        x[r].resize(_model.graph.nb_edges);
+        v[r].resize(_model.graph.nb_edges);
+        d[r].resize(_model.graph.nb_edges);
+        temp[r].resize(_model.graph.nb_edges);
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             x[r][e] = 1.0;
             v[r][e] = 0.0;
             d[r][e] = 0.0;
@@ -35,7 +35,7 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
 {
     // Find initial feasible solution
     for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             x[r][e] = 1.0;
             v[r][e] = 0.0;
         }
@@ -44,7 +44,7 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
     lp_solver.solve(x, v, extra_cost);
 
     for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             x[r][e] = v[r][e];
         }
     }
@@ -60,7 +60,7 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
 
         // Calculate the distance
         euclid_norm = 0.0;
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             for (uint32_t r = 0; r < _requests.size(); r++) {
                 d[r][e] = v[r][e] - x[r][e];
                 euclid_norm += d[r][e] * d[r][e];
@@ -77,7 +77,7 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
 
         // Update x
         for (uint32_t r = 0; r < _requests.size(); r++) {
-            for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+            for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
                 x[r][e] = x[r][e] + eta * d[r][e];
             }
         }
@@ -85,7 +85,7 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
 
     // Round x
     for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             if (x[r][e] < 0.001) {
                 x[r][e] = 0.0;
             }
@@ -118,7 +118,7 @@ double FrankWolfe::computeNewEta()
 
 double FrankWolfe::getObjectiveValue(double eta)
 {
-    for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         for (uint32_t r = 0; r < _requests.size(); r++) {
             temp[r][e] = x[r][e] + eta * d[r][e];
         }

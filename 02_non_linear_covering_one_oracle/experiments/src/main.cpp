@@ -30,19 +30,15 @@ int main(int argc, char** argv)
     }
 
     Config config(arg_parser.config_file);
+    Model model(arg_parser.data_file);
+    std::cout << "Model parsed, number of requests = " << model.requests.size() << std::endl << std::flush;
 
-    Model model;
-    model.parse(arg_parser.data_file);
-
-    const Model::RequestVec_t& requests = model.getRequests();
-    std::cout << "Model parsed, number of requests = " << requests.size() << std::endl << std::flush;
-
-    if (requests.empty()) {
+    if (model.requests.empty()) {
         return 0;
     }
 
     // Calculate the offline fractional solution
-    FrankWolfe fw_algo(config, model, requests);
+    FrankWolfe fw_algo(config, model, model.requests);
     DoubleVec_t extra_cost(model.getNbEdges(), 0.0);
     DoubleMat_t& offline_solution = fw_algo.solve(extra_cost);
     double offline_objective_value = model.getObjectiveValue(offline_solution);
@@ -51,10 +47,10 @@ int main(int argc, char** argv)
 
     // Calculate the online solution with a greedy algorithm
     GreedySolver greedy_solver(model, config);
-    DoubleMat_t& greedy_solution = greedy_solver.solve(requests[0]);
+    DoubleMat_t& greedy_solution = greedy_solver.solve(model.requests[0]);
 
-    for (uint32_t idx = 1; idx < requests.size(); idx++) {
-        greedy_solution = greedy_solver.solve(requests[idx]);
+    for (uint32_t idx = 1; idx < model.requests.size(); idx++) {
+        greedy_solution = greedy_solver.solve(model.requests[idx]);
     }
 
     double greedy_objective_value = model.getObjectiveValue(greedy_solution);
@@ -103,10 +99,10 @@ int main(int argc, char** argv)
             //std::cout << "mu = " << config.mu << std::endl;
 
             Solver solver(config, model);
-            DoubleMat_t& online_solution = solver.solve(pred.predict(requests[0]), greedy_solution[requests[0].id], requests[0]);
+            DoubleMat_t& online_solution = solver.solve(pred.predict(model.requests[0]), greedy_solution[model.requests[0].id], model.requests[0]);
 
-            for (uint32_t idx = 1; idx < requests.size(); idx++) {
-                online_solution = solver.solve(pred.predict(requests[idx]), greedy_solution[requests[idx].id], requests[idx]);
+            for (uint32_t idx = 1; idx < model.requests.size(); idx++) {
+                online_solution = solver.solve(pred.predict(model.requests[idx]), greedy_solution[model.requests[idx].id], model.requests[idx]);
             }
 
             double online_objective_value = model.getObjectiveValue(online_solution);
