@@ -5,25 +5,23 @@
 
 CBFS::CBFS(const Model& model) :
     _model(model),
-    visited(model.getNbVertices()),
-    prev(model.getNbVertices())
+    visited(model.graph.nb_vertices),
+    prev(model.graph.nb_vertices)
 {}
 
 UIntVec_t CBFS::getPath(const uint32_t s, const uint32_t t, const BoolVec_t& marker)
 {
-    const Model::Graph_t& A = _model.getAdjacencyMatrix();
-
     UIntVec_t path;
 
     if (pathExists(s, t, marker)) {
         uint32_t i = t;
         uint32_t j = prev[t];
-        path.push_back(A[j][i]);
+        path.push_back(_model.graph.A[j][i]->id);
 
         while (j != s) {
             i = j;
             j = prev[i];
-            path.push_back(A[j][i]);
+            path.push_back(_model.graph.A[j][i]->id);
         }
     }
 
@@ -32,11 +30,9 @@ UIntVec_t CBFS::getPath(const uint32_t s, const uint32_t t, const BoolVec_t& mar
 
 bool CBFS::pathExists(const uint32_t s, const uint32_t t, const BoolVec_t& marker)
 {
-    const Model::Graph_t& A = _model.getAdjacencyMatrix();
-
     // Initialize path search
     UIntVec_t Q;
-    for (uint32_t idx = 0; idx < _model.getNbVertices(); idx++) {
+    for (uint32_t idx = 0; idx < _model.graph.nb_vertices; idx++) {
         visited[idx] = false;
         prev[idx] = -1;
     }
@@ -49,8 +45,8 @@ bool CBFS::pathExists(const uint32_t s, const uint32_t t, const BoolVec_t& marke
     // Find path with marked edges
     while (idx < Q.size()) {
         i = Q[idx];
-        for (uint32_t j = 0; j < _model.getNbVertices(); j++) {
-            if (A[i][j] != -1 && marker[A[i][j]]) {
+        for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
+            if (_model.graph.A[i][j] && marker[_model.graph.A[i][j]->id]) {
                 if (j == t) {
                     prev[j] = i;
                     return true;

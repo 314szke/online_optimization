@@ -10,6 +10,13 @@ public:
         target(j),
         id(idx)
     {}
+
+    Request(const Request& other) :
+        source(other.source),
+        target(other.target),
+        id(other.id)
+    {}
+
     const uint32_t source;
     const uint32_t target;
     const uint32_t id;

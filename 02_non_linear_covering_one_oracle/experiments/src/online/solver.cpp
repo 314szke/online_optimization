@@ -15,18 +15,18 @@ Solver::Solver(Config& config, Model& model):
     random_engine(rd()),
     uni_dist(0.0, 1.0)
 {
-    x.resize(_model.getNbRequests());
-    B.resize(_model.getNbRequests());
-    marker.resize(_model.getNbRequests());
-    temp.resize(_model.getNbRequests());
+    x.resize(_model.nb_requests);
+    B.resize(_model.nb_requests);
+    marker.resize(_model.nb_requests);
+    temp.resize(_model.nb_requests);
 
-    for (uint32_t r = 0; r < _model.getNbRequests(); r++) {
-        x[r].resize(_model.getNbEdges());
-        B[r].resize(_model.getNbEdges());
-        marker[r].resize(_model.getNbEdges());
-        temp[r].resize(_model.getNbEdges());
+    for (uint32_t r = 0; r < _model.nb_requests; r++) {
+        x[r].resize(_model.graph.nb_edges);
+        B[r].resize(_model.graph.nb_edges);
+        marker[r].resize(_model.graph.nb_edges);
+        temp[r].resize(_model.graph.nb_edges);
 
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             x[r][e] = 0.0;
             B[r][e] = 0.0;
             marker[r][e] = false;
@@ -37,9 +37,9 @@ Solver::Solver(Config& config, Model& model):
 
 DoubleMat_t& Solver::solve(const BoolVec_t& pred_x, const DoubleVec_t& greedy, const Request& request)
 {
-    BoolVec_t edges(_model.getNbEdges(), false);
+    BoolVec_t edges(_model.graph.nb_edges, false);
     uint32_t pred_size = 0;
-    for (uint32_t idx = 0; idx < _model.getNbEdges(); idx++) {
+    for (uint32_t idx = 0; idx < _model.graph.nb_edges; idx++) {
         if (pred_x[idx]) {
             edges[idx] = true;
             pred_size++;
@@ -53,7 +53,7 @@ DoubleMat_t& Solver::solve(const BoolVec_t& pred_x, const DoubleVec_t& greedy, c
     double lambda_delta_e_F;
 
     while (! constraintIsSatisfied(request.source, request.target)) {
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             if (! marker[c][e] && edges[e]) {
                 delta_e_F = getDeltaF(e);
                 lambda_delta_e_F = (1.0 / L) * delta_e_F;
@@ -76,13 +76,13 @@ DoubleMat_t& Solver::solve(const BoolVec_t& pred_x, const DoubleVec_t& greedy, c
 
 
     UIntVec_t path = cbfs.getPath(request.source, request.target, marker[c]);
-    x[c] = DoubleVec_t(_model.getNbEdges(), 0.0);
+    x[c] = DoubleVec_t(_model.graph.nb_edges, 0.0);
     for (uint32_t e = 0; e < path.size(); e++) {
         x[c][path[e]] = 1.0;
     }
 
 
-    for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
+    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         temp[c][e] = x[c][e];
     }
 
@@ -100,10 +100,10 @@ double Solver::getDeltaF(const uint32_t e)
 {
     double value = 0.0;
     double random_number;
-    BoolVec_t random_marker(_model.getNbEdges());
+    BoolVec_t random_marker(_model.graph.nb_edges);
 
     for (uint32_t r = 0; r < R; r++) {
-        for (uint32_t idx = 0; idx < _model.getNbEdges(); idx++) {
+        for (uint32_t idx = 0; idx < _model.graph.nb_edges; idx++) {
             random_marker[idx] = false;
             temp[c][idx] = 0.0;
             if (idx != e) {
@@ -114,9 +114,10 @@ double Solver::getDeltaF(const uint32_t e)
                 }
             }
         }
-        value -= _model.getObjectiveValue(temp);
+        //TODO use different model
+        //value -= _model.getObjectiveValue(temp);
         temp[c][e] = 1.0;
-        value += _model.getObjectiveValue(temp);
+        //value += _model.getObjectiveValue(temp);
     }
 
     value = value / R;

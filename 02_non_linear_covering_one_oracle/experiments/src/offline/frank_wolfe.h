@@ -1,14 +1,15 @@
 #pragma once
 
 #include "config/config.h"
-#include "lp_solver/lp_solver.h"
+#include "lp_solver.h"
+#include "model/base_model.h"
 #include "types/local_types.h"
 
 
 class FrankWolfe {
 public:
-    FrankWolfe(const Config& config, Model& model, const Model::RequestVec_t& requests);
-    DoubleMat_t& solve(const DoubleVec_t& extra_cost);
+    FrankWolfe(const Config& config, BaseModel& model);
+    const DoubleVec_t& solve(const DoubleVec_t& initial_solution);
 private:
     double computeNewEta();
     double getObjectiveValue(double eta);
@@ -17,13 +18,12 @@ private:
     uint32_t max_search_iter;
     double max_dist;
 
-    DoubleMat_t x;
-    DoubleMat_t v;
-    DoubleMat_t d;
+    DoubleVec_t x;
+    DoubleVec_t v;
+    DoubleVec_t d;
 
-    DoubleMat_t temp;
+    DoubleVec_t temp;
 
+    BaseModel& _model;
     LP_Solver lp_solver;
-    Model& _model;
-    const Model::RequestVec_t& _requests;
 };

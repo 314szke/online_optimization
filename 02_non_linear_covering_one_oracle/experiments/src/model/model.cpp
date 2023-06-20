@@ -4,19 +4,17 @@
 #include <regex>
 
 #include "edge.h"
-#include "edge_id.h"
-#include "parser.h"
-#include "path_finding/CBFS.h"
+#include "edge_id.hpp"
 
 
 Model::Model(std::string& data_file) :
     nb_requests(0),
-    f_in(file_name),
+    f_in(data_file),
     line_counter(0)
 {
     if (! f_in.is_open()) {
         std::stringstream message;
-        message << "ERROR: File " << file_name << " could not be open!" << std::endl;
+        message << "ERROR: File " << data_file << " could not be open!" << std::endl;
         throw std::runtime_error(message.str());
     }
 
@@ -25,25 +23,10 @@ Model::Model(std::string& data_file) :
     graph.initialize(nb_vertices, nb_edges);
 
     parse_graph();
+    graph.findAllPaths();
     parse_requests();
 
     f_in.close();
-}
-
-double Model::getObjectiveValue(const DoubleMat_t& values)
-{
-    double cost = 0.0;
-    double sum = 0.0;
-
-    for (uint32_t e = 0; e < graph.nb_edges; e++) {
-        sum = 0.0;
-        for (uint32_t r = 0; r < nb_requests; r++) {
-            sum += values[r][e];
-        }
-        cost += graph.A[graph.ID[e].i][graph.ID[e].j]->getCost(sum);
-    }
-
-    return cost;
 }
 
 void Model::parse_graph()
@@ -67,7 +50,7 @@ void Model::parse_graph()
             match_1 = matched_parameters[3];
             match_2 = matched_parameters[4];
 
-            graph.A[i][j].reset(new Edge(match_1.str(), match_2.str()));
+            graph.A[i][j].reset(new Edge(idx, match_1.str(), match_2.str()));
             graph.ID.push_back(EdgeID(i, j));
         } else {
             std::stringstream message;
@@ -108,9 +91,7 @@ void Model::parse_requests()
 
 void Model::addRequest(const uint32_t i, const uint32_t j)
 {
-    CBFS cbfs(*this);
-    BoolVec_t true_vector(nb_edges, true);
-    UIntVec_t path = cbfs.getPath(i, j, true_vector);
+    Graph::Path_t path = graph.getPath(i, j);
     if (! path.empty()) {
         requests.push_back(Request(i, j, nb_requests));
         nb_requests++;

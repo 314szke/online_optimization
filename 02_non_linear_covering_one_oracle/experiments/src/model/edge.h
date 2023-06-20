@@ -6,10 +6,13 @@
 
 class Edge {
 public:
-    Edge(std::string f_cost, std::string f_derivative);
+    Edge(uint32_t num, std::string f_cost, std::string f_derivative);
 
     double getCost(double value);
     double getDerivative(double value);
+
+    uint32_t id;
+
 private:
     typedef exprtk::symbol_table<double> SymbolTable_t;
     typedef exprtk::expression<double> Expression_t;

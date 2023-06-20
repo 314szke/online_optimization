@@ -6,6 +6,7 @@
 #include "config/config.h"
 #include "input/input_generator.h"
 #include "model/model.h"
+#include "model/cp_model.h"
 #include "model/request.hpp"
 #include "offline/frank_wolfe.h"
 #include "online/greedy_solver.h"
@@ -31,33 +32,32 @@ int main(int argc, char** argv)
 
     Config config(arg_parser.config_file);
     Model model(arg_parser.data_file);
-    std::cout << "Model parsed, number of requests = " << model.requests.size() << std::endl << std::flush;
+    CP_Model cp_model(model);
 
+    std::cout << "Model parsed, number of requests = " << model.requests.size() << std::endl << std::flush;
     if (model.requests.empty()) {
         return 0;
     }
 
-    // Calculate the offline fractional solution
-    FrankWolfe fw_algo(config, model, model.requests);
-    DoubleVec_t extra_cost(model.getNbEdges(), 0.0);
-    DoubleMat_t& offline_solution = fw_algo.solve(extra_cost);
-    double offline_objective_value = model.getObjectiveValue(offline_solution);
-    //print_solution("offline_solution", offline_objective_value, offline_solution);
-    std::cout << "offline_solution = " << offline_objective_value << std::endl << std::flush;
 
     // Calculate the online solution with a greedy algorithm
-    GreedySolver greedy_solver(model, config);
-    DoubleMat_t& greedy_solution = greedy_solver.solve(model.requests[0]);
-
-    for (uint32_t idx = 1; idx < model.requests.size(); idx++) {
-        greedy_solution = greedy_solver.solve(model.requests[idx]);
-    }
-
-    double greedy_objective_value = model.getObjectiveValue(greedy_solution);
-    double greedy_comp_ratio = (offline_objective_value / greedy_objective_value);
+    GreedySolver greedy_solver(config, model);
+    const DoubleVec_t& greedy_solution = greedy_solver.solve();
+    cp_model.setCurrentSolution(greedy_solution);
+    double greedy_objective_value = cp_model.getObjectiveValue();
     //print_solution("greedy_solution", greedy_objective_value, greedy_solution);
     std::cout << "greedy_solution = " << greedy_objective_value << std::endl << std::flush;
 
+
+    // Calculate the optimal offline fractional solution
+    FrankWolfe fw_algo(config, cp_model);
+    const DoubleVec_t& offline_solution = fw_algo.solve(greedy_solution);
+    cp_model.setCurrentSolution(offline_solution);
+    double offline_objective_value = cp_model.getObjectiveValue();
+    //print_solution("offline_solution", offline_objective_value, offline_solution);
+    std::cout << "offline_solution = " << offline_objective_value << std::endl << std::flush;
+
+/*
     // Create predictions
     Prediction pred(model, offline_solution);
     const DoubleMat_t& integral_solution = pred.createPredictionWithError(0.0);
@@ -115,6 +115,8 @@ int main(int argc, char** argv)
         }
     }
 
+    double greedy_comp_ratio = (offline_objective_value / greedy_objective_value);
+
     std::ofstream out("result.txt");
     out << "Eta;CompRatio;Algo" << std::endl;
     for (uint32_t k = 0; k < errors.size(); k++) {
@@ -125,6 +127,6 @@ int main(int argc, char** argv)
         }
     }
     out.close();
-
+*/
     return 0;
 }

@@ -1,7 +1,8 @@
 #include "edge.h"
 
 
-Edge::Edge(std::string f_cost, std::string f_derivative) :
+Edge::Edge(uint32_t num, std::string f_cost, std::string f_derivative) :
+    id(num),
     x(0.0)
 {
     symbol_table.add_variable("x", x);

@@ -1,70 +1,40 @@
 #include "frank_wolfe.h"
 
-#include<iostream>
+#include <iostream>
+
 #include "visualization/print.hpp"
 
 
-FrankWolfe::FrankWolfe(const Config& config, Model& model, const Model::RequestVec_t& requests) :
+FrankWolfe::FrankWolfe(const Config& config, BaseModel& model) :
     T(config.time_horizon),
     max_search_iter(config.max_search_iter),
     max_dist(config.max_distance),
-    lp_solver(model, requests),
+    x(model.getNbVariables(), 1.0),
+    v(model.getNbVariables(), 0.0),
+    d(model.getNbVariables(), 0.0),
+    temp(model.getNbVariables(), 0.0),
     _model(model),
-    _requests(requests)
+    lp_solver(model, config.gurobi_verbosity)
+{}
+
+const DoubleVec_t& FrankWolfe::solve(const DoubleVec_t& initial_solution)
 {
-    x.resize(_requests.size());
-    v.resize(_requests.size());
-    d.resize(_requests.size());
-    temp.resize(_requests.size());
+    x = initial_solution;
+    v = DoubleVec_t(_model.getNbVariables(), 0.0);
 
-    for (uint32_t r = 0; r < _requests.size(); r++) {
-        x[r].resize(_model.graph.nb_edges);
-        v[r].resize(_model.graph.nb_edges);
-        d[r].resize(_model.graph.nb_edges);
-        temp[r].resize(_model.graph.nb_edges);
-        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            x[r][e] = 1.0;
-            v[r][e] = 0.0;
-            d[r][e] = 0.0;
-            temp[r][e] = 0.0;
-        }
-    }
-}
-
-DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
-{
-    // Find initial feasible solution
-    for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            x[r][e] = 1.0;
-            v[r][e] = 0.0;
-        }
-    }
-
-    lp_solver.solve(x, v, extra_cost);
-
-    for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            x[r][e] = v[r][e];
-        }
-    }
-
-    double obj_value = 0.0;
     double eta = 0.0;
     double euclid_norm = 0.0;
 
     // Optimize through T steps
     for (uint32_t t = 0; t < T; t++) {
-        // Calculate v
-        obj_value = lp_solver.solve(x, v, extra_cost);
+        _model.setCurrentSolution(x);
+        v = lp_solver.solve();
 
         // Calculate the distance
         euclid_norm = 0.0;
-        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            for (uint32_t r = 0; r < _requests.size(); r++) {
-                d[r][e] = v[r][e] - x[r][e];
-                euclid_norm += d[r][e] * d[r][e];
-            }
+        for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
+            d[i] = v[i] - x[i];
+            euclid_norm += d[i] * d[i];
         }
 
         // If the distance between the solutions is less than the limit, terminate
@@ -72,25 +42,16 @@ DoubleMat_t& FrankWolfe::solve(const DoubleVec_t& extra_cost)
             return x;
         }
 
-        // Update eta
         eta = computeNewEta();
 
-        // Update x
-        for (uint32_t r = 0; r < _requests.size(); r++) {
-            for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-                x[r][e] = x[r][e] + eta * d[r][e];
+        for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
+            x[i] = x[i] + eta * d[i];
+            if (x[i] < 0) {
+                x[i] = 0;
             }
         }
     }
 
-    // Round x
-    for (uint32_t r = 0; r < _requests.size(); r++) {
-        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            if (x[r][e] < 0.001) {
-                x[r][e] = 0.0;
-            }
-        }
-    }
     return x;
 }
 
@@ -118,10 +79,9 @@ double FrankWolfe::computeNewEta()
 
 double FrankWolfe::getObjectiveValue(double eta)
 {
-    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-        for (uint32_t r = 0; r < _requests.size(); r++) {
-            temp[r][e] = x[r][e] + eta * d[r][e];
-        }
+    for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
+        temp[i] = x[i] + eta * d[i];
     }
-    return _model.getObjectiveValue(temp);
+    _model.setCurrentSolution(temp);
+    return _model.getObjectiveValue();
 }

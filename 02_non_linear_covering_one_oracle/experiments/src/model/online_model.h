@@ -5,11 +5,13 @@
 #include "types/local_types.h"
 
 
-class CP_Model : public BaseModel {
+class OnlineModel : public BaseModel {
 public:
-    CP_Model(Model& model);
+    OnlineModel(Model& model);
+
+    void next();
     void setCurrentSolution(const DoubleVec_t& x);
 private:
-    uint32_t getID(uint32_t e, uint32_t r) const;
     Model& _model;
+    uint32_t time;
 };

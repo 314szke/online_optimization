@@ -115,6 +115,7 @@ void InputGenerator::generateConfig()
     f_out << "time_horizon = 60          # number of iterations in the Frank-Wolfe algorithm" << std::endl;
     f_out << "max_search_iter = 15       # the maximum number of eta search steps in the Frank-Wolfe algorithm" << std::endl;
     f_out << "max_distance = 0.001       # maximum distance between x and v before terminating the Frank-Wolfe algorithm" << std::endl;
+    f_out << "gurobi_verbosity = 0       # if set to 1 gurobi will print a lot of messages" << std::endl;
     f_out << "epsilon = 0.0001           # variables need to reach (1-eps) value to be selected in the solver" << std::endl;
     f_out << "cost_degree = 4            # the maximum degree of the polynomial used for edge costs" << std::endl;
     f_out << "random_iteration = 10      # number of random iterations to estimate the value of the partial derivative of F(x)" << std::endl;

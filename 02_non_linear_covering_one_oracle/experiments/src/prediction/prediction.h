@@ -11,7 +11,7 @@
 
 class Prediction {
 public:
-    Prediction(Model& model, const DoubleMat_t& off_solution);
+    Prediction(Model& model, const DoubleVec_t& off_solution);
     const DoubleMat_t& createPredictionWithError(const double target_error_rate);
     double getErrorRate() const;
     const BoolVec_t& predict(const Request& request) const;
