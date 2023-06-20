@@ -8,6 +8,7 @@ Config::Config(std::string& config_file) :
     time_horizon(0),
     max_search_iter(0),
     max_distance(0.0),
+    gurobi_verbosity(0),
     epsilon(0.0),
     cost_degree(0.0),
     dimension(0.0),
@@ -28,6 +29,7 @@ Config::Config(std::string& config_file) :
     readParameter(time_horizon);
     readParameter(max_search_iter);
     readParameter(max_distance);
+    readParameter(gurobi_verbosity);
     readParameter(epsilon);
     readParameter(cost_degree);
     readParameter(random_iteration);

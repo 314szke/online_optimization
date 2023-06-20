@@ -1,51 +1,52 @@
 #include "greedy_solver.h"
 
-#include "lp_solver/lp_solver.h"
+
+#include "model/graph.h"
+#include "model/online_model.h"
 #include "offline/frank_wolfe.h"
 #include "visualization/print.hpp"
 
 
-GreedySolver::GreedySolver(Model& model, const Config& config) :
+GreedySolver::GreedySolver(const Config& config, Model& model) :
     _config(config),
-    _model(model)
-{
-    costs.resize(_model.getNbRequests());
-    solution.resize(_model.getNbRequests());
-    temp.push_back(DoubleVec_t(_model.getNbEdges(), 0.0));
+    _model(model),
+    online_model(model),
+    T(model.nb_requests),
+    solution(online_model.getNbVariables(), 0.0),
+    nb_cp_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
+    cp_solution(nb_cp_variables, 0.0)
+{}
 
-    for (uint32_t r = 0; r < _model.getNbRequests(); r++) {
-        costs[r].resize(_model.getNbEdges());
-        solution[r].resize(_model.getNbEdges());
-        for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
-            costs[r][e] = 0.0;
-            solution[r][e] = 0.0;
-        }
+const DoubleVec_t& GreedySolver::solve()
+{
+    for (uint32_t t = 0; t < T; t++) {
+        online_model.next();
+        findInitialSolution(_model.requests[t].source, _model.requests[t].target);
+
+        FrankWolfe fw(_config, online_model);
+        solution = fw.solve(solution);
+
+        transformSolution(t);
+    }
+
+    return cp_solution;
+}
+
+void GreedySolver::findInitialSolution(uint32_t s, uint32_t t)
+{
+    solution = DoubleVec_t(online_model.getNbVariables(), 0.0);
+    Graph::Path_t path = _model.graph.getPath(s, t);
+    for (uint32_t idx = 0; idx < path.size(); idx++) {
+        solution[path[idx]] = 1.0;
     }
 }
 
-DoubleMat_t& GreedySolver::solve(const Request& request)
+void GreedySolver::transformSolution(uint32_t r)
 {
-    // The LP solver expects a list of requests
-    Model::RequestVec_t requests;
-    requests.push_back(request);
+    uint32_t start = (_model.graph.nb_edges - 1) + (r * _model.graph.nb_edges);
 
-    // Simulate the cost by an increase of 1 on the edges
-    for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
-        double sum = 0.0;
-        for (uint32_t r = 0; r < _model.getNbRequests(); r++) {
-            sum += solution[r][e];
-        }
-        costs[request.id][e] = _model.getEdgeCost(e, sum);
+    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
+        cp_solution[(start + e)] = solution[e];
+        cp_solution[e] += solution[e];
     }
-
-    // Calculate the min cost path for the request
-    FrankWolfe fw(_config, _model, requests);
-    temp = fw.solve(costs[request.id]);
-
-    // Update only the current solution
-    for (uint32_t e = 0; e < _model.getNbEdges(); e++) {
-        solution[request.id][e] = temp[0][e]; // LP only gets one request
-    }
-
-    return solution;
 }

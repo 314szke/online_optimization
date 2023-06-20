@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 
+#include "graph.h"
 #include "request.hpp"
 #include "types/local_types.h"
 
@@ -15,8 +16,6 @@ public:
     typedef std::vector<Request> RequestVec_t;
 
     Model(std::string& data_file);
-
-    double getObjectiveValue(const DoubleMat_t& values);
 
     Graph graph;
 

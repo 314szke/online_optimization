@@ -2,87 +2,84 @@
 
 
 CP_Model::CP_Model(Model& model) :
-    _model(model),
-    nb_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
-    nb_constraints(_model.graph.nb_edges + 3 * _model.nb_requests),
-    costs(nb_variables, 0.0),
-    coefficients(nb_constraints)
+    BaseModel(model, // + receives number of variables and number of constraints
+        (model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)), // y_e and x^t_e
+        (model.graph.nb_edges // connect y with x
+        + ((model.graph.nb_vertices - 2) * model.nb_requests) // flow preservation for each vertex (except source and target) for each request
+        + (2 * model.nb_requests) // flow for source and target
+        )),
+    _model(model)
 {
+    uint32_t constr_idx = 0.0;
+
     // Constraint connecting y with x
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-        bounds.push_back(0);
-        coefficients[e].resize(nb_variables, 0.0);
-        coefficients[e][e] = 1.0; // y_e
+        bounds[constr_idx] = 0.0;
+        coefficients[constr_idx][e] = 1.0; // y_e
         for (uint32_t r = 0; r < _model.nb_requests; r++) {
-            coefficients[e][getID(e, r)] = 1.0; // x^r_e
+            coefficients[constr_idx][getID(e, r)] = 1.0; // x^r_e
         }
+        constr_idx++;
     }
 
-    // Flow preservation constraints
+    // Flow preservation constraints on non-source and non-target vertices
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        bounds.push_back(0);
+        for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
+            if (i != _model.requests[r].source && i != _model.requests[r].target) {
+                bounds[constr_idx] = 0.0;
+
+                for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
+                    if (j != _model.requests[r].source && j != _model.requests[r].target) {
+
+                        if (_model.graph.A[i][j]) {
+                            coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+                        }
+                        if (_model.graph.A[j][i]) {
+                            coefficients[constr_idx][_model.graph.A[j][i]->id] = -1.0;
+                        }
+                    }
+                }
+                constr_idx++;
+            }
+        }
     }
 
     // Source constraints
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        bounds.push_back(1);
+        bounds[constr_idx] = 1.0;
+
+        for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
+            if (j != _model.requests[r].source) {
+
+                uint32_t i = _model.requests[r].source;
+                if (_model.graph.A[i][j]) {
+                    coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+                }
+            }
+        }
+        constr_idx++;
     }
 
     // Target constraints
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        bounds.push_back(1);
-    }
-}
+        bounds[constr_idx] = 1.0;
 
-double CP_Model::getObjectiveValue(const DoubleVec_t& x)
-{
-    double amount = 0.0;
-    double cost = 0.0;
-    uint32_t i,j;
+        for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
+            if (i != _model.requests[r].target) {
 
-    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-        amount = 0.0;
-        for (uint32_t r = 0; r < nb_requests; r++) {
-            amount += x[getID(e, r)];
+                uint32_t j = _model.requests[r].target;
+                if (_model.graph.A[i][j]) {
+                    coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+                }
+            }
         }
-        i = _model.graph.ID[e].i;
-        j = _model.graph.ID[e].j;
-        cost += _model.graph.A[i][j]->getCost(amount);
+        constr_idx++;
     }
-
-    return cost;
 }
 
-uint32_t CP_Model::getNbVariables() const
+void CP_Model::setCurrentSolution(const DoubleVec_t& x)
 {
-    return nb_variables;
-}
-
-const DoubleVec_t& CP_Model::getCostVector(const DoubleVec_t& x)
-{
-    double amount = 0.0;
-    uint32_t i,j;
-
-    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-        amount = 0.0;
-        for (uint32_t r = 0; r < nb_requests; r++) {
-            amount += x[getID(e, r)];
-        }
-        i = _model.graph.ID[e].i;
-        j = _model.graph.ID[e].j;
-        costs[e] = _model.graph.A[i][j]->getDerivative(amount);
-    }
-    return costs;
-}
-
-const DoubleVec_t& getBounds()
-{
-
-}
-
-const DoubleMat_t& getCoefficients()
-{
-
+    solution = x;
 }
 
 uint32_t CP_Model::getID(uint32_t e, uint32_t r) const
