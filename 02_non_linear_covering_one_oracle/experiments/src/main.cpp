@@ -34,8 +34,8 @@ int main(int argc, char** argv)
     Model model(arg_parser.data_file);
     CP_Model cp_model(model);
 
-    std::cout << "Model parsed, number of requests = " << model.requests.size() << std::endl << std::flush;
-    if (model.requests.empty()) {
+    std::cout << "Model parsed, " << model.nb_requests << " number of requests" << std::endl << std::flush;
+    if (model.nb_requests == 0) {
         return 0;
     }
 
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     const DoubleVec_t& greedy_solution = greedy_solver.solve();
     cp_model.setCurrentSolution(greedy_solution);
     double greedy_objective_value = cp_model.getObjectiveValue();
-    //print_solution("greedy_solution", greedy_objective_value, greedy_solution);
+    print_vector("greedy_solution", greedy_solution);
     std::cout << "greedy_solution = " << greedy_objective_value << std::endl << std::flush;
 
 
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     const DoubleVec_t& offline_solution = fw_algo.solve(greedy_solution);
     cp_model.setCurrentSolution(offline_solution);
     double offline_objective_value = cp_model.getObjectiveValue();
-    //print_solution("offline_solution", offline_objective_value, offline_solution);
+    print_vector("offline_solution", offline_solution);
     std::cout << "offline_solution = " << offline_objective_value << std::endl << std::flush;
 
 /*

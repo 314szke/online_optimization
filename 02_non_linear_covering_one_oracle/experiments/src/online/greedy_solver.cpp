@@ -43,7 +43,7 @@ void GreedySolver::findInitialSolution(uint32_t s, uint32_t t)
 
 void GreedySolver::transformSolution(uint32_t r)
 {
-    uint32_t start = (_model.graph.nb_edges - 1) + (r * _model.graph.nb_edges);
+    uint32_t start = _model.graph.nb_edges + (r * _model.graph.nb_edges);
 
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         cp_solution[(start + e)] = solution[e];

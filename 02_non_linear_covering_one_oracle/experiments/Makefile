@@ -49,7 +49,7 @@ build: $(NAME)
 test: test_$(NAME)
 	./test_$(NAME)
 
-test_OCMP: $(OBJ_TEST)
+test_$(NAME): $(OBJ_TEST)
 	$(LINKER) -o $@ $^ $(LDFLAGS)
 
 $(NAME): $(OBJ)

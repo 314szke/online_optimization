@@ -18,10 +18,11 @@ void OnlineModel::next()
         return;
     }
 
-    bounds = DoubleVec_t(nb_constraints, 0.0);
-    coefficients.resize(nb_constraints);
-    for (uint32_t idx = 0; idx < nb_constraints; idx++) {
-        coefficients[idx].resize(nb_variables, 0.0);
+    for (uint32_t c_idx = 0; c_idx < nb_constraints; c_idx++) {
+        bounds[c_idx] = 0.0;
+        for (uint32_t v_idx = 0; v_idx < nb_variables; v_idx++) {
+            coefficients[c_idx][v_idx] = 0.0;
+        }
     }
 
     uint32_t constr_idx = 0.0;
@@ -30,14 +31,11 @@ void OnlineModel::next()
     for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
         if (i != _model.requests[time].source && i != _model.requests[time].target) {
             for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
-                if (j != _model.requests[time].source && j != _model.requests[time].target) {
-
-                    if (_model.graph.A[i][j]) {
-                        coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
-                    }
-                    if (_model.graph.A[j][i]) {
-                        coefficients[constr_idx][_model.graph.A[j][i]->id] = -1.0;
-                    }
+                if (_model.graph.A[i][j]) {
+                    coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+                }
+                if (_model.graph.A[j][i]) {
+                    coefficients[constr_idx][_model.graph.A[j][i]->id] = -1.0;
                 }
             }
             constr_idx++;
