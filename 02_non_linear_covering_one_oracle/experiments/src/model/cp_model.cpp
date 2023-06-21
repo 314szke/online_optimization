@@ -8,6 +8,7 @@ CP_Model::CP_Model(Model& model) :
         + ((model.graph.nb_vertices - 2) * model.nb_requests) // flow preservation for each vertex (except source and target) for each request
         + (2 * model.nb_requests) // flow for source and target
         )),
+    max_dimension(0.0),
     _model(model)
 {
     uint32_t constr_idx = 0.0;
@@ -71,6 +72,21 @@ CP_Model::CP_Model(Model& model) :
             }
         }
         constr_idx++;
+    }
+
+    // Calculate the maximum number of non-zero coefficients in the original (flow-type) constraints
+    uint32_t coeff_counter = 0.0;
+    for (uint32_t c_idx = _model.graph.nb_edges; c_idx < nb_constraints; c_idx++) {
+        coeff_counter = 0.0;
+        for (uint32_t v_idx = 0.0; v_idx < nb_variables; v_idx++) {
+            if (coefficients[c_idx][v_idx] != 0) {
+                coeff_counter++;
+            }
+        }
+
+        if (coeff_counter > max_dimension) {
+            max_dimension = coeff_counter;
+        }
     }
 }
 
