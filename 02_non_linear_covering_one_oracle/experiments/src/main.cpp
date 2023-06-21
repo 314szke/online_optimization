@@ -33,6 +33,7 @@ int main(int argc, char** argv)
     Config config(arg_parser.config_file);
     Model model(arg_parser.data_file);
     CP_Model cp_model(model);
+    config.dimension = cp_model.max_dimension;
 
     std::cout << "Model parsed, " << model.nb_requests << " number of requests" << std::endl << std::flush;
     if (model.nb_requests == 0) {
@@ -64,10 +65,6 @@ int main(int argc, char** argv)
     double integral_objective_value = model.getObjectiveValue(integral_solution);
     std::cout << "integral_solution = " << integral_objective_value << std::endl << std::flush;
 
-    // Needed to construct the coefficients for the algorithm
-    FloydWarshall floyd_warshall(model);
-    config.dimension = floyd_warshall.getMaxDimension();
-    std::cout << std::flush;
 
     // Calculate the online solution with different error and eta
     DoubleMat_t eta_values;
