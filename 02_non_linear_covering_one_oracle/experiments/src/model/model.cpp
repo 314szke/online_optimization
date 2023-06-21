@@ -62,7 +62,7 @@ void Model::parse_graph()
 
 void Model::parse_requests()
 {
-    nb_requests = readInteger();
+    uint32_t original_nb_requests = readInteger();
 
     const std::regex request_parameters("\\s*([0-9]+)\\s*-\\s*([0-9]+)\\s*[\\S\\s]*");
 
@@ -71,7 +71,7 @@ void Model::parse_requests()
     std::ssub_match match_1;
     std::ssub_match match_2;
 
-    for (uint32_t idx = 0; idx < nb_requests; idx++) {
+    for (uint32_t idx = 0; idx < original_nb_requests; idx++) {
         readLine();
         if (std::regex_match(line, matched_parameters, request_parameters)) {
             match_1 = matched_parameters[1];
@@ -89,11 +89,11 @@ void Model::parse_requests()
     }
 }
 
-void Model::addRequest(const uint32_t i, const uint32_t j)
+void Model::addRequest(uint32_t i, uint32_t j)
 {
     Graph::Path_t path = graph.getPath(i, j);
     if (! path.empty()) {
-        requests.push_back(Request(i, j, nb_requests));
+        requests.push_back(Request(nb_requests, i, j));
         nb_requests++;
     } else {
         std::cout << "WARNING: request from " << i << " to " << j << " is not feasible!" << std::endl;

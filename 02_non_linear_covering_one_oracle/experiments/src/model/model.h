@@ -25,7 +25,7 @@ public:
 private:
     void parse_graph();
     void parse_requests();
-    void addRequest(const uint32_t i, const uint32_t j);
+    void addRequest(uint32_t i, uint32_t j);
 
     void readLine();
     uint32_t readInteger();
