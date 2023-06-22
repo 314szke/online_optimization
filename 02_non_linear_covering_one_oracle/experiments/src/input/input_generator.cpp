@@ -121,6 +121,8 @@ void InputGenerator::generateConfig()
     f_out << "random_iteration = 10      # number of random iterations to estimate the value of the partial derivative of F(x)" << std::endl;
     f_out << "eta_step = 0.099           # the step size in the range of (0, 1] for eta in the experiments" << std::endl;
     f_out << "nb_oracles = 3             # the algorithm's performance will be compared to the this many oracles that have randomly rounded solutions" << std::endl;
+    f_out << "nb_oracle_search = 10      # max number of attempts to look for a unique randomly rounded oracle" << std::endl;
+    f_out << "random_seed = 1234         # used during oracle prediction generation" << std::endl;
 
     f_out.close();
 }
