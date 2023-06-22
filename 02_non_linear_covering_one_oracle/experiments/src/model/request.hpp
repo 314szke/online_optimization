@@ -17,7 +17,11 @@ public:
         target(other.target)
     {}
 
-    const uint32_t id;
-    const uint32_t source;
-    const uint32_t target;
+    friend bool operator <(const Request& x, const Request& y) {
+        return x.id < y.id;
+    }
+
+    uint32_t id;
+    uint32_t source;
+    uint32_t target;
 };

@@ -16,7 +16,8 @@ Config::Config(std::string& config_file) :
     mu(0.0),
     eta(0.0),
     random_iteration(0),
-    eta_step(0.0)
+    eta_step(0.0),
+    nb_oracles(0)
 {
     f_in.open(config_file);
 
@@ -34,6 +35,7 @@ Config::Config(std::string& config_file) :
     readParameter(cost_degree);
     readParameter(random_iteration);
     readParameter(eta_step);
+    readParameter(nb_oracles);
 
     f_in.close();
 }

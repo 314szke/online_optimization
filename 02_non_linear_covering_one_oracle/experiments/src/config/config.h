@@ -22,4 +22,5 @@ public:
     double eta;
     uint32_t random_iteration;
     double eta_step;
+    uint32_t nb_oracles;
 };

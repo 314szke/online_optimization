@@ -4,44 +4,45 @@
 #include <limits>
 #include <numeric>
 
-#include "visualization/print.hpp"
+#include "model/model.h"
 
 
-Prediction::Prediction(Model& model, const DoubleVec_t& off_solution) :
+Prediction::Prediction(const Config& config, Model& model, const DoubleMat_t& offline_paths) :
     _model(model),
-    cbfs(model),
-    pred_error(0.0),
+    predictions(config.nb_oracles),
+    objective_values(config.nb_oracles, 0.0),
     random_engine(rd())
 {
+    Model::RequestVec_t requests_copy = _model.requests;
+    double obj_value = 0.0;
+
+    for (uint32_t oracle_idx = 0; oracle_idx < config.nb_oracles; oracle_idx) {
+        predictions[oracle_idx].resize(_model.graph.nb_edges, 0);
+
+        while (oracleIsNotUnique(obj_value)) {
+            if (std::next_permutation(requests_copy.begin(), requests_copy.end())) {
+                createPredictions(requests_copy);
+            } else {
+                throw std::runtime_error("ERROR: number of oracles surpasses number of request permutations");
+            }
+        }
+    }
+
 
 }
 
-double Prediction::getErrorRate() const
+bool Prediction::oracleIsNotUnique(double obj_value)
 {
-    return pred_error;
+    if (obj_value == 0.0) {
+        return false; // there is no prediction yet (first while loop call)
+    }
+
+    return std::find(objective_values.begin(), objective_values.end(), obj_value) != objective_values.end();
 }
 
-const BoolVec_t& Prediction::predict(const Request& request) const
+void Prediction::createPredictions(const Model::RequestVec_t& requests_copy)
 {
-    return prediction[request.id];
-}
+    for (uint32_t r = 0; r < _model.nb_requests; r++) {
 
-void Prediction::createIntegralSolution(const DoubleMat_t& offline_solution)
-{
-
-}
-
-const DoubleMat_t& Prediction::createPredictionWithError(const double target_error_rate)
-{
-    return solution;
-}
-
-void Prediction::initializeToIntegralSolution()
-{
-
-}
-
-void Prediction::introduceErrors(const Request& request)
-{
-
+    }
 }

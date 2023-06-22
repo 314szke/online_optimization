@@ -1,36 +1,24 @@
 #pragma once
 
-#include<random>
+#include <random>
 
 #include "config/config.h"
 #include "model/model.h"
-#include "model/request.hpp"
-#include "path_finding/CBFS.h"
 #include "types/local_types.h"
 
 
 class Prediction {
 public:
-    Prediction(Model& model, const DoubleVec_t& off_solution);
-    const DoubleMat_t& createPredictionWithError(const double target_error_rate);
-    double getErrorRate() const;
-    const BoolVec_t& predict(const Request& request) const;
+    Prediction(const Config& config, Model& model, const DoubleMat_t& offline_paths);
 private:
-    void createIntegralSolution(const DoubleMat_t& offline_solution);
-    void initializeToIntegralSolution();
-    void introduceErrors(const Request& request);
+    bool oracleIsNotUnique(double obj_value);
+    void createPredictions(const Model::RequestVec_t& requests_copy);
 
     Model& _model;
-    CBFS cbfs;
 
-    double pred_error;
+    UIntMat_t predictions;
+    DoubleVec_t objective_values;
 
-    DoubleMat_t integral_solution;
-    DoubleMat_t temp;
-    BoolMat_t prediction;
-    DoubleMat_t solution;
-
-    BoolMat_t available_edges;
     std::random_device rd;
     std::mt19937 random_engine;
 };
