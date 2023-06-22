@@ -1,5 +1,7 @@
 #include "cp_model.h"
 
+#include <iostream>
+
 
 CP_Model::CP_Model(Model& model) :
     BaseModel(model, // + receives number of variables and number of constraints
@@ -93,6 +95,35 @@ CP_Model::CP_Model(Model& model) :
 void CP_Model::setCurrentSolution(const DoubleVec_t& x)
 {
     solution = x;
+}
+
+const CP_Model::SolutionVec_t& CP_Model::getFormattedSolution()
+{
+    formatted_solution.clear();
+    DoubleVec_t edges(_model.graph.nb_edges, 0.0);
+
+    for (uint32_t r = 0; r < _model.nb_requests; r++) {
+        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
+            edges[e] = solution[getID(e, r)];
+        }
+        formatted_solution.push_back(Solution(_model, edges, _model.requests[r].source, _model.requests[r].target));
+    }
+
+    return formatted_solution;
+}
+
+void CP_Model::printFormattedSolution() const
+{
+    for (uint32_t r = 0; r < _model.nb_requests; r++) {
+        std::cout << "Request " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
+        for (uint32_t p = 0; p < formatted_solution[r].paths.size(); p++) {
+            std::cout << "\tPath " << (p+1) << " with ratio (" << formatted_solution[r].ratios[p] << "): [e";
+            for (uint32_t idx = 0; idx < (formatted_solution[r].paths[p].size() - 1); idx++) {
+                std::cout << formatted_solution[r].paths[p][idx] << ", e";
+            }
+            std::cout << formatted_solution[r].paths[p].back() << "]" << std::endl;
+        }
+    }
 }
 
 uint32_t CP_Model::getID(uint32_t e, uint32_t r) const

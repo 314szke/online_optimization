@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     CP_Model cp_model(model);
     config.dimension = cp_model.max_dimension;
 
-    std::cout << "Model parsed, " << model.nb_requests << " number of requests" << std::endl << std::flush;
+
     if (model.nb_requests == 0) {
         return 0;
     }
@@ -46,8 +46,9 @@ int main(int argc, char** argv)
     const DoubleVec_t& greedy_solution = greedy_solver.solve();
     cp_model.setCurrentSolution(greedy_solution);
     double greedy_objective_value = cp_model.getObjectiveValue();
-    print_vector("greedy_solution", greedy_solution);
-    std::cout << "greedy_solution = " << greedy_objective_value << std::endl << std::flush;
+    std::cout << "GREEDY = " << greedy_objective_value << std::endl << std::flush;
+    cp_model.getFormattedSolution();
+    cp_model.printFormattedSolution();
 
 
     // Calculate the optimal offline fractional solution
@@ -55,18 +56,27 @@ int main(int argc, char** argv)
     const DoubleVec_t& offline_solution = fw_algo.solve(greedy_solution);
     cp_model.setCurrentSolution(offline_solution);
     double offline_objective_value = cp_model.getObjectiveValue();
-    print_vector("offline_solution", offline_solution);
-    std::cout << "offline_solution = " << offline_objective_value << std::endl << std::flush;
+    std::cout << "OFFLINE OPTIMAL = " << offline_objective_value << std::endl << std::flush;
+    cp_model.getFormattedSolution();
+    cp_model.printFormattedSolution();
+
+
+    // Create predictions
+    const CP_Model::SolutionVec_t& formatted_solution = cp_model.getFormattedSolution();
+
 
 /*
-    // Create predictions
-    Prediction pred(model, offline_solution);
-    const DoubleMat_t& integral_solution = pred.createPredictionWithError(0.0);
-    double integral_objective_value = model.getObjectiveValue(integral_solution);
-    std::cout << "integral_solution = " << integral_objective_value << std::endl << std::flush;
+    Prediction oracles(config, model, offline_solution);
 
 
     // Calculate the online solution with different error and eta
+    for (uint32_t oracle_idx = 0; oracle_idx < config.nb_oracles; oracle_idx) {
+        const DoubleMat_t& integral_solution = pred.createPredictionWithError(0.0);
+        double integral_objective_value = model.getObjectiveValue(integral_solution);
+        std::cout << "integral_solution = " << integral_objective_value << std::endl << std::flush;
+
+    }
+
     DoubleMat_t eta_values;
     DoubleMat_t comp_ratios;
     DoubleVec_t pred_comp_ratios;
