@@ -124,6 +124,7 @@ void CP_Model::printFormattedSolution() const
             std::cout << formatted_solution[r].paths[p].back() << "]" << std::endl;
         }
     }
+    std::cout << std::flush;
 }
 
 uint32_t CP_Model::getID(uint32_t e, uint32_t r) const

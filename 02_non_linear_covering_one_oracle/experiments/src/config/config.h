@@ -23,4 +23,6 @@ public:
     uint32_t random_iteration;
     double eta_step;
     uint32_t nb_oracles;
+    uint32_t nb_oracle_search;
+    uint32_t random_seed;
 };

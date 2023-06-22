@@ -63,20 +63,19 @@ int main(int argc, char** argv)
 
     // Create predictions
     const CP_Model::SolutionVec_t& formatted_solution = cp_model.getFormattedSolution();
+    Prediction oracles(config, model, formatted_solution);
+
+
+    // Calculate the online solution with different eta and oracle
+    for (uint32_t oracle_idx = 0; oracle_idx < config.nb_oracles; oracle_idx++) {
+        const UIntMat_t& predictions = oracles.getPredictionsOfOracle(oracle_idx);
+        double prediction_objective_value = oracles.getObjectiveValueOfOracle(oracle_idx);
+        std::cout << "ORACLE (" << (oracle_idx + 1) << ") = " << prediction_objective_value << std::endl << std::flush;
+        oracles.printFormattedSolution(oracle_idx);
+    }
 
 
 /*
-    Prediction oracles(config, model, offline_solution);
-
-
-    // Calculate the online solution with different error and eta
-    for (uint32_t oracle_idx = 0; oracle_idx < config.nb_oracles; oracle_idx) {
-        const DoubleMat_t& integral_solution = pred.createPredictionWithError(0.0);
-        double integral_objective_value = model.getObjectiveValue(integral_solution);
-        std::cout << "integral_solution = " << integral_objective_value << std::endl << std::flush;
-
-    }
-
     DoubleMat_t eta_values;
     DoubleMat_t comp_ratios;
     DoubleVec_t pred_comp_ratios;
