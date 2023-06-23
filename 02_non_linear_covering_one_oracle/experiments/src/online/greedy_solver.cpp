@@ -2,16 +2,13 @@
 
 
 #include "model/graph.h"
-#include "model/online_model.h"
 #include "offline/frank_wolfe.h"
-#include "visualization/print.hpp"
 
 
 GreedySolver::GreedySolver(const Config& config, Model& model) :
     _config(config),
     _model(model),
     online_model(model),
-    T(model.nb_requests),
     solution(online_model.getNbVariables(), 0.0),
     nb_cp_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
     cp_solution(nb_cp_variables, 0.0)
@@ -19,14 +16,14 @@ GreedySolver::GreedySolver(const Config& config, Model& model) :
 
 const DoubleVec_t& GreedySolver::solve()
 {
-    for (uint32_t t = 0; t < T; t++) {
+    for (uint32_t r = 0; r < _model.nb_requests; r++) {
         online_model.next();
-        findInitialSolution(_model.requests[t].source, _model.requests[t].target);
+        findInitialSolution(_model.requests[r].source, _model.requests[r].target);
 
         FrankWolfe fw(_config, online_model);
         solution = fw.solve(solution);
 
-        transformSolution(t);
+        transformSolution(r);
     }
 
     return cp_solution;

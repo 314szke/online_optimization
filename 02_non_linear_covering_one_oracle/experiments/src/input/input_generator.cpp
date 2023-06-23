@@ -119,6 +119,7 @@ void InputGenerator::generateConfig()
     f_out << "epsilon = 0.0001           # variables need to reach (1-eps) value to be selected in the solver" << std::endl;
     f_out << "cost_degree = 4            # the maximum degree of the polynomial used for edge costs" << std::endl;
     f_out << "random_iteration = 10      # number of random iterations to estimate the value of the partial derivative of F(x)" << std::endl;
+    f_out << "DT = 0.001                 # the time step for the increasing rate in solver" << std::endl;
     f_out << "eta_step = 0.099           # the step size in the range of (0, 1] for eta in the experiments" << std::endl;
     f_out << "nb_oracles = 3             # the algorithm's performance will be compared to the this many oracles that have randomly rounded solutions" << std::endl;
     f_out << "nb_oracle_search = 10      # max number of attempts to look for a unique randomly rounded oracle" << std::endl;
