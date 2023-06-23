@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include "visualization/print.hpp"
-
 
 FrankWolfe::FrankWolfe(const Config& config, BaseModel& model) :
     T(config.time_horizon),

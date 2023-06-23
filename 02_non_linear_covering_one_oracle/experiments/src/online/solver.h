@@ -4,34 +4,31 @@
 
 #include "config/config.h"
 #include "model/model.h"
-#include "path_finding/CBFS.h"
+#include "prediction/oracle.hpp"
 #include "types/local_types.h"
 
 
 class Solver {
 public:
-    Solver(Config& config, Model& model);
-    DoubleMat_t& solve(const BoolVec_t& pred_x, const DoubleVec_t& greedy, const Request& request);
+    Solver(const Config& config, Model& model);
+    const DoubleVec_t& solve(const Oracle& oracle);
 private:
-    bool constraintIsSatisfied(const uint32_t s, const uint32_t t);
-    double getDeltaF(const uint32_t e);
+    bool pathExists(uint32_t s, uint32_t t);
+    void transformSolution(uint32_t r);
+    double getDeltaF(uint32_t edge);
 
-    double eps;
-    uint32_t d;
-    double L;
-    double eta;
-    double R;
-    uint32_t c;
-
+    const Config& _config;
     Model& _model;
-    CBFS cbfs;
 
-    DoubleMat_t x;
-    DoubleMat_t B;
-    BoolMat_t marker;
+    DoubleVec_t x;
+    DoubleVec_t B;
 
-    DoubleMat_t temp;
-    std::random_device rd;
+    UIntVec_t edges;
+    bool wait_for_new_edge;
+
+    uint32_t nb_cp_variables;
+    DoubleVec_t cp_solution;
+
     std::mt19937 random_engine;
     std::uniform_real_distribution<double> uni_dist;
 };

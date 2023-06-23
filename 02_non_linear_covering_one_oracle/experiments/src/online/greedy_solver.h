@@ -18,7 +18,6 @@ private:
     Model& _model;
     OnlineModel online_model;
 
-    uint32_t T;
     DoubleVec_t solution;
 
     uint32_t nb_cp_variables;

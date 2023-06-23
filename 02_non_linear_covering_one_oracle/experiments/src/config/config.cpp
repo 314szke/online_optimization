@@ -16,6 +16,7 @@ Config::Config(std::string& config_file) :
     mu(0.0),
     eta(0.0),
     random_iteration(0),
+    DT(0.0),
     eta_step(0.0),
     nb_oracles(0),
     nb_oracle_search(0),
@@ -36,6 +37,7 @@ Config::Config(std::string& config_file) :
     readParameter(epsilon);
     readParameter(cost_degree);
     readParameter(random_iteration);
+    readParameter(DT);
     readParameter(eta_step);
     readParameter(nb_oracles);
     readParameter(nb_oracle_search);

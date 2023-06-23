@@ -21,6 +21,7 @@ public:
     double mu;
     double eta;
     uint32_t random_iteration;
+    double DT;
     double eta_step;
     uint32_t nb_oracles;
     uint32_t nb_oracle_search;
