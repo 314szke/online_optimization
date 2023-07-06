@@ -2,6 +2,21 @@
 
 \section{Online non-linear covering with multiple experts}
 
+We assume that the objective function is convex and, following the primal-dual approach of \cite{Thang20:Online-Primal-Dual}, we assume that it is $(\lambda, \mu)$-locally smooth.
+
+\begin{definition}[\cite{Thang20:Online-Primal-Dual}] \label{def:min-local-smooth-increasing}
+    Let $\mathcal{E}$ be a set of $n$ resources.
+    A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ with monotone gradient is $(\lambda,\mu)$-\emph{locally-smooth} if for every set $S \subseteq \mathcal{E}$, and for every arbitrary vector $\vect{x} \in [0,1]^{n}$, the following inequality holds:
+    \begin{equation*} \label{eq:min-local-smooth-increasing}
+        \sum_{e \in S} \nabla_{e} F(\vect{x}) \leq \lambda F\bigl( \vect{1}_{S} \bigr) + \mu F\bigl( \vect{x} \bigr)
+    \end{equation*}
+\end{definition}
+
+Finally we also assume that the objective function is $2L$-smooth w.r.t $\ell_{2}$-norm, i.e. it's gradient is $2L$-Lipshitz:
+\begin{definition}\label{def:l-smoothness}
+  A differentiable function $f: [0,1]^{n} \to \R^{+}$ is $L$-smooth w.r.t $\ell_{2}$-norm if for every $x, y \in [0,1]^{n}$
+  \[\norm{\nabla f(x) - \nabla f(y)}_{2} \le L\norm{x - y}_{2}\]
+\end{definition}
 
 \begin{figure}[ht]
 	\begin{mdframed}
@@ -101,13 +116,13 @@ Moreover, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\mu_{i}
 \paragraph{Dual variables and feasibility.} We set the dual variables of the linear program relaxation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm.
 %
 \begin{align*}
-    \alpha^{t} &= \biggl( \theta^{t} + \sum_{i} \chi_{i}^{t} \biggr), \\
+    \alpha^{t} &= \frac{1}{\lambda\ln(K\rho)}\biggl( \theta^{t} + \sum_{i} \chi_{i}^{t} \biggr), \\
     %
-    \beta_{i}^{t} &= \nabla_{i} f(x^{t})\ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    \beta_{i}^{t} &= \frac{1}{\lambda\ln(K\rho)}\nabla_{i} f(x^{t})\ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
     %
-    \xi_{S}^{t} &= c_{S}\\
+    \xi_{S}^{t} &= \frac{1}{\lambda\ln(K\rho)} \sum_{i \in S} \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) - \frac{\mu}{\lambda} f(x^{t})\\
     %
-    \gamma^{t} &= -\sum_{i}\beta_{i}^{t}
+    \gamma^{t} &= - \frac{1}{\lambda\ln(K\rho)} \sum_{i} \bigl[ \nabla_{i} f(x^{t+1}) -  \nabla_{i} f(x^{t}) \bigr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) + \frac{\mu}{\lambda} (f(x^{t+1}) - f(x^{t}))
 \end{align*}
 %
 Recall that $\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
@@ -125,14 +140,24 @@ $$
 $$
 
 In the remaining part of the proof, we show the feasibility of the dual solution.
-The first constraint is by KKT conditions.
-The second and last constraint holds by the definition of dual variables.
+The first constraint is by KKT conditions. The second constraint reads
+%
+\begin{align*}
+\xi_{S}^{t} &= \frac{1}{\lambda\ln(K\rho)} \sum_{i \in S} \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) - \frac{\mu}{\lambda} f(x^{t})  \\
+&\leq \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1})  - \frac{\mu}{\lambda} f(x^{t})
+\leq  c(S)
+\end{align*}
+%
+where the last inequality is due to the $(\lambda,\mu)$-smoothness. By scaling the objective by a factor of $\ln (K\rho)$, the second dual constraint holds.
+To show the last constraint, notice that
+\[\beta_{i}^{t} = \frac{1}{\lambda\ln(K\rho)}\nabla_{i} f(x^{t})\left(\ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}}\right) - \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}}\right) \right),\]
+so after substitution all terms in the third constraint cancel out and we receive the requested inequality.
 
 \end{proof}
 
 
 \begin{theorem} \label{covering-theorem}
-The algorithm's cost, up to some fixed constant, is at most $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive in the \texttt{LIN-COMB} benchmark.
+The algorithm's cost, up to some fixed constant, is at most $O(\frac{\ln(K \rho)\lambda}{1 - \mu \ln (K\rho)})$-competitive in the \texttt{LIN-COMB} benchmark.
 \end{theorem}
 %
 \begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the dual problem of the \texttt{LIN-COMB} benchmark relaxation and for the original covering problem. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark - the best linear combination of the experts' solutions.
@@ -141,10 +166,6 @@ At first, let's notice that from the convexity of $f$, we have the inequality
 \[f(x^{t}) - f(x^{t-1}) \le \nabla f(x^{t})(x^{t} - x^{t-1}).\]
 Indeed, consider scalar function $g(\lambda) = f((1-\lambda)x^{t-1} + \lambda x^{t}) = f(x_{\lambda})$. Then $g'(\lambda) = \nabla f(x_{\lambda})(x^{t} - x^{t-1})$ is increasing (from convexity of $f$), so from the fundamental theorem of calculus
 \[f(x^{t}) - f(x^{t-1}) = g(1) - g(0) = \int_{0}^{1}g'(\lambda)d\lambda \le g'(1) = \nabla f(x^{t})(x^{t} - x^{t-1}).\]
-We can also find a lower bound:
-\begin{equation}\label{eq:derivative_bound}
-  f(x^{t}) - f(x^{t-1}) = g(1) - g(0) = \int_{0}^{1}g'(\lambda)d\lambda \ge g'(0) = \nabla f(x^{t-1})(x^{t} - x^{t-1}).
-\end{equation}
 
 \begin{align}
 &f(x^{t}) - f(x^{t-1}) \leq \nabla f(x^{t}) (x^{t} - x^{t-1}) \notag \\
@@ -173,46 +194,39 @@ We can also find a lower bound:
 %
 &= 2 \theta^{t} + 2\sum_{i=1}^{n} \chi_{i}^{t} \\
 %
-&= 2\alpha^{t}	\notag
+&= 2\lambda\ln(K\rho)\alpha^{t}	\notag
 \end{align}
 %
 The above corresponding transformations hold since:
 \begin{compactenum}[(1)]
-	\setcounter{enumi}{2}
+	\setcounter{enumi}{1}
 	\item follows from the inequality $a - b \leq a \ln(a/b)$ for all $0 < b \leq a$;
 	\item holds since $\delta_{i}^{t} \geq \delta_{i}^{t-1}$ (because $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i,k,t$);
 	\item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$;
 	\item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
-	\setcounter{enumi}{5}
 	\item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$
 	(so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT}) applies;
 	\item is true due to the complementary slackness conditions
 		and that $\sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
 \end{compactenum}
 
-In the remaining, we are bounding $\sum_{t} \gamma^{t}$. From~\ref{eq:derivative_bound} we have
-\[f(x^{t}) - f(x^{t-1}) \ge \nabla f(x^{t-1})(x^{t}-x^{t-1}) = \sum_{i}\nabla_{i}f(x^{t-1})(x^{t}_{i} - x^{t-1}_{i})\]
+In the remaining, we are bounding $\sum_{t} \gamma^{t}$. Observe that
 \begin{align*}
-  &-\sum_{t}\gamma^{t} = \sum_{t}\sum_{i}\beta_{i}^{t} = \sum_{t}\sum_{i}\nabla_{i} f(x^{t})\ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \le \\
-  &\quad \sum_{t}\sum_{i}\nabla_{i} f(x^{t})\frac{x_{i}^{t} - x_{i}^{t-1} + \delta_{i}^{t} - \delta_{i}^{t-1}}{x_{i}^{t-1}  + \delta_{i}^{t-1}} \le \sum_{t}\sum_{i}\nabla_{i} f(x^{t})\frac{x_{i}^{t} - x_{i}^{t-1} + \delta_{i}^{t} - \delta_{i}^{t-1}}{x_{i}^{t-1}  + \delta_{i}^{t-1}}
+\sum_{i} (\nabla_{i} f(x^{t}) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)
+\leq \ln(K\rho) 2L\sqrt{n} \sum_{i} (x_{i}^{t} - x_{i}^{t-1})
 \end{align*}
-
-Let's denote by $\omega = \max_{t}\max_{i}\frac{x_{i}^{t} - x_{i}^{t-1} + \delta_{i}^{t} - \delta_{i}^{t-1}}{(x_{i}^{t} - x_{i}^{t-1})(x_{i}^{t-1}  + \delta_{i}^{t-1})}$.
-
-\comment{I think there should be a way to avoid this constant, but I don't know yet how to do it.}
-
-Then
+since $f$ is $2L$-smooth w.r.t $\ell_{2}$-norm.
+Therefore,
 \begin{align*}
-  &-\sum_{t}\gamma^{t} \le \omega\sum_{t}\sum_{i}\nabla_{i} f(x^{t})(x_{i}^{t} - x_{i}^{t-1}) \le \omega\sum_{t}f(x^{t}) - f(x^{t-1}) = \omega f(x^{T})
+\sum_{t=1}^{T} \gamma^{t} &\geq - \frac{\mu}{\lambda} f(x^{T}) - \frac{2L}{\lambda} \sqrt{n} \sum_{t} \sum_{i} (x_{i}^{t} - x_{i}^{t-1}) \\
+&\geq - \frac{\mu}{\lambda} f(x^{T}) - \frac{2L}{\lambda} \sqrt{n} \sum_{i} x_{i}^{T}
 \end{align*}
-
 Summing up, the dual objective is bounded as follows.
 \begin{align*}
- &\sum_{t} (\alpha^{t} + \gamma^{t}) \geq (1/2-\omega) f(x^{T})
+\sum_{t} (\alpha^{t} + \gamma^{t}) \geq \left(\frac{1}{2\ln(K\rho)\lambda} - \frac{\mu}{\lambda}\right)f(x^{T}) - \frac{2L}{\lambda} \sqrt{n} \sum_{i} x_{i}^{T}
 \end{align*}
-Hence, the theorem follows.
+In $0-1$ optimization, $x_{i}^{T} \leq 1$. Hence, the theorem follows.
+
 \end{proof}
 
-\comment{
-  Notice that we didn't use the $\xi_{S}^{t}$ variables in the analysis --- they cancel out in the 3-rd constraint, and the second constraint is trivially fulfilled. Using them we can get maximally $c_{S}$ improvement in the 3-rd constraint, e.g. by setting $\xi_{S}^{t} = \begin{cases} c_{S} \text{ if } t = 0\\ 0 \text{ if } t > 0 \end{cases}$, but I'm not sure how to do it (we need to bound $\gamma^{t}$ simultaneously for every $S$), moreover it is still only additive constant.
-  }
+\comment{Shouldn't we also include the dependence on $n$ in the ratio? I'm not sure if treating $n$ as a constant is fair.}
