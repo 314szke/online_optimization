@@ -9,6 +9,7 @@
 **/*.synctex.gz
 **/OCME
 **/OCF
+**/COCME
 **/tmp.txt
 **/obj/*
 **/__pycache__/*
