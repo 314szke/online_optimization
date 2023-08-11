@@ -10,12 +10,14 @@
 
 class FrankWolfe {
 public:
-    FrankWolfe(const Config& config, ConvexModel& model, LP_Solver& solver);
-    const DoubleVec_t& solve(const OfflineModel& off_model, const Experts& experts, uint32_t constr_limit);
+    FrankWolfe(const Config& config, ConvexModel& model);
+    const DoubleVec_t& solve();
 private:
     double computeNewEta();
     double getObjectiveValue(double eta);
-    void verifyFeasibility(const OfflineModel& off_model, const Experts& experts, uint32_t constr_limit);
+
+    const Config& _config;
+    ConvexModel& _model;
 
     uint32_t T;
     uint32_t max_search_iter;
@@ -26,7 +28,4 @@ private:
     DoubleVec_t v;
     DoubleVec_t d;
     DoubleVec_t temp;
-
-    LP_Solver& _solver;
-    ConvexModel& _model;
 };

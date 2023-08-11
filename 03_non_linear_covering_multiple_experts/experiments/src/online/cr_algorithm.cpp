@@ -10,57 +10,43 @@ CR_Algorithm::CR_Algorithm(const OfflineModel& model, const Config& config, cons
     offline_model(model),
     _experts(experts),
     convex_model(model, experts),
-    lp_solver(convex_model, config.gurobi_verbosity),
-    frank_wolfe(config, convex_model, lp_solver),
+    frank_wolfe(config, convex_model),
     online_objective(0.0),
-    sub_solutions(offline_model.getNbConstraints()),
     online_solution(offline_model.getNbVariables(), 0.0),
     previous_solution(offline_model.getNbVariables(), 0.0)
-{
-    for (uint32_t t = 0; t < offline_model.getNbConstraints(); t++) {
-        sub_solutions[t].resize(offline_model.getNbVariables(), 0.0);
-    }
-}
+{}
 
 const DoubleVec_t& CR_Algorithm::solve()
 {
     double temp_x = 0.0;
+    uint32_t idx;
 
-    for (uint32_t t = 1; t < (offline_model.getNbConstraints() + 1); t++) {
+    for (uint32_t t = 0; t < offline_model.getNbConstraints(); t++) {
         convex_model.revealNextConstraint();
-        lp_solver.addNewConstraints(t);
 
-        DoubleVec_t w = frank_wolfe.solve(offline_model, _experts, t);
+        DoubleVec_t w = frank_wolfe.solve();
         verifyWeights(w);
         roundWeightsIfNeeded(w);
-        const DoubleMat_t& s = _experts.getSolutions((t - 1));
+        const DoubleMat_t& s = _experts.getSolutions(t);
 
-        for (uint32_t i = 0; i < offline_model.getNbVariables(); i++) {
+        for (uint32_t i = 0; i < convex_model.getNbMachines(); i++) {
             temp_x = 0.0;
+            idx = (t * convex_model.getNbMachines()) + i;
             for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-                temp_x += s[k][i] * w[(i + (k * offline_model.getNbVariables()))];
+                temp_x += s[k][idx] * w[((k * convex_model.getNbMachines()) + i)];
             }
-            if (previous_solution[i] < temp_x) {
-                online_solution[i] = temp_x;
+            if (previous_solution[idx] < temp_x) {
+                online_solution[idx] = temp_x;
             }
         }
-
-        for (uint32_t i = 0; i < offline_model.getNbVariables(); i++) {
-            sub_solutions[(t-1)][i] = online_solution[i];
-        }
-        Solution::RoundSolutionIfNeeded(offline_model, sub_solutions[(t-1)], t);
 
         verifySolution(t);
         online_objective = offline_model.getObjectiveValue(online_solution);
         previous_solution = online_solution;
+        convex_model.updateSolution(online_solution);
     }
 
     return online_solution;
-}
-
-const DoubleMat_t& CR_Algorithm::getSubSolutions() const
-{
-    return sub_solutions;
 }
 
 double CR_Algorithm::getObjectiveValue() const
@@ -91,10 +77,10 @@ void CR_Algorithm::verifyWeights(const DoubleVec_t& w)
 
 void CR_Algorithm::roundWeightsIfNeeded(DoubleVec_t& w)
 {
-    for (uint32_t i = 0; i < offline_model.getNbVariables(); i++) {
+    for (uint32_t i = 0; i < convex_model.getNbMachines(); i++) {
         while (sumOfWeightsAreLessThanOne(w, i)) {
             for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-                w[(i + (k * offline_model.getNbVariables()))] += 0.0000000000001;
+                w[(i + (k * convex_model.getNbMachines()))] += 0.0000000000001;
             }
         }
     }
@@ -104,7 +90,7 @@ bool CR_Algorithm::sumOfWeightsAreLessThanOne(const DoubleVec_t& w, uint32_t i)
 {
     double value = 0.0;
     for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-        value += w[(i + (k * offline_model.getNbVariables()))];
+        value += w[(i + (k * convex_model.getNbMachines()))];
     }
 
     if (value < 1.0 && ((1.0 - value) > 0.001)) {

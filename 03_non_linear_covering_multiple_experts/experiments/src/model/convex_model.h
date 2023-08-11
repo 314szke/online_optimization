@@ -14,8 +14,7 @@ public:
 
     double getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const;
     void calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev);
-
-    uint32_t getNbLPVariables() const;
+    void updateSolution(const DoubleVec_t& solution);
 private:
     uint32_t getLocalId(uint32_t i, uint32_t k) const;
     double f(const DoubleVec_t& x) const;
@@ -27,5 +26,6 @@ private:
     double p;
     double L;
     int64_t time;
-    uint32_t nb_constraints_per_time;
+    DoubleVec_t x;
+    DoubleVec_t x_prev;
 };

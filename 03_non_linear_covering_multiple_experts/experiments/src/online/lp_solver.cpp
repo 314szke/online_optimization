@@ -26,6 +26,7 @@ LP_Solver::LP_Solver(const BaseModel& model, uint32_t verbosity) :
 
     // Add constraints
     addNewConstraints(0);
+    addNewConstraints(1);
 }
 
 void LP_Solver::addNewConstraints(const uint32_t time)
@@ -51,7 +52,7 @@ void LP_Solver::addNewConstraints(const uint32_t time)
     }
 }
 
-const DoubleVec_t& LP_Solver::solve()
+DoubleVec_t LP_Solver::solve()
 {
     const DoubleVec_t& c = _model.getCost();
     GRBLinExpr objective;

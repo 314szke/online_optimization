@@ -13,9 +13,7 @@
 class CR_Algorithm {
 public:
     CR_Algorithm(const OfflineModel& model, const Config& config, const Experts& experts);
-
     const DoubleVec_t& solve();
-    const DoubleMat_t& getSubSolutions() const;
     double getObjectiveValue() const;
 private:
     void verifySolution(const uint32_t t);
@@ -27,11 +25,9 @@ private:
     const Experts& _experts;
 
     ConvexModel convex_model;
-    LP_Solver lp_solver;
     FrankWolfe frank_wolfe;
 
     double online_objective;
-    DoubleMat_t sub_solutions;
     DoubleVec_t online_solution;
     DoubleVec_t previous_solution;
 };
