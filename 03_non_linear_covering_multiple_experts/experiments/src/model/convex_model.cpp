@@ -16,38 +16,35 @@ ConvexModel::ConvexModel(const OfflineModel& model, const Experts& experts) :
     nb_jobs = offline_model.getNbJobs();
 
     nb_variables = nb_machines * experts.getNbExperts();
-    nb_constraints = (2 * offline_model.getNbVariables()) + 1;
+    nb_constraints = nb_machines + 2;
 
     c.resize(nb_variables, 0.0);
     b.resize(2);
     A.resize(2);
 
-    b[0].resize(offline_model.getNbVariables());
-    b[1].resize(offline_model.getNbVariables() + 1);
-    A[0].resize(offline_model.getNbVariables());
-    A[1].resize(offline_model.getNbVariables() + 1);
-
-    for (uint32_t j = 0; j < offline_model.getNbVariables(); j++) {
-        b[0][j] = 1.0;
-        b[1][j] = 0.0;
-
-        A[0][j].resize(nb_variables);
-        A[1][j].resize(nb_variables);
-
+    // Constraint independent of time: the sum of weights is one
+    b[0].resize(nb_machines);
+    A[0].resize(nb_machines);
+    for (uint32_t i = 0; i < nb_machines; i++) {
+        b[0][i] = 1.0;
+        A[0][i].resize(nb_variables);
         for (uint32_t v = 0; v < nb_variables; v++) {
-            A[0][j][v] = 0.0;
+            A[0][i][v] = 0.0;
         }
-        // Constraint independent of time: the sum of weights is one
-        for (uint32_t i = 0; i < nb_machines; i++) {
-            for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-                A[0][j][getLocalId(i,k)] = 1.0;
-            }
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            A[0][i][getLocalId(i,k)] = 1.0;
         }
     }
 
-    // Each step has n + 1 constraints
-    b[1][offline_model.getNbVariables()] = 1.0;
-    A[1][offline_model.getNbVariables()].resize(nb_variables);
+    // Create space for constraints at time t
+    b[1].resize(nb_machines + 1);
+    A[1].resize(nb_machines + 1);
+    for (uint32_t i = 0; i < nb_machines; i++) {
+        b[1][i] = 0.0;
+        A[1][i].resize(nb_variables);
+    }
+    b[1][nb_machines] = 1.0;
+    A[1][nb_machines].resize(nb_variables);
 }
 
 void ConvexModel::revealNextConstraint()
@@ -56,7 +53,7 @@ void ConvexModel::revealNextConstraint()
     time++;
 
     // Clear previous coefficients
-    for (uint32_t i = 0; i < (offline_model.getNbVariables() + 1); i++) {
+    for (uint32_t i = 0; i < (nb_machines + 1); i++) {
         for (uint32_t v = 0; v < nb_variables; v++) {
             A[1][i][v] = 0.0;
         }
@@ -66,35 +63,34 @@ void ConvexModel::revealNextConstraint()
     const DoubleMat_t& s = _experts.getSolutions(time);
 
     // Add non-negative variable constraint
-    for (uint32_t j = 0; j < offline_model.getNbVariables(); j++) {
-        for (uint32_t i = 0; i < nb_machines; i++) {
-            for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-                A[1][j][getLocalId(i,k)] = s[k][getId(i,j)];
-            }
+    for (uint32_t i = 0; i < nb_machines; i++) {
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            A[1][i][getLocalId(i,k)] = s[k][getId(i,time)];
         }
     }
 
     // Add new LP constraint satisfaction constraint
     for (uint32_t i = 0; i < nb_machines; i++) {
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            A[1][offline_model.getNbVariables()][getLocalId(i,k)] = A_offline[time][getId(i,time)] * s[k][getId(i,time)];
+            A[1][nb_machines][getLocalId(i,k)] = A_offline[time][getId(i,time)] * s[k][getId(i,time)];
         }
     }
 }
 
-double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
+double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
     const DoubleMat_t& s = _experts.getSolutions(time);
     const DoubleMat_t& s_prev = _experts.getSolutions((time - 1));
     const DoubleVec_t& avg = _experts.getAverageSolutions(time);
     const DoubleVec_t& avg_prev = _experts.getAverageSolutions((time - 1));
 
-    DoubleVec_t x(offline_model.getNbVariables(), 0.0);
-    DoubleVec_t x_prev(offline_model.getNbVariables(), 0.0);
-
     uint32_t idx;
 
     // Calculate x and x_prev
+    for (uint32_t i = 0; i < nb_machines; i++) {
+        x[getId(i,time)] = 0.0;
+        x_prev[getId(i,time)] = 0.0;
+    }
     for (uint32_t i = 0; i < nb_machines; i++) {
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
             idx = getId(i,time);
@@ -108,24 +104,22 @@ double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w
     double log_value = 0.0;
 
     for (uint32_t i = 0; i < nb_machines; i++) {
-        for (uint32_t j = 0; j < nb_jobs; j++) {
-            idx = getId(i,j);
+        idx = getId(i, time);
 
-            // Calculate the log value
-            if (((x[idx] + avg[idx]) == 0) || ((x_prev[idx] + avg_prev[idx]) == 0)) {
-                log_value = 0;
-            } else {
-                log_value = std::log((x[idx] + avg[idx]) / (x_prev[idx] + avg_prev[idx]));
-            }
-
-            d_i_f_value = d_i_f(x_prev, i, idx);
-
-            // Calculate the objective function value
-            value += d_i_f_value * ((x[idx] + avg[idx]) * log_value);
-            value -= d_i_f_value * x[idx];
-            value += (L / 2.0) * (x[idx] - avg[idx]) * (x[idx] + avg[idx]) * log_value;
-            value -= (L / 4.0) * (x[idx] - avg[idx]) * (x[idx] - avg[idx]);
+        // Calculate the log value
+        if (((x[idx] + avg[idx]) == 0) || ((x_prev[idx] + avg_prev[idx]) == 0)) {
+            log_value = 0;
+        } else {
+            log_value = std::log((x[idx] + avg[idx]) / (x_prev[idx] + avg_prev[idx]));
         }
+
+        d_i_f_value = d_i_f(x_prev, i, idx);
+
+        // Calculate the objective function value
+        value += d_i_f_value * ((x[idx] + avg[idx]) * log_value);
+        value -= d_i_f_value * x[idx];
+        value += (L / 2.0) * (x[idx] - avg[idx]) * (x[idx] + avg[idx]) * log_value;
+        value -= (L / 4.0) * (x[idx] - avg[idx]) * (x[idx] - avg[idx]);
     }
 
     return value;
@@ -138,12 +132,13 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
     const DoubleVec_t& avg = _experts.getAverageSolutions(time);
     const DoubleVec_t& avg_prev = _experts.getAverageSolutions((time - 1));
 
-    DoubleVec_t x(offline_model.getNbVariables(), 0.0);
-    DoubleVec_t x_prev(offline_model.getNbVariables(), 0.0);
-
     uint32_t idx;
 
     // Calculate x and x_prev
+    for (uint32_t i = 0; i < nb_machines; i++) {
+        x[getId(i,time)] = 0.0;
+        x_prev[getId(i,time)] = 0.0;
+    }
     for (uint32_t i = 0; i < nb_machines; i++) {
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
             idx = getId(i,time);
@@ -156,22 +151,20 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
     double log_value = 0.0;
 
     for (uint32_t i = 0; i < nb_machines; i++) {
-        for (uint32_t j = 0; j < nb_jobs; j++) {
-            idx = getId(i,j);
+        idx = getId(i,time);
 
-            // Calculate the log value
-            if (((x[idx] + avg[idx]) == 0) || ((x_prev[idx] + avg_prev[idx]) == 0)) {
-                log_value = 0;
-            } else {
-                log_value = std::log((x[idx] + avg[idx]) / (x_prev[idx] + avg_prev[idx]));
-            }
+        // Calculate the log value
+        if (((x[idx] + avg[idx]) == 0) || ((x_prev[idx] + avg_prev[idx]) == 0)) { // TODO this will be always 0
+            log_value = 0;
+        } else {
+            log_value = std::log((x[idx] + avg[idx]) / (x_prev[idx] + avg_prev[idx]));
+        }
 
-            d_i_f_value = d_i_f(x_prev, i, idx);
+        d_i_f_value = d_i_f(x_prev, i, idx);
 
-            // Calculate the objective function derivative
-            for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-                c[getLocalId(i,k)] = s[k][idx] * (d_i_f_value + (L * x[idx])) * log_value;
-            }
+        // Calculate the objective function derivative
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            c[getLocalId(i,k)] = s[k][idx] * (d_i_f_value + (L * x[idx])) * log_value;
         }
     }
 }

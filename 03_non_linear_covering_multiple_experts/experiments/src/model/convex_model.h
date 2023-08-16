@@ -12,7 +12,7 @@ public:
 
     void revealNextConstraint();
 
-    double getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const;
+    double getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev);
     void calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev);
     void updateSolution(const DoubleVec_t& solution);
 private:
