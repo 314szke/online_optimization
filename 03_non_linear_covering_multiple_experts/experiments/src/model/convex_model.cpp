@@ -3,6 +3,9 @@
 #include <cmath>
 
 
+const static double MIN_DENOMINATOR = 0.0000001;
+
+
 ConvexModel::ConvexModel(const OfflineModel& model, const Experts& experts) :
     offline_model(model),
     _experts(experts),
@@ -107,8 +110,14 @@ double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w
         idx = getId(i, time);
 
         // Calculate the log value
-        if (((x[idx] + avg[idx]) == 0) || ((x_prev[idx] + avg_prev[idx]) == 0)) {
+        if ((x[idx] + avg[idx]) == 0) {
             log_value = 0;
+        } else if ((x_prev[idx] + avg_prev[idx]) == 0) {
+            if ((x[idx] + avg[idx]) < MIN_DENOMINATOR) {
+                log_value = 1;
+            } else {
+                log_value = std::log((x[idx] + avg[idx]) / MIN_DENOMINATOR);
+            }
         } else {
             log_value = std::log((x[idx] + avg[idx]) / (x_prev[idx] + avg_prev[idx]));
         }
@@ -154,8 +163,14 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
         idx = getId(i,time);
 
         // Calculate the log value
-        if (((x[idx] + avg[idx]) == 0) || ((x_prev[idx] + avg_prev[idx]) == 0)) { // TODO this will be always 0
+        if ((x[idx] + avg[idx]) == 0) {
             log_value = 0;
+        } else if ((x_prev[idx] + avg_prev[idx]) == 0) {
+            if ((x[idx] + avg[idx]) < MIN_DENOMINATOR) {
+                log_value = 1;
+            } else {
+                log_value = std::log((x[idx] + avg[idx]) / MIN_DENOMINATOR);
+            }
         } else {
             log_value = std::log((x[idx] + avg[idx]) / (x_prev[idx] + avg_prev[idx]));
         }
@@ -201,7 +216,7 @@ double ConvexModel::f(const DoubleVec_t& x) const
     }
     loads_p_norm = std::pow(loads_p_norm, (1.0 / p));
 
-    return std::pow(loads_p_norm, 2.0);
+    return std::pow(loads_p_norm, 1.5);
 }
 
 double ConvexModel::d_i_f(const DoubleVec_t& x, uint32_t machine_i, uint32_t var_i) const
@@ -233,5 +248,5 @@ double ConvexModel::d_i_f(const DoubleVec_t& x, uint32_t machine_i, uint32_t var
         norm_derivative = 0.0;
     }
 
-    return 2 * f(x) * norm_derivative;
+    return 1.5 * f(x) * norm_derivative;
 }

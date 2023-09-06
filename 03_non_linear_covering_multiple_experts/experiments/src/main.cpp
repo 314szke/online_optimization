@@ -30,6 +30,9 @@ int main(int argc, char** argv)
     }
 
 
+    std::cout << std::fixed;
+    std::cout.precision(2);
+
     // Set up the model
     Config config(arg_parser.config_file);
     OfflineModel offline_model(arg_parser.data_file);
