@@ -50,7 +50,7 @@ OfflineSolver::OfflineSolver(const BaseModel& model, uint32_t verbosity) :
 
     for (uint32_t i = 0; i < base_model.getNbMachines(); i++) {
         GRBLinExpr expr;
-        for (uint32_t j = 0; j < base_model.getNbJobs(); j++) {
+        for (uint32_t j = 0; j < base_model.getNbConstraints(); j++) {
             idx = base_model.getId(i, j);
             expr += c[idx] * variables[idx];
         }
@@ -74,7 +74,7 @@ const DoubleVec_t& OfflineSolver::solve()
     //    lp_model->computeIIS();
     //    lp_model->write("model.ilp");
     //} catch(...) {}
-    lp_model->write("model.lp");
+    //lp_model->write("model.lp");
 
     lp_model->optimize();
 

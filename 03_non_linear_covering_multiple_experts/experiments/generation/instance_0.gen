@@ -1,0 +1,8 @@
+nb_machines = 3
+nb_jobs = 2
+min_processing_time = 1
+max_processing_time = 2
+nb_perfect_expert = 1
+nb_online_expert = 1
+nb_adversary_expert = 1
+nb_random_expert = 1
