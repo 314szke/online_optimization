@@ -25,6 +25,9 @@ private:
 
     uint32_t nb_experts;
     uint32_t nb_perfect_expert;
+    uint32_t nb_perturbed_expert;
+    double min_perturbation_ratio;
+    double max_perturbation_ratio;
     uint32_t nb_online_expert;
     uint32_t nb_adversary_expert;
     uint32_t nb_min_processing_expert;

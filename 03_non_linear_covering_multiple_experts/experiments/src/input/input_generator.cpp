@@ -20,6 +20,9 @@ InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
     max_processing_time(0),
     nb_experts(0),
     nb_perfect_expert(0),
+    nb_perturbed_expert(0),
+    min_perturbation_ratio(0.0),
+    max_perturbation_ratio(0.0),
     nb_online_expert(0),
     nb_adversary_expert(0),
     nb_min_processing_expert(0),
@@ -38,12 +41,15 @@ InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
     readParameter(min_processing_time);
     readParameter(max_processing_time);
     readParameter(nb_perfect_expert);
+    readParameter(nb_perturbed_expert);
+    readParameter(min_perturbation_ratio);
+    readParameter(max_perturbation_ratio);
     readParameter(nb_online_expert);
     readParameter(nb_adversary_expert);
     readParameter(nb_min_processing_expert);
     readParameter(nb_random_expert);
 
-    nb_experts = nb_perfect_expert + nb_online_expert + nb_adversary_expert + nb_min_processing_expert + nb_random_expert;
+    nb_experts = nb_perfect_expert + nb_perturbed_expert + nb_online_expert + nb_adversary_expert + nb_min_processing_expert + nb_random_expert;
 
     f_in.close();
 }
@@ -123,6 +129,11 @@ void InputGenerator::generateExperts()
         perfect_solution[k].resize(offline_model.getNbVariables(), 0.0);
     }
 
+    DoubleMat_t perturbed_solution(nb_perturbed_expert);
+    for (uint32_t k = 0; k < nb_perturbed_expert; k++) {
+        perturbed_solution[k].resize(offline_model.getNbVariables(), 0.0);
+    }
+
     DoubleMat_t min_solution(nb_online_expert);
     for (uint32_t k = 0; k < nb_online_expert; k++) {
         min_solution[k].resize(offline_model.getNbVariables(), 0.0);
@@ -146,6 +157,7 @@ void InputGenerator::generateExperts()
     std::random_device rd;
     std::mt19937 engine(rd());
     std::uniform_int_distribution<uint32_t> var_dist(0, (offline_model.getNbMachines() - 1));
+    std::uniform_real_distribution<double> perturbation_dist(min_perturbation_ratio, max_perturbation_ratio);
 
     for (uint32_t j = 0; j < offline_model.getNbConstraints(); j++) {
         // Perfect experts
@@ -159,12 +171,33 @@ void InputGenerator::generateExperts()
             f_out << perfect_solution[k][(offline_model.getNbVariables() - 1)] << std::endl;
         }
 
+        // Perturbed experts
+        uint32_t random_uint;
+        uint32_t var_idx;
+        double perturbation_ratio;
+
+        for (uint32_t k = 0; k < nb_perturbed_expert; k++) {
+            perturbation_ratio = perturbation_dist(engine);
+            random_uint = var_dist(engine);
+            var_idx = (j * offline_model.getNbMachines()) + random_uint;
+
+            for (uint32_t i = (j * offline_model.getNbMachines()); i < ((j+1) * offline_model.getNbMachines()); i++) {
+                perturbed_solution[k][i] = optimal_solution[i] * (1.0 - perturbation_ratio);
+            }
+            perturbed_solution[k][var_idx] += perturbation_ratio;
+
+            for (uint32_t i = 0; i < (offline_model.getNbVariables() - 1); i++) {
+                f_out << perturbed_solution[k][i] << " ";
+            }
+            f_out << perturbed_solution[k][(offline_model.getNbVariables() - 1)] << std::endl;
+        }
+
+        // Online experts
         online_model.revealNextConstraint();
         OfflineSolver online_solver(online_model, 0);
         DoubleVec_t solution = online_solver.solve();
         Solution::RoundSolutionIfNeeded(offline_model, solution, (j+1));
 
-        // Online experts
         for (uint32_t k = 0; k < nb_online_expert; k++) {
             for (uint32_t i = (j * offline_model.getNbMachines()); i < ((j+1) * offline_model.getNbMachines()); i++) {
                 min_solution[k][i] = solution[i];
@@ -209,9 +242,6 @@ void InputGenerator::generateExperts()
         }
 
         // Random experts
-        uint32_t random_uint;
-        uint32_t var_idx;
-
         for (uint32_t k = 0; k < nb_random_expert; k++) {
             random_uint = var_dist(engine);
             var_idx = (j * offline_model.getNbMachines()) + random_uint;
