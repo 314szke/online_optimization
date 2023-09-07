@@ -27,5 +27,6 @@ private:
     uint32_t nb_perfect_expert;
     uint32_t nb_online_expert;
     uint32_t nb_adversary_expert;
+    uint32_t nb_min_processing_expert;
     uint32_t nb_random_expert;
 };

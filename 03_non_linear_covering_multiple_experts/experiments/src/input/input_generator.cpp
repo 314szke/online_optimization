@@ -22,6 +22,7 @@ InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
     nb_perfect_expert(0),
     nb_online_expert(0),
     nb_adversary_expert(0),
+    nb_min_processing_expert(0),
     nb_random_expert(0)
 {
     f_in.open(_arg_parser.generator_file);
@@ -39,9 +40,10 @@ InputGenerator::InputGenerator(const ArgumentParser& arg_parser) :
     readParameter(nb_perfect_expert);
     readParameter(nb_online_expert);
     readParameter(nb_adversary_expert);
+    readParameter(nb_min_processing_expert);
     readParameter(nb_random_expert);
 
-    nb_experts = nb_perfect_expert + nb_online_expert + nb_adversary_expert + nb_random_expert;
+    nb_experts = nb_perfect_expert + nb_online_expert + nb_adversary_expert + nb_min_processing_expert + nb_random_expert;
 
     f_in.close();
 }
@@ -131,6 +133,11 @@ void InputGenerator::generateExperts()
         max_solution[k].resize(offline_model.getNbVariables(), 0.0);
     }
 
+    DoubleMat_t min_proc_solution(nb_min_processing_expert);
+    for (uint32_t k = 0; k < nb_min_processing_expert; k++) {
+        min_proc_solution[k].resize(offline_model.getNbVariables(), 0.0);
+    }
+
     DoubleMat_t random_solution(nb_random_expert);
     for (uint32_t k = 0; k < nb_random_expert; k++) {
         random_solution[k].resize(offline_model.getNbVariables(), 0.0);
@@ -183,6 +190,22 @@ void InputGenerator::generateExperts()
                 f_out << max_solution[k][i] << " ";
             }
             f_out << max_solution[k][(offline_model.getNbVariables() - 1)] << std::endl;
+        }
+
+        // Min processing time expert
+        uint32_t min_idx = (j * offline_model.getNbMachines());
+        for (uint32_t i = (j * offline_model.getNbMachines()); i < ((j+1) * offline_model.getNbMachines()); i++) {
+            if (c[min_idx] > c[i]) {
+                min_idx = i;
+            }
+        }
+
+        for (uint32_t k = 0; k < nb_min_processing_expert; k++) {
+            min_proc_solution[k][min_idx] = 1;
+            for (uint32_t i = 0; i < (offline_model.getNbVariables() - 1); i++) {
+                f_out << min_proc_solution[k][i] << " ";
+            }
+            f_out << min_proc_solution[k][(offline_model.getNbVariables() - 1)] << std::endl;
         }
 
         // Random experts

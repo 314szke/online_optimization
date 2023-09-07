@@ -5,4 +5,5 @@ max_processing_time = 10
 nb_perfect_expert = 1
 nb_online_expert = 1
 nb_adversary_expert = 1
+nb_min_processing_expert = 1
 nb_random_expert = 6

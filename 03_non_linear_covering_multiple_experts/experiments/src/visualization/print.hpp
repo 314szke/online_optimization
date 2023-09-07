@@ -36,5 +36,9 @@ template<typename T>
 void print_solution(std::string message, double value, const std::vector<T>& vec) {
     std::stringstream new_message;
     new_message << message << " = " << value << std::endl << message;
-    print_vector(new_message.str(), vec);
+    if (vec.size() > 25) {
+        std::cout << new_message.str() << " [too long to print]" << std::endl;
+    } else {
+        print_vector(new_message.str(), vec);
+    }
 }
