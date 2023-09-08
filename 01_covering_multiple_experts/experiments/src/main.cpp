@@ -91,7 +91,7 @@ int main(int argc, char** argv)
     const DoubleVec_t& expert_objective_values = experts.getObjectiveValues();
     double sum_experts = 0.0;
     for (uint32_t k = 0; k < experts.getNbExperts(); k++) {
-        //std::cout << "Expert " << (k+1) << " = " << expert_objective_values[k] << std::endl;
+        std::cout << "Expert " << (k+1) << " = " << expert_objective_values[k] << std::endl;
         sum_experts += expert_objective_values[k];
     }
     std::cout << "Avg of experts = " << sum_experts / (double) experts.getNbExperts() << std::endl;

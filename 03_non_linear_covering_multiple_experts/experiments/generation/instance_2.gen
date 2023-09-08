@@ -1,0 +1,12 @@
+nb_machines = 5
+nb_jobs = 5
+min_processing_time = 1
+max_processing_time = 5
+nb_perfect_expert = 0
+nb_perturbed_expert = 2
+min_perturbation_ratio = 0.05
+max_perturbation_ratio = 0.15
+nb_online_expert = 1
+nb_adversary_expert = 1
+nb_min_processing_expert = 1
+nb_random_expert = 1

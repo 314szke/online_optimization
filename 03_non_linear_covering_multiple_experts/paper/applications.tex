@@ -4,48 +4,53 @@
 
 \subsection{Makespan minimization}
 
-Makespan minimization is equivalent, up to a constant factor, to minimize $\ell_{\log m}$-norm function. 
-We determine the smoothness parameters of $\ell_{p}$-norm over machine loads. 
+
+Makespan minimization is equivalent, up to a constant factor, to minimize $\ell_{\log m}$-norm function.
+We determine the smoothness parameters of $\ell_{p}$-norm over machine loads.
 
 \begin{lemma}
 $\ell_{p}$-norm is $(1,0)$-locally-smooth
 \end{lemma}
 %
 \begin{proof}
-We have to prove that, for every sub-assignment of jobs to machines $S \subseteq \{(i,j): 1 \leq i \leq m, 1 \leq j \leq n\}$, 
+
+We have to prove that, for every sub-assignment of jobs to machines $S \subseteq \{(i,j): 1 \leq i \leq m, 1 \leq j \leq n\}$,
+
 \begin{align}	\label{eq:lp-smooth}
 \sum_{(i,j) \in S} \nabla_{(i,j)} f(x) \leq f(\one_{S})
 \end{align}
 where $f(x) = \| \bigl( \sum_{j} a_{1j} x_{1j}, \ldots, \sum_{j} p_{mj} x_{mj} \bigr)\|_{p}$.
 ($a_{ij}$ is the processing time of job $j$ on machine $i$.)
 
-We have 
+
+We have
 %
 \begin{align*}
-\frac{\partial f(x)}{\partial x_{ij}} 
-= \frac{a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-1)/p}} 
+\frac{\partial f(x)}{\partial x_{ij}}
+= \frac{a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-1)/p}}
 %= \frac{a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left \| \bigl( \sum_{j} a_{1j} x_{1j}, \ldots, \sum_{j} a_{mj} x_{mj} \bigr) \right\|_{p}^{(p-1)/p}}
 \end{align*}
-Hence, 
+Hence,
 \begin{align*}
-\sum_{(i,j) \in S} \frac{\partial f(x)}{\partial x_{ij}} 
-= \frac{ \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-1)/p}} 
+\sum_{(i,j) \in S} \frac{\partial f(x)}{\partial x_{ij}}
+= \frac{ \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-1)/p}}
 \end{align*}
 
-\Cref{eq:lp-smooth} is equivalent to 
+\Cref{eq:lp-smooth} is equivalent to
 \begin{align*}
- \frac{ \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-1)/p}} 
+ \frac{ \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-1)/p}}
 &\leq  \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j}, \ldots, \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr\|_{p} \\
 %
 \Longleftrightarrow \qquad
-	\sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} &\leq 
-		\left ( \sum_{i'} \biggl [ \biggl( \sum_{j'} a_{i'j'} x_{i'j'} \biggr)^{p-1} \biggr]^{p/(p-1)} \right)^{(p-1)/p} \\
-			& \qquad \qquad \cdot \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j}, \ldots, \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr\|_{p} \\
+    \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} &\leq
+        \left ( \sum_{i'} \biggl [ \biggl( \sum_{j'} a_{i'j'} x_{i'j'} \biggr)^{p-1} \biggr]^{p/(p-1)} \right)^{(p-1)/p} \\
+            & \qquad \qquad \cdot \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j}, \ldots, \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr\|_{p} \\
 %
 \Longleftrightarrow \qquad
-	\sum_{i} \biggl ( \sum_{j: (i,j) \in S} a_{ij} \biggr) \cdot \biggl( \sum_{j'} a_{ij'} x_{ij'} \biggr)^{p-1} &\leq 
-		\left \| \left( \biggl( \sum_{j'} a_{1j'} x_{1j'} \biggr)^{p-1}, \ldots, \biggl( \sum_{j'} a_{m,j'} x_{m,j'} \biggr)^{p-1} \right)   \right \|_{\frac{p}{p-1}}  \\
-			& \qquad \qquad \cdot \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j}, \ldots, \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr\|_{p} \\
+    \sum_{i} \biggl ( \sum_{j: (i,j) \in S} a_{ij} \biggr) \cdot \biggl( \sum_{j'} a_{ij'} x_{ij'} \biggr)^{p-1} &\leq
+        \left \| \left( \biggl( \sum_{j'} a_{1j'} x_{1j'} \biggr)^{p-1}, \ldots, \biggl( \sum_{j'} a_{m,j'} x_{m,j'} \biggr)^{p-1} \right)   \right \|_{\frac{p}{p-1}}  \\
+            & \qquad \qquad \cdot \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j}, \ldots, \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr\|_{p} \\
+                        
 \end{align*}
 The above inequality holds by H\"older inequality (recall the latter: $\| a \cdot b\|_{1} \leq \| a \|_{p} \cdot \| b \|_{q}$ where $1/p + 1/q = 1$).
 \end{proof}
@@ -55,6 +60,6 @@ There exists an algorithm which is $O(\log K \cdot \frac{\log m}{ \log \log m})$
 \end{theorem}
 %
 \begin{proof}
-By the main theorem and the previous lemma, there exists a $O(\log K)$-competitive fractional solution. 
-One can use rounding schemes in ``Online Unrelated Machine Load Balancing with Predictions Revisited'' of Shi Li and Xian in ICML to get an integer assignment with a multiplicative factor of $\frac{\log m}{ \log \log m}$. 
+By the main theorem and the previous lemma, there exists a $O(\log K)$-competitive fractional solution.
+One can use rounding schemes in ``Online Unrelated Machine Load Balancing with Predictions Revisited'' of Shi Li and Xian in ICML to get an integer assignment with a multiplicative factor of $\frac{\log m}{ \log \log m}$.
 \end{proof}
