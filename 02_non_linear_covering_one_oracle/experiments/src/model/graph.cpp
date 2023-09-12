@@ -13,9 +13,9 @@ void Graph::initialize(uint32_t n, uint32_t m)
     nb_vertices = n;
     nb_edges = m;
 
-    A.resize(n);
+    A.resize(nb_vertices);
     for (uint32_t idx = 0; idx < nb_vertices; idx++) {
-        A[idx].resize(n);
+        A[idx].resize(nb_vertices);
     }
 
     distances.resize(nb_vertices, UIntVec_t(nb_vertices, (nb_vertices + 1)));
@@ -57,7 +57,7 @@ Graph::Path_t Graph::getPath(uint32_t s, uint32_t t)
     uint32_t v = t;
     while (s != t) {
         t = connections[s][t];
-        edges.push_back(A[t][v]->id);
+        edges.push_back(A[t][v].id);
         v = t;
     }
 

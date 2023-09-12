@@ -1,17 +1,20 @@
 #pragma once
 
+#include <memory>
+
 #include "exprtk.hpp"
 #include "types/local_types.h"
 
 
 class Edge {
 public:
-    Edge(uint32_t num, std::string f_cost, std::string f_derivative);
+    Edge();
+    void set(uint32_t num, std::string f_cost, std::string f_derivative);
 
     double getCost(double value);
     double getDerivative(double value);
 
-    uint32_t id;
+    int64_t id;
 
 private:
     typedef exprtk::symbol_table<double> SymbolTable_t;
@@ -23,5 +26,5 @@ private:
     Expression_t cost_function_derivative;
 
     SymbolTable_t symbol_table;
-    FormulaParser_t parser;
+    std::unique_ptr<FormulaParser_t> parser;
 };

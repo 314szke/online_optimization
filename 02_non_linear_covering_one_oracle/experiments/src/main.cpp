@@ -1,5 +1,6 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <limits>
 #include <sstream>
 
 #include "config/argument_parser.h"
@@ -45,7 +46,7 @@ int main(int argc, char** argv)
     const DoubleVec_t& greedy_solution = greedy_solver.solve();
     cp_model.setCurrentSolution(greedy_solution);
     double greedy_objective_value = cp_model.getObjectiveValue();
-    std::cout << "GREEDY = " << greedy_objective_value << std::endl << std::flush;
+    std::cout << ">>> GREEDY = " << greedy_objective_value << std::endl << std::flush;
     cp_model.getFormattedSolution();
     cp_model.printFormattedSolution();
 
@@ -55,14 +56,18 @@ int main(int argc, char** argv)
     const DoubleVec_t& offline_solution = fw_algo.solve(greedy_solution);
     cp_model.setCurrentSolution(offline_solution);
     double offline_objective_value = cp_model.getObjectiveValue();
-    std::cout << "OFFLINE OPTIMAL = " << offline_objective_value << std::endl << std::flush;
-    cp_model.getFormattedSolution();
+    std::cout << ">>> OFFLINE OPTIMAL FRACTIONAL = " << offline_objective_value << std::endl << std::flush;
+    const CP_Model::SolutionVec_t& formatted_solution = cp_model.getFormattedSolution();
     cp_model.printFormattedSolution();
 
 
     // Create predictions
-    const CP_Model::SolutionVec_t& formatted_solution = cp_model.getFormattedSolution();
     Prediction oracles(config, model, formatted_solution);
+    for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
+        const Oracle& oracle = oracles.getOracle(oracle_idx);
+        std::cout << ">>> ORACLE (" << (oracle_idx + 1) << ") = " << oracle.objective_value << std::endl << std::flush;
+        oracles.printFormattedSolution(oracle_idx);
+    }
 
 
     // Calculate the online solution with different eta and oracle
@@ -70,27 +75,32 @@ int main(int argc, char** argv)
     out << "Eta;CompRatio;Algo" << std::endl;
     double greedy_comp_ratio = (offline_objective_value / greedy_objective_value);
 
+    double best_eta = -1.0;
+    int best_oracle_idx = -1;
+    double best_objective_value = std::numeric_limits<double>::infinity();
+
     double eta = 1.0;
+    Solver solver(config, model);
+
     while (eta > 0) {
         config.update(eta);
-        std::cout << "# eta = " << eta << std::endl << std::flush;
 
-        for (uint32_t oracle_idx = 0; oracle_idx < config.nb_oracles; oracle_idx++) {
+        for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
             const Oracle& oracle = oracles.getOracle(oracle_idx);
             double prediction_comp_ratio = (offline_objective_value / oracle.objective_value);
-            if (eta == 1.0) { // only print once
-                std::cout << "ORACLE (" << (oracle_idx + 1) << ") = " << oracle.objective_value << std::endl << std::flush;
-                oracles.printFormattedSolution(oracle_idx);
-            }
 
-            Solver solver(config, model);
             const DoubleVec_t& online_solution = solver.solve(oracle);
             cp_model.setCurrentSolution(online_solution);
             double online_objective_value = cp_model.getObjectiveValue();
             double online_comp_ratio = (offline_objective_value / online_objective_value);
-            std::cout << "ONLINE = " << online_objective_value << std::endl;
-            cp_model.getFormattedSolution();
-            cp_model.printFormattedSolution();
+            std::cout << ">>> ONLINE (eta  = " << eta << "; oracle = " << (oracle_idx + 1) << ") = " << online_objective_value << std::endl;
+
+            // Save best scenario
+            if (online_objective_value < best_objective_value) {
+                best_objective_value = online_objective_value;
+                best_eta = eta;
+                best_oracle_idx = oracle_idx;
+            }
 
             // Save results to a file
             if (oracle_idx == 0) { // only print once
@@ -103,6 +113,18 @@ int main(int argc, char** argv)
         eta = eta - config.eta_step;
     }
     out.close();
+
+    // Print best online scenario
+    const Oracle& oracle = oracles.getOracle(best_oracle_idx);
+    config.update(best_eta);
+
+    const DoubleVec_t& online_solution = solver.solve(oracle);
+    cp_model.setCurrentSolution(online_solution);
+    double online_objective_value = cp_model.getObjectiveValue();
+
+    std::cout << ">>> BEST ONLINE (eta  = " << best_eta << "; oracle = " << best_oracle_idx << ") = " << online_objective_value << std::endl;
+    cp_model.getFormattedSolution();
+    cp_model.printFormattedSolution();
 
     return 0;
 }

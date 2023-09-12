@@ -32,11 +32,11 @@ CP_Model::CP_Model(Model& model) :
                 bounds[constr_idx] = 0.0;
 
                 for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
-                    if (_model.graph.A[i][j]) {
-                        coefficients[constr_idx][getID(_model.graph.A[i][j]->id, r)] = 1.0;
+                    if (_model.graph.A[i][j].id != -1) {
+                        coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
                     }
-                    if (_model.graph.A[j][i]) {
-                        coefficients[constr_idx][getID(_model.graph.A[j][i]->id, r)] = -1.0;
+                    if (_model.graph.A[j][i].id != -1) {
+                        coefficients[constr_idx][getID(_model.graph.A[j][i].id, r)] = -1.0;
                     }
                 }
                 constr_idx++;
@@ -52,8 +52,8 @@ CP_Model::CP_Model(Model& model) :
             if (j != _model.requests[r].source) {
 
                 uint32_t i = _model.requests[r].source;
-                if (_model.graph.A[i][j]) {
-                    coefficients[constr_idx][getID(_model.graph.A[i][j]->id, r)] = 1.0;
+                if (_model.graph.A[i][j].id != -1) {
+                    coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
                 }
             }
         }
@@ -68,8 +68,8 @@ CP_Model::CP_Model(Model& model) :
             if (i != _model.requests[r].target) {
 
                 uint32_t j = _model.requests[r].target;
-                if (_model.graph.A[i][j]) {
-                    coefficients[constr_idx][getID(_model.graph.A[i][j]->id, r)] = 1.0;
+                if (_model.graph.A[i][j].id != -1) {
+                    coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
                 }
             }
         }

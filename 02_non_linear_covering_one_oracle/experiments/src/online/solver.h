@@ -16,6 +16,7 @@ private:
     bool pathExists(uint32_t s, uint32_t t);
     void transformSolution(uint32_t r);
     double getDeltaF(uint32_t edge);
+    double getRandomNumber();
 
     const Config& _config;
     Model& _model;
@@ -31,4 +32,7 @@ private:
 
     std::mt19937 random_engine;
     std::uniform_real_distribution<double> uni_dist;
+    UIntVec_t random_set;
+    DoubleVec_t random_numbers;
+    uint32_t random_idx;
 };

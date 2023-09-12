@@ -13,15 +13,29 @@ Solver::Solver(const Config& config, Model& model):
     nb_cp_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
     cp_solution(nb_cp_variables, 0.0),
     random_engine(config.random_seed),
-    uni_dist(0.0, 1.0)
+    uni_dist(0.0, 1.0),
+    random_set(_model.graph.nb_edges),
+    random_numbers(1000000), // 1 million
+    random_idx(0)
 {
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         edges[e] = e;
+    }
+
+    for (uint32_t idx = 0; idx < random_numbers.size(); idx++) {
+        random_numbers[idx] = uni_dist(random_engine);
     }
 }
 
 const DoubleVec_t& Solver::solve(const Oracle& oracle)
 {
+    // Initialize
+    for (uint32_t idx = 0; idx < nb_cp_variables; idx++) {
+        cp_solution[idx] = 0.0;
+    }
+    wait_for_new_edge = false;
+    random_idx = 0;
+
     uint32_t e;
     double delta_e_F, lambda_delta_e_F;
     double increasing_rate;
@@ -89,7 +103,7 @@ bool Solver::pathExists(uint32_t s, uint32_t t)
 
         for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
             // Edge exists, vertex i not visited and edge picked by the algo
-            if (_model.graph.A[v][i] && (! visited[i]) && (x[_model.graph.A[v][i]->id] == 1.0)) {
+            if ((_model.graph.A[v][i].id != -1) && (! visited[i]) && (x[_model.graph.A[v][i].id] == 1.0)) {
                 visited[i] = true;
                 Q.push_back(i);
             }
@@ -107,10 +121,12 @@ double Solver::getDeltaF(uint32_t edge)
     uint32_t i,j;
 
     for (uint32_t it = 0; it < _config.random_iteration; it++) {
-        UIntVec_t random_set(_model.graph.nb_edges, 0);
+        for (uint32_t set_idx = 0; set_idx < _model.graph.nb_edges; set_idx++) {
+            random_set[set_idx] = 0;
+        }
         for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             if (e != edge) {
-                random_number = uni_dist(random_engine);
+                random_number = getRandomNumber();
                 if (random_number < x[e]) {
                     random_set[e] = 1;
                 }
@@ -123,7 +139,7 @@ double Solver::getDeltaF(uint32_t edge)
         for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             i = _model.graph.ID[e].i;
             j = _model.graph.ID[e].j;
-            cost_with_edge += _model.graph.A[i][j]->getCost(cp_solution[e] + random_set[e]);
+            cost_with_edge += _model.graph.A[i][j].getCost(cp_solution[e] + random_set[e]);
         }
 
         // Cost without x[edge]
@@ -132,7 +148,7 @@ double Solver::getDeltaF(uint32_t edge)
         for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
             i = _model.graph.ID[e].i;
             j = _model.graph.ID[e].j;
-            cost += _model.graph.A[i][j]->getCost(cp_solution[e] + random_set[e]);
+            cost += _model.graph.A[i][j].getCost(cp_solution[e] + random_set[e]);
         }
 
         sum += (cost_with_edge - cost);
@@ -141,11 +157,20 @@ double Solver::getDeltaF(uint32_t edge)
     return (sum / _config.random_iteration);
 }
 
+double Solver::getRandomNumber()
+{
+    random_idx++;
+    if (random_idx > random_numbers.size()) {
+        random_idx = 0;
+    }
+    return random_numbers[random_idx];
+}
+
 void Solver::transformSolution(uint32_t r)
 {
     Solution solution = Solution(_model, x, _model.requests[r].source, _model.requests[r].target);
 
-// Minimum cost path approach
+    // Minimum cost path approach
 
     uint32_t e, i, j;
     uint32_t best_path = 0;
@@ -159,7 +184,7 @@ void Solver::transformSolution(uint32_t r)
                 e = solution.paths[p][e_idx];
                 i = _model.graph.ID[e].i;
                 j = _model.graph.ID[e].j;
-                cost += _model.graph.A[i][j]->getCost(cp_solution[e] + 1);
+                cost += _model.graph.A[i][j].getCost(cp_solution[e] + 1);
             }
             if (cost < best_objective) {
                 best_objective = cost;

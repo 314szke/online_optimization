@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 
 #include "edge.h"
@@ -9,7 +8,7 @@
 
 class Graph {
 public:
-    typedef std::vector<std::unique_ptr<Edge>> EdgeVec_t;
+    typedef std::vector<Edge> EdgeVec_t;
     typedef std::vector<EdgeID> EdgeIDVec_t;
     typedef std::vector<EdgeVec_t> EdgeMat_t;
     typedef std::vector<uint32_t> Path_t;

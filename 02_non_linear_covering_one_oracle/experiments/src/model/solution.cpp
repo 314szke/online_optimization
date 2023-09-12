@@ -32,7 +32,7 @@ Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uin
             for (uint32_t v = 0; v < (all_paths[idx].size() - 1); v++) {
                 i = all_paths[idx][v];
                 j = all_paths[idx][v + 1];
-                e = _model.graph.A[i][j]->id;
+                e = _model.graph.A[i][j].id;
                 if (edges[e] == 0.0) {
                     all_paths.erase(all_paths.begin() + idx);
                     removed_a_path = true;
@@ -59,7 +59,7 @@ Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uin
         for (uint32_t v = 0; v < (all_paths[idx].size() - 1); v++) {
             i = all_paths[idx][v];
             j = all_paths[idx][v + 1];
-            e = _model.graph.A[i][j]->id;
+            e = _model.graph.A[i][j].id;
             paths.back().push_back(e);
             amount += edges[e];
             counter++;
@@ -79,7 +79,7 @@ UIntMat_t Solution::findPathFrom(uint32_t s, const BoolVec_t& visited)
     local_visited[s] = true;
 
     for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
-        if (_model.graph.A[s][i] && (! local_visited[i])) {
+        if ((_model.graph.A[s][i].id != -1) && (! local_visited[i])) {
 
             UIntMat_t new_paths = findPathFrom(i, local_visited);
             for (uint32_t idx = 0; idx < new_paths.size(); idx++) {

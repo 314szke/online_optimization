@@ -31,11 +31,11 @@ void OnlineModel::next()
     for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
         if (i != _model.requests[time].source && i != _model.requests[time].target) {
             for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
-                if (_model.graph.A[i][j]) {
-                    coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+                if (_model.graph.A[i][j].id != -1) {
+                    coefficients[constr_idx][_model.graph.A[i][j].id] = 1.0;
                 }
-                if (_model.graph.A[j][i]) {
-                    coefficients[constr_idx][_model.graph.A[j][i]->id] = -1.0;
+                if (_model.graph.A[j][i].id != -1) {
+                    coefficients[constr_idx][_model.graph.A[j][i].id] = -1.0;
                 }
             }
             constr_idx++;
@@ -48,8 +48,8 @@ void OnlineModel::next()
         if (j != _model.requests[time].source) {
 
             uint32_t i = _model.requests[time].source;
-            if (_model.graph.A[i][j]) {
-                coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+            if (_model.graph.A[i][j].id != -1) {
+                coefficients[constr_idx][_model.graph.A[i][j].id] = 1.0;
             }
         }
     }
@@ -61,8 +61,8 @@ void OnlineModel::next()
         if (i != _model.requests[time].target) {
 
             uint32_t j = _model.requests[time].target;
-            if (_model.graph.A[i][j]) {
-                coefficients[constr_idx][_model.graph.A[i][j]->id] = 1.0;
+            if (_model.graph.A[i][j].id != -1) {
+                coefficients[constr_idx][_model.graph.A[i][j].id] = 1.0;
             }
         }
     }

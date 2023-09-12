@@ -50,7 +50,7 @@ void Model::parse_graph()
             match_1 = matched_parameters[3];
             match_2 = matched_parameters[4];
 
-            graph.A[i][j].reset(new Edge(idx, match_1.str(), match_2.str()));
+            graph.A[i][j].set(idx, match_1.str(), match_2.str());
             graph.ID.push_back(EdgeID(i, j));
         } else {
             std::stringstream message;

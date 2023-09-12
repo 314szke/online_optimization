@@ -21,7 +21,7 @@ double BaseModel::getObjectiveValue()
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         i = _model.graph.ID[e].i;
         j = _model.graph.ID[e].j;
-        cost += _model.graph.A[i][j]->getCost(solution[e]);
+        cost += _model.graph.A[i][j].getCost(solution[e]);
     }
 
     return cost;
@@ -44,7 +44,7 @@ DoubleVec_t& BaseModel::getCostVector()
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         i = _model.graph.ID[e].i;
         j = _model.graph.ID[e].j;
-        costs[e] = _model.graph.A[i][j]->getDerivative(solution[e]);
+        costs[e] = _model.graph.A[i][j].getDerivative(solution[e]);
     }
 
     return costs;
