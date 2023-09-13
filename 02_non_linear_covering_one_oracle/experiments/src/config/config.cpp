@@ -51,8 +51,7 @@ void Config::update(double new_eta)
     eta = new_eta;
 
     // O(k ln(d/eta))^(k-1)
-    lambda = cost_degree * std::pow(std::log(dimension / eta),
-    (cost_degree - 1.0));
+    lambda = cost_degree * std::pow(std::log(dimension / eta), (cost_degree - 1.0));
 
     // (k-1) / (k * ln(1 + 2 * d^2 / eta))
     mu = (cost_degree - 1.0) / (cost_degree * std::log(1.0 + (2.0 * std::pow(dimension, 2.0)) / eta));

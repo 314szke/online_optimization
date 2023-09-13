@@ -168,6 +168,13 @@ double Solver::getRandomNumber()
 
 void Solver::transformSolution(uint32_t r)
 {
+    // Remove edges which were not selected
+    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
+        if (x[e] != 1.0) {
+            x[e] = 0.0;
+        }
+    }
+
     Solution solution = Solution(_model, x, _model.requests[r].source, _model.requests[r].target);
 
     // Minimum cost path approach
