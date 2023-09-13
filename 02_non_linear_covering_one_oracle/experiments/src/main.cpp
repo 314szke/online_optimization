@@ -2,10 +2,12 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <string>
 
 #include "config/argument_parser.h"
 #include "config/config.h"
-#include "input/input_generator.h"
+#include "input/grid_generator.h"
+#include "input/random_generator.h"
 #include "model/model.h"
 #include "model/cp_model.h"
 #include "model/request.hpp"
@@ -25,8 +27,13 @@ int main(int argc, char** argv)
     arg_parser.parse();
 
     if (arg_parser.modeIsGeneration()) {
-        InputGenerator input_generator(arg_parser);
-        input_generator.generate();
+        if (arg_parser.generator_file.rfind("random", 0) == 0) {
+            RandomGenerator random_generator(arg_parser);
+            random_generator.generate();
+        } else {
+            GridGenerator grid_generator(arg_parser);
+            grid_generator.generate();
+        }
         return 0;
     }
 

@@ -1,16 +1,12 @@
 #pragma once
 
-#include <fstream>
-#include <regex>
-#include <string>
-
 #include "base/configured_object.h"
 #include "config/argument_parser.h"
 
 
-class InputGenerator : private ConfiguredObject {
+class RandomGenerator : private ConfiguredObject {
 public:
-    InputGenerator(const ArgumentParser& arg_parser);
+    RandomGenerator(const ArgumentParser& arg_parser);
     void generate();
 private:
     void generateData();
@@ -22,8 +18,10 @@ private:
     uint32_t nb_edges;
     uint32_t nb_requests;
     double edge_prob;
-    uint32_t min_degree;
-    uint32_t max_degree;
+    double min_degree;
+    double max_degree;
     double min_coeff;
     double max_coeff;
+
+    double max_degree_found;
 };
