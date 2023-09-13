@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <random>
 
 #include "config/config.h"
@@ -13,6 +14,7 @@ public:
     Solver(const Config& config, Model& model);
     const DoubleVec_t& solve(const Oracle& oracle);
 private:
+    void init();
     bool pathExists(uint32_t s, uint32_t t);
     void transformSolution(uint32_t r);
     double getDeltaF(uint32_t edge);
@@ -30,7 +32,7 @@ private:
     uint32_t nb_cp_variables;
     DoubleVec_t cp_solution;
 
-    std::mt19937 random_engine;
+    std::unique_ptr<std::mt19937> random_engine;
     std::uniform_real_distribution<double> uni_dist;
     UIntVec_t random_set;
     DoubleVec_t random_numbers;

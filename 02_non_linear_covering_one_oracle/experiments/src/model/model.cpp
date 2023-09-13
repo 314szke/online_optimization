@@ -31,10 +31,11 @@ Model::Model(std::string& data_file) :
 
 void Model::parse_graph()
 {
-    const std::regex edge_parameters("\\s*([0-9]+)\\s*-\\s*([0-9]+)\\s*#\\s*([x0-9\\.\\*\\^\\-\\+\\/\\s]+)\\s*#\\s*([x0-9\\.\\*\\^\\-\\+\\/\\s]+)\\s*[\\S\\s]*");
+    const std::regex edge_parameters("\\s*([0-9]+)\\s*-\\s*([0-9]+)\\s*#\\s*([0-9\\.]+)\\s*#\\s*([0-9\\.]+)\\s*#\\s*([0-9\\.]+)\\s*[\\S\\s]*");
 
     std::smatch matched_parameters;
     uint32_t i, j;
+    double coeff, expo, constant;
     std::ssub_match match_1;
     std::ssub_match match_2;
 
@@ -47,10 +48,11 @@ void Model::parse_graph()
             i = stoi(match_1.str());
             j = stoi(match_2.str());
 
-            match_1 = matched_parameters[3];
-            match_2 = matched_parameters[4];
+            coeff = stod(matched_parameters[3].str());
+            expo = stod(matched_parameters[4].str());
+            constant = stod(matched_parameters[5].str());
 
-            graph.A[i][j].set(idx, match_1.str(), match_2.str());
+            graph.A[i][j].set(idx, coeff, expo, constant);
             graph.ID.push_back(EdgeID(i, j));
         } else {
             std::stringstream message;

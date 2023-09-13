@@ -16,7 +16,7 @@ Prediction::Prediction(const Config& config, Model& model, const CP_Model::Solut
         oracle.dimensions.resize(_model.nb_requests);
         oracle.predictions.resize(_model.nb_requests);
 
-        uint32_t attempts = config.nb_oracle_search;
+        int attempts = config.nb_oracle_search;
         while (oracleIsNotUnique(oracle) && attempts >= 0) {
             createPredictions(oracle);
             attempts--;

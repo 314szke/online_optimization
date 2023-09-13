@@ -89,11 +89,12 @@ int main(int argc, char** argv)
             const Oracle& oracle = oracles.getOracle(oracle_idx);
             double prediction_comp_ratio = (offline_objective_value / oracle.objective_value);
 
+            std::cout << "ONLINE (eta  = " << eta << "; oracle = " << (oracle_idx + 1) << ") is running" << std::endl << std::flush;
             const DoubleVec_t& online_solution = solver.solve(oracle);
             cp_model.setCurrentSolution(online_solution);
             double online_objective_value = cp_model.getObjectiveValue();
             double online_comp_ratio = (offline_objective_value / online_objective_value);
-            std::cout << ">>> ONLINE (eta  = " << eta << "; oracle = " << (oracle_idx + 1) << ") = " << online_objective_value << std::endl;
+            std::cout << ">>> ONLINE (eta  = " << eta << "; oracle = " << (oracle_idx + 1) << ") = " << online_objective_value << std::endl << std::flush;
 
             // Save best scenario
             if (online_objective_value < best_objective_value) {
@@ -107,7 +108,7 @@ int main(int argc, char** argv)
                 out << eta << ";" << greedy_comp_ratio << ";greedy" << std::endl;
             }
             out << eta << ";" << prediction_comp_ratio << ";oracle " << (oracle_idx + 1) << std::endl;
-            out << eta << ";" << online_comp_ratio << ";algo(oracle " << (oracle_idx + 1) << ")" << std::endl;
+            out << eta << ";" << online_comp_ratio << ";algo(oracle " << (oracle_idx + 1) << ")" << std::endl << std::flush;
         }
 
         eta = eta - config.eta_step;
@@ -122,7 +123,7 @@ int main(int argc, char** argv)
     cp_model.setCurrentSolution(online_solution);
     double online_objective_value = cp_model.getObjectiveValue();
 
-    std::cout << ">>> BEST ONLINE (eta  = " << best_eta << "; oracle = " << best_oracle_idx << ") = " << online_objective_value << std::endl;
+    std::cout << ">>> BEST ONLINE (eta  = " << best_eta << "; oracle = " << (best_oracle_idx + 1) << ") = " << online_objective_value << std::endl;
     cp_model.getFormattedSolution();
     cp_model.printFormattedSolution();
 

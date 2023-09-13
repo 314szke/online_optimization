@@ -1,33 +1,28 @@
 #include "edge.h"
 
+#include <cmath>
+
 
 Edge::Edge() :
     id(-1),
-    x(0.0)
-{
-    symbol_table.add_variable("x", x);
-    cost_function.register_symbol_table(symbol_table);
-    cost_function_derivative.register_symbol_table(symbol_table);
-}
+    coefficient(1.0),
+    exponent(0.0)
+{}
 
-void Edge::set(uint32_t num, std::string f_cost, std::string f_derivative)
+void Edge::set(uint32_t num, double coeff, double expo, double constant)
 {
     id = num;
-    x = 0.0;
-
-    parser.reset(new FormulaParser_t());
-    parser->compile(f_cost, cost_function);
-    parser->compile(f_derivative, cost_function_derivative);
+    coefficient = coeff;
+    exponent = expo;
+    constant_term = constant;
 }
 
 double Edge::getCost(double value)
 {
-    x = value;
-    return cost_function.value();
+    return (coefficient * std::pow(value, exponent)) + constant_term;
 }
 
 double Edge::getDerivative(double value)
 {
-    x = value;
-    return cost_function_derivative.value();
+    return (coefficient * exponent) * std::pow(value, (exponent-1));
 }

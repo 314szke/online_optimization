@@ -1,5 +1,7 @@
 #include "solution.h"
 
+#include <limits>
+
 
 Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uint32_t t) :
     _model(model)
@@ -48,23 +50,20 @@ Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uin
 
 
     // Convert vertices to edges
-    double amount;
-    double counter;
-
     for (uint32_t idx = 0; idx < all_paths.size(); idx++) {
         paths.push_back(UIntVec_t());
 
-        amount = 0.0;
-        counter = 0.0;
+        double smallest_amount = std::numeric_limits<double>::infinity();
         for (uint32_t v = 0; v < (all_paths[idx].size() - 1); v++) {
             i = all_paths[idx][v];
             j = all_paths[idx][v + 1];
             e = _model.graph.A[i][j].id;
             paths.back().push_back(e);
-            amount += edges[e];
-            counter++;
+            if (smallest_amount > edges[e]) {
+                smallest_amount = edges[e];
+            }
         }
-        ratios.push_back(amount / counter);
+        ratios.push_back(smallest_amount);
     }
 }
 

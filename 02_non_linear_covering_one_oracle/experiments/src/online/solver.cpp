@@ -1,5 +1,6 @@
 #include "solver.h"
 
+#include <iostream>
 #include <limits>
 
 #include "model/solution.h"
@@ -12,40 +13,49 @@ Solver::Solver(const Config& config, Model& model):
     wait_for_new_edge(false),
     nb_cp_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
     cp_solution(nb_cp_variables, 0.0),
-    random_engine(config.random_seed),
     uni_dist(0.0, 1.0),
     random_set(_model.graph.nb_edges),
     random_numbers(1000000), // 1 million
     random_idx(0)
 {
+    init();
+
+    for (uint32_t idx = 0; idx < random_numbers.size(); idx++) {
+        random_numbers[idx] = uni_dist(*random_engine);
+    }
+}
+
+void Solver::init()
+{
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         edges[e] = e;
     }
 
-    for (uint32_t idx = 0; idx < random_numbers.size(); idx++) {
-        random_numbers[idx] = uni_dist(random_engine);
+    for (uint32_t idx = 0; idx < nb_cp_variables; idx++) {
+        cp_solution[idx] = 0.0;
     }
+
+    random_engine.reset(new std::mt19937(_config.random_seed));
+    wait_for_new_edge = false;
+    random_idx = 0;
 }
 
 const DoubleVec_t& Solver::solve(const Oracle& oracle)
 {
-    // Initialize
-    for (uint32_t idx = 0; idx < nb_cp_variables; idx++) {
-        cp_solution[idx] = 0.0;
-    }
-    wait_for_new_edge = false;
-    random_idx = 0;
+    init();
 
     uint32_t e;
     double delta_e_F, lambda_delta_e_F;
     double increasing_rate;
 
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
+        std::cout << "\tSolving request [" << (r+1) << "/" << _model.nb_requests << "]" << std::endl << std::flush;
         x = DoubleVec_t(_model.graph.nb_edges, 0.0);
         B = DoubleVec_t(_model.graph.nb_edges, 0.0);
 
         while (! pathExists(_model.requests[r].source, _model.requests[r].target)) {
-            std::shuffle(edges.begin(), edges.end(), random_engine);
+            std::shuffle(edges.begin(), edges.end(), *random_engine);
+
             for (uint32_t e_idx = 0; e_idx < _model.graph.nb_edges; e_idx++) {
                 e = edges[e_idx];
 
