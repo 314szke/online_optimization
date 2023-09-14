@@ -32,10 +32,10 @@ void OnlineModel::next()
         if (i != _model.requests[time].source && i != _model.requests[time].target) {
             for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
                 if (_model.graph.A[i][j].id != -1) {
-                    coefficients[constr_idx][_model.graph.A[i][j].id] = 1.0;
+                    coefficients[constr_idx][_model.graph.A[i][j].id] = -1.0;
                 }
                 if (_model.graph.A[j][i].id != -1) {
-                    coefficients[constr_idx][_model.graph.A[j][i].id] = -1.0;
+                    coefficients[constr_idx][_model.graph.A[j][i].id] = 1.0;
                 }
             }
             constr_idx++;

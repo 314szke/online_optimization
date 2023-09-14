@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     arg_parser.parse();
 
     if (arg_parser.modeIsGeneration()) {
-        if (arg_parser.generator_file.rfind("random", 0) == 0) {
+        if (arg_parser.generator_file.find("random") != std::string::npos) {
             RandomGenerator random_generator(arg_parser);
             random_generator.generate();
         } else {

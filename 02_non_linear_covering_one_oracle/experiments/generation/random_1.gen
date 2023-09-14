@@ -1,7 +1,9 @@
 nb_vertices = 10           # the number of vertices of the generated graph
 nb_requests = 5            # the number of vertices of the generated graph
 edge_prob = 0.4            # the probablity to create edges for the generated graph
-min_degree = 1             # min for the degree of the edges is coeff * x^degree
-max_degree = 4             # max for the degree of the edges is coeff * x^degree
 min_coeff = 1.0            # min for the cost of the edges is coeff * x^degree
 max_coeff = 10.0           # max for the cost of the edges is coeff * x^degree
+min_degree = 1.0           # min for the degree of the edges is coeff * x^degree
+max_degree = 4.0           # max for the degree of the edges is coeff * x^degree
+min_constant = 0.0         # min constant term in the edge cost coeff * x^degree + constant
+max_constant = 4.0         # max constant term in the edge cost coeff * x^degree + constant

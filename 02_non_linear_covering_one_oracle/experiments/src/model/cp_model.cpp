@@ -33,10 +33,10 @@ CP_Model::CP_Model(Model& model) :
 
                 for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
                     if (_model.graph.A[i][j].id != -1) {
-                        coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
+                        coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = -1.0;
                     }
                     if (_model.graph.A[j][i].id != -1) {
-                        coefficients[constr_idx][getID(_model.graph.A[j][i].id, r)] = -1.0;
+                        coefficients[constr_idx][getID(_model.graph.A[j][i].id, r)] = 1.0;
                     }
                 }
                 constr_idx++;
@@ -48,10 +48,9 @@ CP_Model::CP_Model(Model& model) :
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         bounds[constr_idx] = 1.0;
 
+        uint32_t i = _model.requests[r].source;
         for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
             if (j != _model.requests[r].source) {
-
-                uint32_t i = _model.requests[r].source;
                 if (_model.graph.A[i][j].id != -1) {
                     coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
                 }
@@ -64,10 +63,9 @@ CP_Model::CP_Model(Model& model) :
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         bounds[constr_idx] = 1.0;
 
+        uint32_t j = _model.requests[r].target;
         for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
             if (i != _model.requests[r].target) {
-
-                uint32_t j = _model.requests[r].target;
                 if (_model.graph.A[i][j].id != -1) {
                     coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
                 }
@@ -116,12 +114,12 @@ void CP_Model::printFormattedSolution() const
 {
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         std::cout << "Request " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
-        for (uint32_t p = 0; p < formatted_solution[r].paths.size(); p++) {
-            std::cout << "\tPath " << (p+1) << " with ratio (" << formatted_solution[r].ratios[p] << "): [e";
-            for (uint32_t idx = 0; idx < (formatted_solution[r].paths[p].size() - 1); idx++) {
-                std::cout << formatted_solution[r].paths[p][idx] << ", e";
+        for (uint32_t p = 0; p < formatted_solution[r].vertices.size(); p++) {
+            std::cout << "\tPath " << (p+1) << " with ratio (" << formatted_solution[r].ratios[p] << "): [ v";
+            for (uint32_t idx = 0; idx < (formatted_solution[r].vertices[p].size() - 1); idx++) {
+                std::cout << formatted_solution[r].vertices[p][idx] << " v";
             }
-            std::cout << formatted_solution[r].paths[p].back() << "]" << std::endl;
+            std::cout << formatted_solution[r].vertices[p].back() << " ]" << std::endl;
         }
     }
     std::cout << std::flush;

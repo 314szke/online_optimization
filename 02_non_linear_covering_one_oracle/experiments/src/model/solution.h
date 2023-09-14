@@ -9,6 +9,7 @@ public:
     Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uint32_t t);
 
     UIntMat_t paths;
+    UIntMat_t vertices;
     DoubleVec_t ratios;
 
 private:

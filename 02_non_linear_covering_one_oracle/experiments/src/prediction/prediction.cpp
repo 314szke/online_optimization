@@ -41,14 +41,16 @@ const Oracle& Prediction::getOracle(uint32_t oracle_idx) const
 void Prediction::printFormattedSolution(uint32_t oracle_idx) const
 {
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
+        Solution formatted_solution(_model, oracles[oracle_idx].predictions[r], _model.requests[r].source, _model.requests[r].target);
+
         std::cout << "Request " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
-        std::cout << "\tPath:";
-        for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            if (oracles[oracle_idx].predictions[r][e] != 0) {
-                std::cout << " e" << e;
+        for (uint32_t p = 0; p < formatted_solution.vertices.size(); p++) {
+            std::cout << "\tPath " << (p+1) << " with ratio (" << formatted_solution.ratios[p] << "): [ v";
+            for (uint32_t idx = 0; idx < (formatted_solution.vertices[p].size() - 1); idx++) {
+                std::cout << formatted_solution.vertices[p][idx] << " v";
             }
+            std::cout << formatted_solution.vertices[p].back() << " ]" << std::endl;
         }
-        std::cout << std::endl;
     }
     std::cout << std::flush;
 }
@@ -76,14 +78,14 @@ void Prediction::createPredictions(Oracle& oracle)
     // Round the paths with the probability of the traffic passing through them
     for (uint32_t r_idx = 0; r_idx < _model.nb_requests; r_idx++) {
         oracle.predictions[r_idx].clear();
-        oracle.predictions[r_idx].resize(_model.graph.nb_edges, 0);
+        oracle.predictions[r_idx].resize(_model.graph.nb_edges, 0.0);
 
         std::discrete_distribution<uint32_t> ratio_distribution(_solution[r_idx].ratios.begin(), _solution[r_idx].ratios.end());
         p_idx = ratio_distribution(random_engine);
 
         for (uint32_t e_idx = 0; e_idx < _solution[r_idx].paths[p_idx].size(); e_idx++) {
             edge = _solution[r_idx].paths[p_idx][e_idx];
-            oracle.predictions[r_idx][edge] = 1;
+            oracle.predictions[r_idx][edge] = 1.0;
         }
     }
 
@@ -109,7 +111,7 @@ void Prediction::createPredictions(Oracle& oracle)
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         oracle.dimensions[r] = 0.0;
         for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-            if (oracle.predictions[r][e] == 1) {
+            if (oracle.predictions[r][e] == 1.0) {
                 oracle.dimensions[r]++;
             }
         }

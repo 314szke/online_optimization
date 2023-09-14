@@ -18,10 +18,12 @@ private:
     uint32_t nb_edges;
     uint32_t nb_requests;
     double edge_prob;
-    double min_degree;
-    double max_degree;
     double min_coeff;
     double max_coeff;
+    double min_degree;
+    double max_degree;
+    double min_constant;
+    double max_constant;
 
     double max_degree_found;
 };

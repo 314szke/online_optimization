@@ -10,6 +10,6 @@ public:
     {}
 
     UIntVec_t dimensions;
-    UIntMat_t predictions;
+    DoubleMat_t predictions;
     double objective_value;
 };
