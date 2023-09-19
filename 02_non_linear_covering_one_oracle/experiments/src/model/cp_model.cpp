@@ -7,9 +7,7 @@ CP_Model::CP_Model(Model& model) :
     BaseModel(model, // + receives number of variables and number of constraints
         (model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)), // y_e and x^t_e
         (model.graph.nb_edges // connect y with x
-        + ((model.graph.nb_vertices - 2) * model.nb_requests) // flow preservation for each vertex (except source and target) for each request
-        + (2 * model.nb_requests) // flow for source and target
-        )),
+        + (model.graph.nb_vertices * model.nb_requests))), // flow preservation for each vertex
     max_dimension(0.0),
     _model(model)
 {
@@ -28,50 +26,27 @@ CP_Model::CP_Model(Model& model) :
     // Flow preservation constraints on non-source and non-target vertices
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
-            if (i != _model.requests[r].source && i != _model.requests[r].target) {
+            if (i == _model.requests[r].source) {
+                bounds[constr_idx] = 1.0;
+            } else if (i == _model.requests[r].target) {
+                bounds[constr_idx] = -1.0;
+            } else {
                 bounds[constr_idx] = 0.0;
+            }
 
-                for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
+            for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
+                if (i != j) {
                     if (_model.graph.A[i][j].id != -1) {
-                        coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = -1.0;
+                        coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
                     }
                     if (_model.graph.A[j][i].id != -1) {
-                        coefficients[constr_idx][getID(_model.graph.A[j][i].id, r)] = 1.0;
+                        coefficients[constr_idx][getID(_model.graph.A[j][i].id, r)] = -1.0;
                     }
                 }
-                constr_idx++;
             }
+
+            constr_idx++;
         }
-    }
-
-    // Source constraints
-    for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        bounds[constr_idx] = 1.0;
-
-        uint32_t i = _model.requests[r].source;
-        for (uint32_t j = 0; j < _model.graph.nb_vertices; j++) {
-            if (j != _model.requests[r].source) {
-                if (_model.graph.A[i][j].id != -1) {
-                    coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
-                }
-            }
-        }
-        constr_idx++;
-    }
-
-    // Target constraints
-    for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        bounds[constr_idx] = 1.0;
-
-        uint32_t j = _model.requests[r].target;
-        for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
-            if (i != _model.requests[r].target) {
-                if (_model.graph.A[i][j].id != -1) {
-                    coefficients[constr_idx][getID(_model.graph.A[i][j].id, r)] = 1.0;
-                }
-            }
-        }
-        constr_idx++;
     }
 
     // Calculate the maximum number of non-zero coefficients in the original (flow-type) constraints
