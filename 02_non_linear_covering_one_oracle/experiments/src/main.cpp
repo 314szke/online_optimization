@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <pthread.h>
 #include <sstream>
 #include <string>
 
@@ -14,9 +15,32 @@
 #include "offline/frank_wolfe.h"
 #include "online/greedy_solver.h"
 #include "online/solver.h"
+#include "online/random_store.h"
 #include "prediction/oracle.hpp"
 #include "prediction/prediction.h"
 
+
+struct ThreadData_t {
+    double* online_solution;
+    Config* config;
+    RandomStore* random_store;
+    Model* model;
+    Oracle* oracle;
+};
+
+void* solve(void *thread_args)
+{
+    struct ThreadData_t *local_data;
+    local_data = (struct ThreadData_t *) thread_args;
+
+    Solver solver(*(local_data->config), *(local_data->random_store), *(local_data->model));
+    const DoubleVec_t& solution = solver.solve(*(local_data->oracle));
+    for (uint32_t idx = 0; idx < solution.size(); idx++) {
+        local_data->online_solution[idx] = solution[idx];
+    }
+
+    pthread_exit(NULL);
+}
 
 int main(int argc, char** argv)
 {
@@ -53,7 +77,7 @@ int main(int argc, char** argv)
     const DoubleVec_t& greedy_solution = greedy_solver.solve();
     cp_model.setCurrentSolution(greedy_solution);
     double greedy_objective_value = cp_model.getObjectiveValue();
-    std::cout << ">>> GREEDY = " << greedy_objective_value << std::endl << std::flush;
+    std::cout << std::endl << ">>> GREEDY = " << greedy_objective_value << std::endl << std::flush;
     cp_model.getFormattedSolution();
     cp_model.printFormattedSolution();
 
@@ -63,7 +87,7 @@ int main(int argc, char** argv)
     const DoubleVec_t& offline_solution = fw_algo.solve(greedy_solution);
     cp_model.setCurrentSolution(offline_solution);
     double offline_objective_value = cp_model.getObjectiveValue();
-    std::cout << ">>> OFFLINE OPTIMAL FRACTIONAL = " << offline_objective_value << std::endl << std::flush;
+    std::cout << std::endl << ">>> OFFLINE OPTIMAL FRACTIONAL = " << offline_objective_value << std::endl << std::flush;
     const CP_Model::SolutionVec_t& formatted_solution = cp_model.getFormattedSolution();
     cp_model.printFormattedSolution();
 
@@ -71,10 +95,11 @@ int main(int argc, char** argv)
     // Create predictions
     Prediction oracles(config, model, formatted_solution);
     for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
-        const Oracle& oracle = oracles.getOracle(oracle_idx);
-        std::cout << ">>> ORACLE (" << (oracle_idx + 1) << ") = " << oracle.objective_value << std::endl << std::flush;
+        Oracle* oracle = oracles.getOracle(oracle_idx);
+        std::cout << std::endl << ">>> ORACLE (" << (oracle_idx + 1) << ") = " << oracle->objective_value << std::endl << std::flush;
         oracles.printFormattedSolution(oracle_idx);
     }
+    std::cout << std::endl << std::flush;
 
 
     // Calculate the online solution with different eta and oracle
@@ -86,19 +111,46 @@ int main(int argc, char** argv)
     int best_oracle_idx = -1;
     double best_objective_value = std::numeric_limits<double>::infinity();
 
-    double eta = 1.0;
-    Solver solver(config, model);
+    RandomStore random_store(config.random_seed, config.random_store_size);
 
+    // Setup threads
+    pthread_t threads[oracles.getNbOracles()];
+    struct ThreadData_t thread_data[oracles.getNbOracles()];
+    void* status;
+    for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
+        thread_data[oracle_idx].online_solution = new double[cp_model.getNbVariables()];
+        thread_data[oracle_idx].config = &config;
+        thread_data[oracle_idx].random_store = &random_store;
+        thread_data[oracle_idx].model = &model;
+        thread_data[oracle_idx].oracle = oracles.getOracle(oracle_idx);
+    }
+
+    double eta = 1.0;
     while (eta > 0) {
         config.update(eta);
 
         for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
-            const Oracle& oracle = oracles.getOracle(oracle_idx);
-            double prediction_comp_ratio = (offline_objective_value / oracle.objective_value);
+            int return_code = pthread_create(&threads[oracle_idx], NULL, solve, (void *)&thread_data[oracle_idx]);
 
-            std::cout << "ONLINE (eta  = " << eta << "; oracle = " << (oracle_idx + 1) << ") is running" << std::endl << std::flush;
-            const DoubleVec_t& online_solution = solver.solve(oracle);
-            cp_model.setCurrentSolution(online_solution);
+            if (return_code) {
+                std::cout << "ERROR: thread creation failed!" << std::endl;
+            }
+        }
+
+        for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
+            pthread_join(threads[oracle_idx], &status);
+        }
+
+        for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
+            Oracle* oracle = oracles.getOracle(oracle_idx);
+            double prediction_comp_ratio = (offline_objective_value / oracle->objective_value);
+
+            DoubleVec_t local_solution(cp_model.getNbVariables(), 0.0);
+            for (uint32_t idx = 0; idx < cp_model.getNbVariables(); idx++) {
+                local_solution[idx] = thread_data[oracle_idx].online_solution[idx];
+            }
+
+            cp_model.setCurrentSolution(local_solution);
             double online_objective_value = cp_model.getObjectiveValue();
             double online_comp_ratio = (offline_objective_value / online_objective_value);
             std::cout << ">>> ONLINE (eta  = " << eta << "; oracle = " << (oracle_idx + 1) << ") = " << online_objective_value << std::endl << std::flush;
@@ -122,15 +174,20 @@ int main(int argc, char** argv)
     }
     out.close();
 
+    for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
+        delete[] thread_data[oracle_idx].online_solution;
+    }
+
     // Print best online scenario
-    const Oracle& oracle = oracles.getOracle(best_oracle_idx);
+    Oracle* oracle = oracles.getOracle(best_oracle_idx);
     config.update(best_eta);
 
-    const DoubleVec_t& online_solution = solver.solve(oracle);
+    Solver solver(config, random_store, model);
+    const DoubleVec_t& online_solution = solver.solve(*oracle);
     cp_model.setCurrentSolution(online_solution);
     double online_objective_value = cp_model.getObjectiveValue();
 
-    std::cout << ">>> BEST ONLINE (eta  = " << best_eta << "; oracle = " << (best_oracle_idx + 1) << ") = " << online_objective_value << std::endl;
+    std::cout << std::endl << ">>> BEST ONLINE (eta  = " << best_eta << "; oracle = " << (best_oracle_idx + 1) << ") = " << online_objective_value << std::endl;
     cp_model.getFormattedSolution();
     cp_model.printFormattedSolution();
 

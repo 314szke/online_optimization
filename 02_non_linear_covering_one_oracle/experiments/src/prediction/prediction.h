@@ -16,7 +16,7 @@ public:
     Prediction(const Config& config, Model& model, const CP_Model::SolutionVec_t& offline_paths);
 
     uint32_t getNbOracles() const;
-    const Oracle& getOracle(uint32_t oracle_idx) const;
+    Oracle* getOracle(uint32_t oracle_idx);
     void printFormattedSolution(uint32_t oracle_idx) const;
 private:
     bool oracleIsNotUnique(const Oracle& oracle);

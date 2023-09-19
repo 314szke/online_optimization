@@ -7,7 +7,7 @@ CXX= clang++
 CPPFLAGS= -std=c++17 -Wall -Wextra -Wfloat-conversion -Wimplicit-int-float-conversion -I./$(SRCDIR) -I/opt/gurobi1001/linux64/include/
 LINKER=$(CXX)
 
-LDFLAGS = -L/opt/gurobi1001/linux64/lib -lgurobi_c++ -lgurobi100 -lm
+LDFLAGS = -L/opt/gurobi1001/linux64/lib -lgurobi_c++ -lgurobi100 -lm -lpthread
 
 SRCDIR= src
 TESTDIR= test

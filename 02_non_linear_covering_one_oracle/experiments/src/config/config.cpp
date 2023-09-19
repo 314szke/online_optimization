@@ -20,7 +20,8 @@ Config::Config(std::string& config_file) :
     eta_step(0.0),
     nb_oracles(0),
     nb_oracle_search(0),
-    random_seed(0)
+    random_seed(0),
+    random_store_size(10000000) // 10 million
 {
     f_in.open(config_file);
 

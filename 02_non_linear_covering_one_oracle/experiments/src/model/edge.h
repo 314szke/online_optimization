@@ -10,8 +10,8 @@ public:
     Edge();
     void set(uint32_t num, double coeff, double expo, double constant);
 
-    double getCost(double value);
-    double getDerivative(double value);
+    double getCost(double value) const;
+    double getDerivative(double value) const;
 
     int64_t id;
 

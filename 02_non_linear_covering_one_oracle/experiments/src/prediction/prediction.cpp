@@ -33,9 +33,9 @@ uint32_t Prediction::getNbOracles() const
     return oracles.size();
 }
 
-const Oracle& Prediction::getOracle(uint32_t oracle_idx) const
+Oracle* Prediction::getOracle(uint32_t oracle_idx)
 {
-    return oracles[oracle_idx];
+    return &(oracles[oracle_idx]);
 }
 
 void Prediction::printFormattedSolution(uint32_t oracle_idx) const
@@ -43,9 +43,9 @@ void Prediction::printFormattedSolution(uint32_t oracle_idx) const
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         Solution formatted_solution(_model, oracles[oracle_idx].predictions[r], _model.requests[r].source, _model.requests[r].target);
 
-        std::cout << "Request " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
+        std::cout << "\tRequest " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
         for (uint32_t p = 0; p < formatted_solution.vertices.size(); p++) {
-            std::cout << "\tPath " << (p+1) << " with ratio (" << formatted_solution.ratios[p] << "): [ v";
+            std::cout << "\t\tPath " << (p+1) << " with ratio (" << formatted_solution.ratios[p] << "): [ v";
             for (uint32_t idx = 0; idx < (formatted_solution.vertices[p].size() - 1); idx++) {
                 std::cout << formatted_solution.vertices[p][idx] << " v";
             }

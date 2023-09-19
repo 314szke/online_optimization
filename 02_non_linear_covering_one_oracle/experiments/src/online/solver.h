@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <random>
 
 #include "config/config.h"
@@ -8,20 +7,22 @@
 #include "prediction/oracle.hpp"
 #include "types/local_types.h"
 
+#include "random_store.h"
+
 
 class Solver {
 public:
-    Solver(const Config& config, Model& model);
+    Solver(const Config& config, const RandomStore& random_store, const Model& model);
     const DoubleVec_t& solve(const Oracle& oracle);
 private:
-    void init();
     bool pathExists(uint32_t s, uint32_t t);
     void transformSolution(uint32_t r);
     double getDeltaF(uint32_t edge);
     double getRandomNumber();
 
     const Config& _config;
-    Model& _model;
+    const RandomStore& _random_store;
+    const Model& _model;
 
     DoubleVec_t x;
     DoubleVec_t B;
@@ -32,9 +33,7 @@ private:
     uint32_t nb_cp_variables;
     DoubleVec_t cp_solution;
 
-    std::unique_ptr<std::mt19937> random_engine;
-    std::uniform_real_distribution<double> uni_dist;
+    std::mt19937 random_engine;
     UIntVec_t random_set;
-    DoubleVec_t random_numbers;
     uint32_t random_idx;
 };

@@ -88,9 +88,9 @@ const CP_Model::SolutionVec_t& CP_Model::getFormattedSolution()
 void CP_Model::printFormattedSolution() const
 {
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        std::cout << "Request " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
+        std::cout << "\tRequest " << (r+1) << " (v" << _model.requests[r].source << " -> v" << _model.requests[r].target << "):" << std::endl;
         for (uint32_t p = 0; p < formatted_solution[r].vertices.size(); p++) {
-            std::cout << "\tPath " << (p+1) << " with ratio (" << formatted_solution[r].ratios[p] << "): [ v";
+            std::cout << "\t\tPath " << (p+1) << " with ratio (" << formatted_solution[r].ratios[p] << "): [ v";
             for (uint32_t idx = 0; idx < (formatted_solution[r].vertices[p].size() - 1); idx++) {
                 std::cout << formatted_solution[r].vertices[p][idx] << " v";
             }

@@ -26,4 +26,5 @@ public:
     uint32_t nb_oracles;
     uint32_t nb_oracle_search;
     uint32_t random_seed;
+    uint32_t random_store_size;
 };

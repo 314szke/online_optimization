@@ -17,12 +17,12 @@ void Edge::set(uint32_t num, double coeff, double expo, double constant)
     constant_term = constant;
 }
 
-double Edge::getCost(double value)
+double Edge::getCost(double value) const
 {
     return (coefficient * std::pow(value, exponent)) + constant_term;
 }
 
-double Edge::getDerivative(double value)
+double Edge::getDerivative(double value) const
 {
     return (coefficient * exponent) * std::pow(value, (exponent-1));
 }

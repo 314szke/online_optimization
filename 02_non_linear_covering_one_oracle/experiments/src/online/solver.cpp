@@ -6,55 +6,36 @@
 #include "model/solution.h"
 
 
-Solver::Solver(const Config& config, Model& model):
+Solver::Solver(const Config& config, const RandomStore& random_store, const Model& model):
     _config(config),
+    _random_store(random_store),
     _model(model),
     edges(model.graph.nb_edges),
     wait_for_new_edge(false),
     nb_cp_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
     cp_solution(nb_cp_variables, 0.0),
-    uni_dist(0.0, 1.0),
+    random_engine(_config.random_seed),
     random_set(_model.graph.nb_edges),
-    random_numbers(1000000), // 1 million
     random_idx(0)
-{
-    init();
-
-    for (uint32_t idx = 0; idx < random_numbers.size(); idx++) {
-        random_numbers[idx] = uni_dist(*random_engine);
-    }
-}
-
-void Solver::init()
 {
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         edges[e] = e;
     }
-
-    for (uint32_t idx = 0; idx < nb_cp_variables; idx++) {
-        cp_solution[idx] = 0.0;
-    }
-
-    random_engine.reset(new std::mt19937(_config.random_seed));
-    wait_for_new_edge = false;
-    random_idx = 0;
 }
 
 const DoubleVec_t& Solver::solve(const Oracle& oracle)
 {
-    init();
-
     uint32_t e;
     double delta_e_F, lambda_delta_e_F;
     double increasing_rate;
 
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        std::cout << "\tSolving request [" << (r+1) << "/" << _model.nb_requests << "]" << std::endl << std::flush;
+        //std::cout << "\tSolving request [" << (r+1) << "/" << _model.nb_requests << "]" << std::endl << std::flush;
         x = DoubleVec_t(_model.graph.nb_edges, 0.0);
         B = DoubleVec_t(_model.graph.nb_edges, 0.0);
 
         while (! pathExists(_model.requests[r].source, _model.requests[r].target)) {
-            std::shuffle(edges.begin(), edges.end(), *random_engine);
+            std::shuffle(edges.begin(), edges.end(), random_engine);
 
             for (uint32_t e_idx = 0; e_idx < _model.graph.nb_edges; e_idx++) {
                 e = edges[e_idx];
@@ -170,10 +151,10 @@ double Solver::getDeltaF(uint32_t edge)
 double Solver::getRandomNumber()
 {
     random_idx++;
-    if (random_idx > random_numbers.size()) {
+    if (random_idx == _config.random_store_size) {
         random_idx = 0;
     }
-    return random_numbers[random_idx];
+    return _random_store.getRandomNumber(random_idx);
 }
 
 void Solver::transformSolution(uint32_t r)
