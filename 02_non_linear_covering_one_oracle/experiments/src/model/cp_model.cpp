@@ -85,6 +85,11 @@ const CP_Model::SolutionVec_t& CP_Model::getFormattedSolution()
     return formatted_solution;
 }
 
+const CP_Model::SolutionVec_t& CP_Model::getLastFormattedSolution() const
+{
+    return formatted_solution;
+}
+
 void CP_Model::printFormattedSolution() const
 {
     for (uint32_t r = 0; r < _model.nb_requests; r++) {

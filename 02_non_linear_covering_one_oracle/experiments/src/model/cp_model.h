@@ -14,6 +14,7 @@ public:
 
     void setCurrentSolution(const DoubleVec_t& x);
     const SolutionVec_t& getFormattedSolution();
+    const SolutionVec_t& getLastFormattedSolution() const;
     void printFormattedSolution() const;
 
     uint32_t max_dimension;

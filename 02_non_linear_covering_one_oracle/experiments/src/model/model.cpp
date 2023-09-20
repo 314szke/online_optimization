@@ -7,7 +7,7 @@
 #include "edge_id.hpp"
 
 
-Model::Model(std::string& data_file) :
+Model::Model(const std::string& data_file) :
     nb_requests(0),
     f_in(data_file),
     line_counter(0)

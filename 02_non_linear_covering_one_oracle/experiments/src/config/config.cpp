@@ -4,7 +4,7 @@
 #include <math.h>
 
 
-Config::Config(std::string& config_file) :
+Config::Config(const std::string& config_file) :
     time_horizon(0),
     max_search_iter(0),
     max_distance(0.0),
@@ -21,7 +21,8 @@ Config::Config(std::string& config_file) :
     nb_oracles(0),
     nb_oracle_search(0),
     random_seed(0),
-    random_store_size(10000000) // 10 million
+    random_store_size(10000000), // 10 million
+    use_threads(0)
 {
     f_in.open(config_file);
 
@@ -43,6 +44,7 @@ Config::Config(std::string& config_file) :
     readParameter(nb_oracles);
     readParameter(nb_oracle_search);
     readParameter(random_seed);
+    readParameter(use_threads);
 
     f_in.close();
 }

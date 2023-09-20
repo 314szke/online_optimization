@@ -7,7 +7,7 @@
 
 class Config : private ConfiguredObject {
 public:
-    Config(std::string& config_file);
+    Config(const std::string& config_file);
     void update(double new_eta);
 
     uint32_t time_horizon;
@@ -27,4 +27,5 @@ public:
     uint32_t nb_oracle_search;
     uint32_t random_seed;
     uint32_t random_store_size;
+    uint32_t use_threads;
 };

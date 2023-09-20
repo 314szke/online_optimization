@@ -133,6 +133,7 @@ void RandomGenerator::generateConfig()
     f_out << "nb_oracles = 3             # the algorithm's performance will be compared to the this many oracles that have randomly rounded solutions" << std::endl;
     f_out << "nb_oracle_search = 10      # max number of attempts to look for a unique randomly rounded oracle" << std::endl;
     f_out << "random_seed = 1234         # used during oracle prediction generation" << std::endl;
+    f_out << "use_threads = 0            # value 0 or 1 to indicate whether multiple threads should be used during the execution" << std::endl;
 
     f_out.close();
 }

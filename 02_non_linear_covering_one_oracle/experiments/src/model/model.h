@@ -15,7 +15,7 @@ class Model {
 public:
     typedef std::vector<Request> RequestVec_t;
 
-    Model(std::string& data_file);
+    Model(const std::string& data_file);
 
     Graph graph;
 
