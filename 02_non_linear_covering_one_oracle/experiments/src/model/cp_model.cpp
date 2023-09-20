@@ -23,7 +23,7 @@ CP_Model::CP_Model(Model& model) :
         constr_idx++;
     }
 
-    // Flow preservation constraints on non-source and non-target vertices
+    // Flow preservation constraints
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
         for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
             if (i == _model.requests[r].source) {

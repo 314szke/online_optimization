@@ -41,7 +41,7 @@ void GreedySolver::findInitialSolution(uint32_t s, uint32_t t)
 
 void GreedySolver::transformSolution(uint32_t r)
 {
-    uint32_t e, i, j;
+    uint32_t i, j;
     uint32_t best_path = 0;
     double best_objective = std::numeric_limits<double>::infinity();
 
@@ -50,13 +50,18 @@ void GreedySolver::transformSolution(uint32_t r)
     // Take the min cost path
     if (formatted_solution.paths.size() > 1) {
         for (uint32_t p = 0; p < formatted_solution.paths.size(); p++) {
+            DoubleVec_t new_path(_model.graph.nb_edges, 0.0);
+            for (uint32_t e = 0; e < formatted_solution.paths[p].size(); e++) {
+                new_path[formatted_solution.paths[p][e]] = 1.0;
+            }
+
             double cost = 0.0;
-            for (uint32_t e_idx = 0; e_idx < formatted_solution.paths[p].size(); e_idx++) {
-                e = formatted_solution.paths[p][e_idx];
+            for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
                 i = _model.graph.ID[e].i;
                 j = _model.graph.ID[e].j;
-                cost += _model.graph.A[i][j].getCost(cp_solution[e] + 1);
+                cost += _model.graph.A[i][j].getCost(cp_solution[e] + new_path[e]);
             }
+
             if (cost < best_objective) {
                 best_objective = cost;
                 best_path = p;
@@ -67,7 +72,7 @@ void GreedySolver::transformSolution(uint32_t r)
     uint32_t start = _model.graph.nb_edges + (r * _model.graph.nb_edges);
 
     for (uint32_t e_idx = 0; e_idx < formatted_solution.paths[best_path].size(); e_idx++) {
-        e = formatted_solution.paths[best_path][e_idx];
+        uint32_t e = formatted_solution.paths[best_path][e_idx];
         cp_solution[(start + e)] = 1.0;
         cp_solution[e] += 1.0;
     }
