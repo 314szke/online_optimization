@@ -1,7 +1,5 @@
 #include "frank_wolfe.h"
 
-#include <iostream>
-
 
 FrankWolfe::FrankWolfe(const Config& config, BaseModel& model) :
     T(config.time_horizon),

@@ -8,7 +8,7 @@ Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uin
 {
     // Find all paths used by the CP solution
     BoolVec_t visited(_model.graph.nb_vertices, false);
-    UIntMat_t all_paths = findPathFrom(s, visited);
+    UIntMat_t all_paths = findPathFrom(s, visited, edges);
 
     // Remove paths which do not end in t
     bool removed_a_path;
@@ -25,31 +25,8 @@ Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uin
 
     } while (removed_a_path);
 
-    // Remove paths which have edges not included in the CP solution
-    uint32_t i, j, e;
-    do {
-        removed_a_path = false;
-
-        for (uint32_t idx = 0; idx < all_paths.size(); idx++) {
-            for (uint32_t v = 0; v < (all_paths[idx].size() - 1); v++) {
-                i = all_paths[idx][v];
-                j = all_paths[idx][v + 1];
-                e = _model.graph.A[i][j].id;
-                if (edges[e] == 0.0) {
-                    all_paths.erase(all_paths.begin() + idx);
-                    removed_a_path = true;
-                    break;
-                }
-            }
-            if (removed_a_path) {
-                break;
-            }
-        }
-
-    } while (removed_a_path);
-
-
     // Convert vertices to edges
+    uint32_t i, j, e;
     for (uint32_t idx = 0; idx < all_paths.size(); idx++) {
         paths.push_back(UIntVec_t());
         vertices.push_back(UIntVec_t());
@@ -72,7 +49,7 @@ Solution::Solution(const Model& model, const DoubleVec_t& edges, uint32_t s, uin
     }
 }
 
-UIntMat_t Solution::findPathFrom(uint32_t s, const BoolVec_t& visited)
+UIntMat_t Solution::findPathFrom(uint32_t s, const BoolVec_t& visited, const DoubleVec_t& edges)
 {
     // There is always a path from s to s
     UIntMat_t all_paths;
@@ -83,9 +60,9 @@ UIntMat_t Solution::findPathFrom(uint32_t s, const BoolVec_t& visited)
     local_visited[s] = true;
 
     for (uint32_t i = 0; i < _model.graph.nb_vertices; i++) {
-        if ((_model.graph.A[s][i].id != -1) && (! local_visited[i])) {
+        if ((_model.graph.A[s][i].id != -1) && (! local_visited[i]) && (edges[_model.graph.A[s][i].id] != 0.0)) {
 
-            UIntMat_t new_paths = findPathFrom(i, local_visited);
+            UIntMat_t new_paths = findPathFrom(i, local_visited, edges);
             for (uint32_t idx = 0; idx < new_paths.size(); idx++) {
                 all_paths.push_back(UIntVec_t());
                 all_paths.back().push_back(s);

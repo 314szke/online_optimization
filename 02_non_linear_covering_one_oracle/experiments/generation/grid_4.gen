@@ -1,0 +1,10 @@
+width = 7                  # the number of vertices of the generated grid on the horizontal side
+height = 7                 # the number of vertices of the generated grid on the vertical side
+nb_requests = 19           # the number of vertices of the generated graph
+edge_prob = 1.0            # the probablity to create edges for the generated graph (can be higher to avoid unreachable areas)
+min_coeff = 1.0            # min for the cost of the edges is coeff * x^degree
+max_coeff = 1.0            # max for the cost of the edges is coeff * x^degree
+min_degree = 3.0           # min for the degree of the edges is coeff * x^degree
+max_degree = 3.0           # max for the degree of the edges is coeff * x^degree
+min_constant = 0.0         # min constant term in the edge cost coeff * x^degree + constant
+max_constant = 0.0         # max constant term in the edge cost coeff * x^degree + constant
