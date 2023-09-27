@@ -10,22 +10,15 @@ Solver::Solver(const Config& config, const RandomStore& random_store, const Mode
     _config(config),
     _random_store(random_store),
     _model(model),
-    edges(model.graph.nb_edges),
     wait_for_new_edge(false),
     nb_cp_variables(model.graph.nb_edges + (model.graph.nb_edges * model.nb_requests)),
     cp_solution(nb_cp_variables, 0.0),
-    random_engine(_config.random_seed),
     random_set(_model.graph.nb_edges),
     random_idx(0)
-{
-    for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
-        edges[e] = e;
-    }
-}
+{}
 
 const DoubleVec_t& Solver::solve(const Oracle& oracle)
 {
-    uint32_t e;
     double delta_e_F, lambda_delta_e_F;
     double increasing_rate;
 
@@ -35,11 +28,7 @@ const DoubleVec_t& Solver::solve(const Oracle& oracle)
         B = DoubleVec_t(_model.graph.nb_edges, 0.0);
 
         while (! pathExists(_model.requests[r].source, _model.requests[r].target)) {
-            std::shuffle(edges.begin(), edges.end(), random_engine);
-
-            for (uint32_t e_idx = 0; e_idx < _model.graph.nb_edges; e_idx++) {
-                e = edges[e_idx];
-
+            for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
                 if (x[e] < 1.0) {
                     delta_e_F = getDeltaF(e);
                     lambda_delta_e_F = (1.0 / _config.lambda) * delta_e_F;
@@ -57,9 +46,6 @@ const DoubleVec_t& Solver::solve(const Oracle& oracle)
                     if (x[e] >= (1.0 - _config.epsilon)) {
                         x[e] = 1.0;
                         wait_for_new_edge = false;
-                        if (pathExists(_model.requests[r].source, _model.requests[r].target)) {
-                            break;
-                        }
                     }
                 }
             }

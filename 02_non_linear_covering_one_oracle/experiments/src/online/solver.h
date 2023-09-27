@@ -27,13 +27,11 @@ private:
     DoubleVec_t x;
     DoubleVec_t B;
 
-    UIntVec_t edges;
     bool wait_for_new_edge;
 
     uint32_t nb_cp_variables;
     DoubleVec_t cp_solution;
 
-    std::mt19937 random_engine;
     UIntVec_t random_set;
     uint32_t random_idx;
 };
