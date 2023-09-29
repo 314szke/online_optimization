@@ -1,0 +1,115 @@
+>>> GREEDY = 196.00
+	Request 1 (v5 -> v2):
+		Path 1 with ratio (1.00): [ v5 v3 v0 v1 v2 ]
+	Request 2 (v0 -> v5):
+		Path 1 with ratio (1.00): [ v0 v3 v5 ]
+	Request 3 (v0 -> v2):
+		Path 1 with ratio (1.00): [ v0 v1 v2 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v3 ]
+	Request 5 (v3 -> v5):
+		Path 1 with ratio (1.00): [ v3 v5 ]
+	Request 6 (v0 -> v1):
+		Path 1 with ratio (1.00): [ v0 v1 ]
+	Request 7 (v1 -> v2):
+		Path 1 with ratio (1.00): [ v1 v2 ]
+
+>>> OFFLINE = 69.00
+	Request 1 (v5 -> v2):
+		Path 1 with ratio (0.00): [ v5 v3 v0 v1 v2 ]
+		Path 2 with ratio (1.00): [ v5 v6 v7 v4 v2 ]
+	Request 2 (v0 -> v5):
+		Path 1 with ratio (0.00): [ v0 v1 v2 v4 v7 v6 v5 ]
+		Path 2 with ratio (1.00): [ v0 v3 v5 ]
+	Request 3 (v0 -> v2):
+		Path 1 with ratio (1.00): [ v0 v1 v2 ]
+		Path 2 with ratio (0.00): [ v0 v3 v5 v6 v7 v4 v2 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v3 ]
+	Request 5 (v3 -> v5):
+		Path 1 with ratio (1.00): [ v3 v5 ]
+	Request 6 (v0 -> v1):
+		Path 1 with ratio (1.00): [ v0 v1 ]
+		Path 2 with ratio (0.00): [ v0 v3 v5 v6 v7 v4 v2 v1 ]
+	Request 7 (v1 -> v2):
+		Path 1 with ratio (0.00): [ v1 v0 v3 v5 v6 v7 v4 v2 ]
+		Path 2 with ratio (1.00): [ v1 v2 ]
+
+
+>>> ORACLE (1) = 69.00
+	Request 1 (v5 -> v2):
+		Path 1 with ratio (1.00): [ v5 v6 v7 v4 v2 ]
+	Request 2 (v0 -> v5):
+		Path 1 with ratio (1.00): [ v0 v3 v5 ]
+	Request 3 (v0 -> v2):
+		Path 1 with ratio (1.00): [ v0 v1 v2 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v3 ]
+	Request 5 (v3 -> v5):
+		Path 1 with ratio (1.00): [ v3 v5 ]
+	Request 6 (v0 -> v1):
+		Path 1 with ratio (1.00): [ v0 v1 ]
+	Request 7 (v1 -> v2):
+		Path 1 with ratio (1.00): [ v1 v2 ]
+
+ONLINE run the solver with different eta and oracles...
+
+	ONLINE (eta = 1.00) is running
+		Solving [1/1]
+	ONLINE (eta  = 1.00; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.90) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.90; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.80) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.80; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.70) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.70; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.60) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.60; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.51) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.51; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.41) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.41; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.31) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.31; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.21) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.21; oracle = 1) = 196.00
+
+	ONLINE (eta = 0.11) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.11; oracle = 1) = 69.00
+
+	ONLINE (eta = 0.01) is running
+		Solving [1/1]
+	ONLINE (eta  = 0.01; oracle = 1) = 69.00
+
+>>> BEST ONLINE (eta  = 0.11; oracle = 1) = 69.00
+	Request 1 (v5 -> v2):
+		Path 1 with ratio (1.00): [ v5 v6 v7 v4 v2 ]
+	Request 2 (v0 -> v5):
+		Path 1 with ratio (1.00): [ v0 v3 v5 ]
+	Request 3 (v0 -> v2):
+		Path 1 with ratio (1.00): [ v0 v1 v2 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v3 ]
+	Request 5 (v3 -> v5):
+		Path 1 with ratio (1.00): [ v3 v5 ]
+	Request 6 (v0 -> v1):
+		Path 1 with ratio (1.00): [ v0 v1 ]
+	Request 7 (v1 -> v2):
+		Path 1 with ratio (1.00): [ v1 v2 ]

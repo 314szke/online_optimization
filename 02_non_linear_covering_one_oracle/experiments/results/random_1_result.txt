@@ -1,0 +1,78 @@
+Eta;CompRatio;Algo
+1;0.85234;greedy
+1;0.511118;oracle 1
+1;0.85234;algo(oracle 1)
+1;0.721392;oracle 2
+1;0.85234;algo(oracle 2)
+1;0.816496;oracle 3
+1;0.85234;algo(oracle 3)
+0.901;0.85234;greedy
+0.901;0.511118;oracle 1
+0.901;0.85234;algo(oracle 1)
+0.901;0.721392;oracle 2
+0.901;0.85234;algo(oracle 2)
+0.901;0.816496;oracle 3
+0.901;0.85234;algo(oracle 3)
+0.802;0.85234;greedy
+0.802;0.511118;oracle 1
+0.802;0.752203;algo(oracle 1)
+0.802;0.721392;oracle 2
+0.802;0.79638;algo(oracle 2)
+0.802;0.816496;oracle 3
+0.802;0.85234;algo(oracle 3)
+0.703;0.85234;greedy
+0.703;0.511118;oracle 1
+0.703;0.752203;algo(oracle 1)
+0.703;0.721392;oracle 2
+0.703;0.79638;algo(oracle 2)
+0.703;0.816496;oracle 3
+0.703;0.85234;algo(oracle 3)
+0.604;0.85234;greedy
+0.604;0.511118;oracle 1
+0.604;0.715078;algo(oracle 1)
+0.604;0.721392;oracle 2
+0.604;0.79638;algo(oracle 2)
+0.604;0.816496;oracle 3
+0.604;0.816496;algo(oracle 3)
+0.505;0.85234;greedy
+0.505;0.511118;oracle 1
+0.505;0.715078;algo(oracle 1)
+0.505;0.721392;oracle 2
+0.505;0.79638;algo(oracle 2)
+0.505;0.816496;oracle 3
+0.505;0.816496;algo(oracle 3)
+0.406;0.85234;greedy
+0.406;0.511118;oracle 1
+0.406;0.663736;algo(oracle 1)
+0.406;0.721392;oracle 2
+0.406;0.79638;algo(oracle 2)
+0.406;0.816496;oracle 3
+0.406;0.816496;algo(oracle 3)
+0.307;0.85234;greedy
+0.307;0.511118;oracle 1
+0.307;0.663736;algo(oracle 1)
+0.307;0.721392;oracle 2
+0.307;0.79638;algo(oracle 2)
+0.307;0.816496;oracle 3
+0.307;0.816496;algo(oracle 3)
+0.208;0.85234;greedy
+0.208;0.511118;oracle 1
+0.208;0.663736;algo(oracle 1)
+0.208;0.721392;oracle 2
+0.208;0.79638;algo(oracle 2)
+0.208;0.816496;oracle 3
+0.208;0.816496;algo(oracle 3)
+0.109;0.85234;greedy
+0.109;0.511118;oracle 1
+0.109;0.663736;algo(oracle 1)
+0.109;0.721392;oracle 2
+0.109;0.79638;algo(oracle 2)
+0.109;0.816496;oracle 3
+0.109;0.816496;algo(oracle 3)
+0.01;0.85234;greedy
+0.01;0.511118;oracle 1
+0.01;0.511118;algo(oracle 1)
+0.01;0.721392;oracle 2
+0.01;0.721392;algo(oracle 2)
+0.01;0.816496;oracle 3
+0.01;0.816496;algo(oracle 3)
