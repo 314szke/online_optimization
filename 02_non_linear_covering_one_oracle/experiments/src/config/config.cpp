@@ -19,6 +19,7 @@ Config::Config(const std::string& config_file) :
     DT(0.0),
     eta_step(0.0),
     nb_oracles(0),
+    nb_generated_oracles(0),
     nb_oracle_search(0),
     random_seed(0),
     random_store_size(10000000), // 10 million
@@ -42,6 +43,7 @@ Config::Config(const std::string& config_file) :
     readParameter(DT);
     readParameter(eta_step);
     readParameter(nb_oracles);
+    readParameter(nb_generated_oracles);
     readParameter(nb_oracle_search);
     readParameter(random_seed);
     readParameter(use_threads);

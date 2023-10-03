@@ -1,7 +1,9 @@
 #include "prediction.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
+#include <limits>
 
 #include "model/model.h"
 
@@ -11,7 +13,8 @@ Prediction::Prediction(const Config& config, Model& model, const CP_Model::Solut
     _solution(offline_paths),
     random_engine(config.random_seed)
 {
-    for (uint32_t oracle_idx = 0; oracle_idx < config.nb_oracles; oracle_idx++) {
+    // Generate oracles
+    for (uint32_t oracle_idx = 0; oracle_idx < config.nb_generated_oracles; oracle_idx++) {
         Oracle oracle;
         oracle.dimensions.resize(_model.nb_requests);
         oracle.predictions.resize(_model.nb_requests);
@@ -26,6 +29,57 @@ Prediction::Prediction(const Config& config, Model& model, const CP_Model::Solut
             oracles.push_back(oracle);
         }
     }
+/*
+    // Keep only the best oracles
+    while (oracles.size() > config.nb_oracles) {
+        double max_objective = 0.0;
+        int64_t max_idx = -1;
+        for (uint32_t idx = 0; idx < oracles.size(); idx++) {
+            if (oracles[idx].objective_value > max_objective) {
+                max_objective = oracles[idx].objective_value;
+                max_idx = idx;
+            }
+        }
+        oracles.erase(oracles.begin() + max_idx);
+    }
+*/
+
+    // Keep best, worst, middle oracles
+    double min_objective = std::numeric_limits<double>::infinity();
+    int64_t min_idx = -1;
+    for (uint32_t idx = 0; idx < oracles.size(); idx++) {
+        if (oracles[idx].objective_value < min_objective) {
+            min_objective = oracles[idx].objective_value;
+            min_idx = idx;
+        }
+    }
+
+    double max_objective = 0.0;
+    int64_t max_idx = -1;
+    for (uint32_t idx = 0; idx < oracles.size(); idx++) {
+        if (oracles[idx].objective_value > max_objective) {
+            max_objective = oracles[idx].objective_value;
+            max_idx = idx;
+        }
+    }
+
+    double min_distance = std::numeric_limits<double>::infinity();
+    double middle_value = min_objective + ((max_objective - min_objective) / 2.0);
+    int64_t middle_idx = -1;
+    double distance;
+    for (uint32_t idx = 0; idx < oracles.size(); idx++) {
+        distance = std::abs(oracles[idx].objective_value - middle_value);
+        if (distance < min_distance) {
+            min_distance = distance;
+            middle_idx = idx;
+        }
+    }
+
+    OracleVec_t final_oracles;
+    final_oracles.push_back(oracles[min_idx]);
+    final_oracles.push_back(oracles[middle_idx]);
+    final_oracles.push_back(oracles[max_idx]);
+    oracles = final_oracles;
 }
 
 uint32_t Prediction::getNbOracles() const

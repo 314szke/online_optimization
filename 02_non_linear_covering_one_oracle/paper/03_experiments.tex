@@ -8,31 +8,26 @@ that are motivated by congestion management.
 In the routing problem, we are given a directed graph $G(A,V)$, a set of requests $R = \{(s_{i}, t_{i}) : s_{i}, t_{i} \in V\}$ that represents demands of
 connecting $s_{i}$ to $t_{i}$. We assume that for each request, there exists a directed path between $s_{i}$ to $t_{i}$.
 Each arc $(u, v) \in A$ is associated with a cost function $f_{(u,v)}: \mathbb{R}^{+} \rightarrow \mathbb{R}^{+}$ that depends on the number of requests using the arc.
-Requests arrive online, and one needs to design a routing that minimizes the total cost.
+Requests arrive online, and the goal is to design a routing that minimizes the total cost.
 
 
 \paragraph{Input.}
-We generate the input graphs randomly following the Erd\H{o}s-Rényi model $G(n, p)$, where $n$ is the number of vertices and $p$ is the probability that an arc gets created. The source and target vertices of the requests are also generated uniformly at random.
+There are two type of inputs in our experiments. The first one includes randomly generated graphs following the Erd\H{o}s-Rényi model $G(n, p)$, where $n$ is the number of vertices and $p$ is the probability that an arc gets created. The source and target vertices of the requests are also generated uniformly at random. The second input type collects specific examples designed to trap algorithms which rely on greedy heuristics.
+
 
 \paragraph{Predictions.}
-The predictions rely on the optimal offline integral solution.
-We define the error of a prediction $P$ on instance $I$ as $error(P(I)) = 1 - \frac{OPT(I)}{P(I)}$,
-where $OPT(I)$ is the objective value of the optimal offline integral solution of instance $I$ and $P(I)$ is the objective value obtained by the prediction's solution.
-To introduce errors in the prediction, we choose a request uniformly at random and attempt to find an alternative path compared to the optimal integral solution. We repeat this process several times to raise the error rate above the desired threshold.
+The predictions come from rounding the optimal offline fractional solution. If a request is served by several paths in the fractional solution, the oracle picks one of the paths uniformly at random using the amounts passing through each of them as weights. Otherwise, the oracle uses the unique best path of the optimal solution. Due to the randomized rounding, on most instances the oracles propose a worse solution than the optimal greedy integral solution, which picks the cheapest path at each time step.
+
 
 \paragraph{Implementation.}
-The covering formulation of the routing problem enumerates all possible cuts in the graph. At each arriving request $r = (s,t)$, our algorithm receives a set of constraints, $\sum_{e \in \delta(S)} x_{e}^{r} \ge 1$, where $\delta(S)$ is the cut on $S \subset V$, such that $s \in S$ and $t \notin S$.
-%This formulation generates exponential number of constraints with respect to the size of the graph at each time step, which makes the implementation of the algorithm rather impractical.
-%To circumvent this limitation, we slightly modify the implementation of our algorithm.
-Upon each arriving request, our algorithm receives two solutions: one from the prediction and one from a greedy algorithm. The greedy algorithm calculates, at each arriving request, a path that minimizes the increase of the total cost and routes the request on this path.
-It is shown that this routing has the optimal competitive ratio when the cost functions are polynomial \cite[Section 4.2]{Thang20:Online-Primal-Dual}.
-In our implementation, we update the arcs %of both solutions with the same method as
-as described in Algorithm~\ref{algo:covering}.
-%The arcs that do not belong to either the greedy solution or the prediction are always dominated by the greedy solution.
-The request is satisfied when a path exists among the arcs in the set $A^{*}$ (arcs with value $1$) in our algorithm. If such a path exists, the solution of the request is this path.
-%, therefore the implementation includes a rounding step to obtain an integral solution.
+The routing problem's covering formulation enumerates all possible cuts in the graph. Upon each arriving request $r = (s,t)$, a new set of constraints are released $\sum_{e \in \delta(S)} x_{e}^{r} \ge 1$, where $\delta(S)$ is the cut on $S \subset V$ such that $s \in S$ and $t \notin S$. This formulation generates an exponential number of constraints with respect to the size of the graph. However, these constraints can be simplified in the implementation of Algorithm~\ref{algo:covering}, since the algorithm is not constrained by standard linear program solving techniques. Algorithm~\ref{algo:covering} increases the amount of traffic on each arc following the step described on line \ref{algo-covering:x}. The request is satisfied when there exists a path among the arcs in the set $A^{*}$ (arcs with value $1$). Therefore, we can replace the constraint satisfaction with a simple path finding in the implementation. If there are several possible paths with the arcs in $A^{*}$, our algorithm chooses the minimum cost path, so the implementation includes a rounding step providing an integral solution.
 
-\paragraph{Instances.} We show the results of several instances in Figure~\ref{fig:experiment} and other figures  in Appendix~\ref{appix:experiments}. The graph of the experiment contains $40$ vertices, $126$ arcs, and $17$ requests. The cost functions of the arcs are polynomials of degree 4, and the coefficients were generated randomly in $[1.0, 10.0]$.
+
+\paragraph{Instances.} Randomly generated instances yield similar results, therefore we only present one of them, named Instance $1$. Additionally, we show an example, where the greedy heuristic makes sub-optimal decisions on Instance $2$. These two instances are complementary and allow us to examine how our algorithm behaves when the oracles' predictions are worse or better than the greedy heuristic.
+
+\textit{Instance $1$} has $20$ vertices, $184$ arcs, and $20$ requests. Each arc has a cost function of the form $f(x) = a x^b$, where $1.0 \le a \le 10.0$ and $1.0 \le b \le 4.0$. We generated $20$ oracles from the optimal offline fractional solution and kept $3$ of these oracles: the best, the worst and the middle one on the scale of their obtained objective values.
+
+\textit{Instance $2$} has $8$ vertices, $16$ arcs, and $7$ requests. This instance is specifically designed to trap the greedy heuristic. The structure of Instance $2$ is visible on ??? Figure, along with the greedy and optimal solutions.
 
 \paragraph{Observation.} When the prediction is not an optimal offline solution (the error is not 0),
 our algorithm outperforms both the prediction and the greedy solution when the confidence parameter is $0.1 \leq \eta \leq 0.8$.
@@ -40,10 +35,16 @@ In practice, predictions are neither perfect nor completely wrong. So the confid
 is rarely very close to 0 nor very close to 1. The experiments prove that our algorithm provides improvements over the predictions and the greedy solution
 (achieving the best theoretical performance) in the practical aspect of the routing problem.
 
-%because the algorithm looks for a solution using the union of the arcs belonging to the solutions of the prediction and the greedy algorithm.
-
-\begin{figure}
-    \includegraphics[width=\linewidth]{Img/figure1.pdf}
-    \caption{The x-axis show the confidence in the prediction, where 0 means higher confidence. The y-axis show the competitive ratio compared to the optimal offline integral solution. The different colors (also markers) show the result of the algorithm with different prediction error rates and the solutions of the greedy algorithm and the prediction alone.}
-    \label{fig:experiment}
-\end{figure}
+{
+    \begin{minipage}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Img/cex_init2.pdf}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Img/cex_greedy2.pdf}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Img/cex_opt2.pdf}
+    \end{minipage}
+    \captionof{figure}{Instance $2$, the greedy solution, and the optimal solution}
+    \label{fig:cex}
+}

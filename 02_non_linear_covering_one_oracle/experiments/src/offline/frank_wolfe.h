@@ -13,6 +13,7 @@ public:
 private:
     double computeNewEta();
     double getObjectiveValue(double eta);
+    double round(double value);
 
     uint32_t T;
     uint32_t max_search_iter;

@@ -1,5 +1,8 @@
 #include "frank_wolfe.h"
 
+#include <iomanip>
+#include <sstream>
+
 
 FrankWolfe::FrankWolfe(const Config& config, BaseModel& model) :
     T(config.time_horizon),
@@ -48,6 +51,11 @@ const DoubleVec_t& FrankWolfe::solve(const DoubleVec_t& initial_solution)
         }
     }
 
+    // Round the solution
+    for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
+        x[i] = round(x[i]);
+    }
+
     return x;
 }
 
@@ -80,4 +88,13 @@ double FrankWolfe::getObjectiveValue(double eta)
     }
     _model.setCurrentSolution(temp);
     return _model.getObjectiveValue();
+}
+
+double FrankWolfe::round(double value)
+{
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << value;
+    double y;
+    ss >> y;
+    return y;
 }

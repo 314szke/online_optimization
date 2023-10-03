@@ -13,6 +13,6 @@ public:
     DoubleVec_t ratios;
 
 private:
-    UIntMat_t findPathFrom(uint32_t s, const BoolVec_t& visited, const DoubleVec_t& edges);
+    UIntMat_t findAllPaths(uint32_t s, uint32_t t, const DoubleVec_t& edges);
     const Model& _model;
 };

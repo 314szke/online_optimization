@@ -1,7 +1,5 @@
 #include "greedy_solver.h"
 
-#include <iostream>
-
 #include "model/graph.h"
 #include "model/solution.h"
 #include "offline/frank_wolfe.h"
@@ -18,9 +16,7 @@ GreedySolver::GreedySolver(const Config& config, Model& model) :
 
 const DoubleVec_t& GreedySolver::solve()
 {
-    //std::cout << "GREEDY solver running..." << std::endl << std::flush;
     for (uint32_t r = 0; r < _model.nb_requests; r++) {
-        //std::cout << "\tSolving request [" << (r+1) << "/" << _model.nb_requests << "]" << std::endl << std::flush;
         online_model.next();
         findInitialSolution(_model.requests[r].source, _model.requests[r].target);
 
