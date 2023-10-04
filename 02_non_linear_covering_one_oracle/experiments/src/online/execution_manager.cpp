@@ -93,7 +93,7 @@ void ExecutionManager::solveForAllEta(Prediction& oracles, struct ExecutionData_
     double best_objective = std::numeric_limits<double>::infinity();
 
     std::ofstream out("result.txt");
-    out << "Eta;CompRatio;Algo" << std::endl;
+    out << "Eta;CompRatio;Algo;Oracle" << std::endl;
     double greedy_comp_ratio = (offline_objective / greedy_objective);
 
     std::cout << std::endl << "ONLINE run the solver with different eta and oracles..." << std::endl << std::flush;
@@ -134,11 +134,9 @@ void ExecutionManager::solveForAllEta(Prediction& oracles, struct ExecutionData_
             }
 
             // Save results to a file
-            if (oracle_idx == 0) { // only print once
-                out << eta << ";" << greedy_comp_ratio << ";greedy" << std::endl;
-            }
-            out << eta << ";" << prediction_comp_ratio << ";oracle " << (oracle_idx + 1) << std::endl;
-            out << eta << ";" << online_comp_ratio << ";algo(oracle " << (oracle_idx + 1) << ")" << std::endl << std::flush;
+            out << eta << ";" << greedy_comp_ratio << ";greedy;" << (oracle_idx + 1) << std::endl;
+            out << eta << ";" << prediction_comp_ratio << ";oracle " << (oracle_idx + 1) << ";" << (oracle_idx + 1) << std::endl;
+            out << eta << ";" << online_comp_ratio << ";algo(oracle " << (oracle_idx + 1) << ")" << ";" << (oracle_idx + 1) << std::endl << std::flush;
         }
 
         eta = eta - config.eta_step;
