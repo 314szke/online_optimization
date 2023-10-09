@@ -1,23 +1,20 @@
-#include "grid_generator.h"
+#include "connected_graph_generator.h"
 
 #include <fstream>
 #include <random>
 
 
-GridGenerator::GridGenerator(const ArgumentParser& arg_parser) :
+ConnectedGraphGenerator::ConnectedGraphGenerator(const ArgumentParser& arg_parser) :
     _arg_parser(arg_parser),
-    width(0),
-    height(0),
+    nb_vertices(0),
+    nb_edges(0),
     nb_requests(0),
-    edge_prob(0.0),
     min_coeff(0.0),
     max_coeff(0.0),
     min_degree(0.0),
     max_degree(0.0),
     min_constant(0.0),
     max_constant(0.0),
-    nb_vertices(0),
-    nb_edges(0),
     max_degree_found(0.0),
     engine(rd())
 {
@@ -29,10 +26,9 @@ GridGenerator::GridGenerator(const ArgumentParser& arg_parser) :
         throw std::runtime_error(message.str());
     }
 
-    readParameter(width);
-    readParameter(height);
+    readParameter(nb_vertices);
+    readParameter(nb_edges);
     readParameter(nb_requests);
-    readParameter(edge_prob);
     readParameter(min_coeff);
     readParameter(max_coeff);
     readParameter(min_degree);
@@ -40,57 +36,24 @@ GridGenerator::GridGenerator(const ArgumentParser& arg_parser) :
     readParameter(min_constant);
     readParameter(max_constant);
 
-    nb_vertices = width * height;
-    nb_edges = 0;
-
-    // Keep track of connections to avoid unreachable regions
-    in_degrees.resize(nb_vertices, 4);
-    out_degrees.resize(nb_vertices, 4);
-    // Side vertices have less connections
-    for (uint32_t idx = 0; idx < width; idx++) {
-        // top vertices
-        in_degrees[idx] = 3;
-        out_degrees[idx] = 3;
-        // bottom vertices
-        in_degrees[(((height - 1) * width) + idx)] = 3;
-        out_degrees[(((height - 1) * width) + idx)] = 3;
-    }
-    for (uint32_t idx = 0; idx < height; idx++) {
-        // left vertices
-        in_degrees[(idx * width)] = 3;
-        out_degrees[(idx * width)] = 3;
-        //right vertices
-        in_degrees[((idx * width) + (width - 1))] = 3;
-        out_degrees[((idx * width) + (width - 1))] = 3;
-    }
-    // Corners have even less
-    in_degrees[0] = 2;
-    out_degrees[0] = 2;
-    in_degrees[(width - 1)] = 2;
-    out_degrees[(width - 1)] = 2;
-    in_degrees[((height - 1) * width)] = 2;
-    out_degrees[((height - 1) * width)] = 2;
-    in_degrees[(nb_vertices - 1)] = 2;
-    out_degrees[(nb_vertices - 1)] = 2;
-
+    edge_matrix.resize(nb_vertices, BoolVec_t(nb_vertices, false));
 
     // Random generators
-    edge_dist.reset(new DoubleDist_t(0.0, 1.0));
     coeff_dist.reset(new DoubleDist_t(min_coeff, max_coeff));
     degree_dist.reset(new DoubleDist_t(min_degree, max_degree));
     constant_dist.reset(new DoubleDist_t(min_constant, max_constant));
-    request_dist.reset(new UIntDist_t(0, (nb_vertices - 1)));
+    vertex_dist.reset(new UIntDist_t(0, (nb_vertices - 1)));
 
     f_in.close();
 }
 
-void GridGenerator::generate()
+void ConnectedGraphGenerator::generate()
 {
     generateData();
     generateConfig();
 }
 
-void GridGenerator::generateData()
+void ConnectedGraphGenerator::generateData()
 {
     std::ofstream f_out(_arg_parser.data_file);
 
@@ -101,53 +64,42 @@ void GridGenerator::generateData()
     }
 
     f_out << nb_vertices << std::endl;
-    f_out << 0 << "        " << std::endl;
+    f_out << (nb_edges + 2 * nb_vertices)  << std::endl;
 
     uint32_t v1, v2;
 
-    // Horizontal edges
-    for (uint32_t h_idx = 0; h_idx < height; h_idx++) {
-        for (uint32_t w_idx = 0; w_idx < (width - 1); w_idx++) {
-            v1 = (h_idx * width) + w_idx;
-            v2 = v1 + 1;
-
-            createEdge(v1, v2, f_out);
-            createEdge(v2, v1, f_out);
-        }
+    // Create a cycle that connects every edge
+    for (v1 = 0; v1 < nb_vertices; v1++) {
+        v2 = next(v1);
+        createEdge(v1, v2, f_out);
+        createEdge(v2, v1, f_out);
     }
 
-    // Vertical edges
-    for (uint32_t w_idx = 0; w_idx < width; w_idx++) {
-        for (uint32_t h_idx = 0; h_idx < (height - 1); h_idx++) {
-            v1 = (h_idx * width) + w_idx;
-            v2 = ((h_idx + 1) * width) + w_idx;
+    // Create random edges until the requested number of edges is reached
+    for (uint32_t it = 0; it < nb_edges; it++) {
+        do {
+            v1 = (*vertex_dist)(engine);
+            v2 = (*vertex_dist)(engine);
+        } while ((v1 == v2) || edge_matrix[v1][v2] || (v2 == next(v1)) || (v1 == next(v2)));
 
-            createEdge(v1, v2, f_out);
-            createEdge(v2, v1, f_out);
-        }
+        createEdge(v1, v2, f_out);
     }
 
     f_out << nb_requests << std::endl;
 
     uint32_t i, j;
     for (uint32_t r = 0; r < nb_requests; r++) {
-        i = (*request_dist)(engine);
-        j = (*request_dist)(engine);
-        while (i == j) {
-            i = (*request_dist)(engine);
-            j = (*request_dist)(engine);
-        }
+        do {
+            i = (*vertex_dist)(engine);
+            j = (*vertex_dist)(engine);
+        } while (i == j);
         f_out << i << " - " << j << std::endl;
     }
-
-    f_out.seekp(0);
-    f_out << nb_vertices << std::endl;
-    f_out << nb_edges;
 
     f_out.close();
 }
 
-void GridGenerator::generateConfig()
+void ConnectedGraphGenerator::generateConfig()
 {
     std::ofstream f_out(_arg_parser.config_file);
 
@@ -175,36 +127,23 @@ void GridGenerator::generateConfig()
     f_out.close();
 }
 
-void GridGenerator::createEdge(uint32_t v1 , uint32_t v2, std::ofstream& f_out)
+void ConnectedGraphGenerator::createEdge(uint32_t v1 , uint32_t v2, std::ofstream& f_out)
 {
-    double p = (*edge_dist)(engine);
-    if (edgeShouldBeCreated(p, v1, v2)) {
-        double coeff = (*coeff_dist)(engine);
-        double degree = (*degree_dist)(engine);
-        double constant = (*constant_dist)(engine);
+    double coeff = (*coeff_dist)(engine);
+    double degree = (*degree_dist)(engine);
+    double constant = (*constant_dist)(engine);
 
-        f_out << v1 << " - " << v2 << " # " << coeff << " # " << degree << " # " << constant << std::endl;
-        nb_edges++;
+    f_out << v1 << " - " << v2 << " # " << coeff << " # " << degree << " # " << constant << std::endl;
+    edge_matrix[v1][v2] = true;
 
-        if (degree > max_degree_found) {
-            max_degree_found = degree;
-        }
+    if (degree > max_degree_found) {
+        max_degree_found = degree;
     }
 }
 
-bool GridGenerator::edgeShouldBeCreated(double probability, uint32_t v1, uint32_t v2)
-{
-    if (out_degrees[v1] == 1)
-        return true;
-
-    if (in_degrees[v2] == 1)
-        return true;
-
-    if (probability < edge_prob)
-        return true;
-
-    out_degrees[v1]--;
-    in_degrees[v2]--;
-
-    return false;
+uint32_t ConnectedGraphGenerator::next(uint32_t v) {
+    if ((v + 1) < nb_vertices) {
+        return (v + 1);
+    }
+    return 0;
 }

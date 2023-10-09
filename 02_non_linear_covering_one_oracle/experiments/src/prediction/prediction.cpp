@@ -80,6 +80,7 @@ Prediction::Prediction(const Config& config, Model& model, const CP_Model::Solut
     final_oracles.push_back(oracles[middle_idx]);
     final_oracles.push_back(oracles[max_idx]);
     oracles = final_oracles;
+
 }
 
 uint32_t Prediction::getNbOracles() const

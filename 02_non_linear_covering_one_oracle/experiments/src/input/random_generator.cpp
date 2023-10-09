@@ -121,7 +121,7 @@ void RandomGenerator::generateConfig()
         throw std::runtime_error(message.str());
     }
 
-    f_out << "time_horizon = 60          # number of iterations in the Frank-Wolfe algorithm" << std::endl;
+    f_out << "time_horizon = 600         # number of iterations in the Frank-Wolfe algorithm" << std::endl;
     f_out << "max_search_iter = 15       # the maximum number of eta search steps in the Frank-Wolfe algorithm" << std::endl;
     f_out << "max_distance = 0.001       # maximum distance between x and v before terminating the Frank-Wolfe algorithm" << std::endl;
     f_out << "gurobi_verbosity = 0       # if set to 1 gurobi will print a lot of messages" << std::endl;

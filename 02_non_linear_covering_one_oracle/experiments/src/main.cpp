@@ -2,6 +2,7 @@
 #include <string>
 
 #include "config/argument_parser.h"
+#include "input/connected_graph_generator.h"
 #include "input/grid_generator.h"
 #include "input/random_generator.h"
 #include "online/execution_manager.h"
@@ -19,6 +20,9 @@ int main(int argc, char** argv)
         if (arg_parser.generator_file.find("random") != std::string::npos) {
             RandomGenerator random_generator(arg_parser);
             random_generator.generate();
+        } else if (arg_parser.generator_file.find("connected") != std::string::npos) {
+            ConnectedGraphGenerator connected_graph_generator(arg_parser);
+            connected_graph_generator.generate();
         } else {
             GridGenerator grid_generator(arg_parser);
             grid_generator.generate();
