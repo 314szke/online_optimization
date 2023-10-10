@@ -1,0 +1,119 @@
+>>> GREEDY = 37.80
+	Request 1 (v8 -> v9):
+		Path 1 with ratio (1.00): [ v8 v6 v2 v9 ]
+	Request 2 (v5 -> v0):
+		Path 1 with ratio (1.00): [ v5 v0 ]
+	Request 3 (v3 -> v7):
+		Path 1 with ratio (1.00): [ v3 v7 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v5 v3 ]
+	Request 5 (v2 -> v4):
+		Path 1 with ratio (1.00): [ v2 v6 v4 ]
+
+>>> OFFLINE = 22.66
+	Request 1 (v8 -> v9):
+		Path 1 with ratio (0.25): [ v8 v0 v2 v9 ]
+		Path 2 with ratio (0.67): [ v8 v6 v2 v9 ]
+		Path 3 with ratio (0.01): [ v8 v5 v7 v4 v2 v9 ]
+		Path 4 with ratio (0.06): [ v8 v5 v7 v6 v2 v9 ]
+	Request 2 (v5 -> v0):
+		Path 1 with ratio (0.57): [ v5 v0 ]
+		Path 2 with ratio (0.43): [ v5 v8 v0 ]
+	Request 3 (v3 -> v7):
+		Path 1 with ratio (0.70): [ v3 v7 ]
+		Path 2 with ratio (0.30): [ v3 v6 v7 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (0.33): [ v0 v4 v3 ]
+		Path 2 with ratio (0.42): [ v0 v5 v3 ]
+		Path 3 with ratio (0.23): [ v0 v8 v5 v3 ]
+		Path 4 with ratio (0.01): [ v0 v2 v9 v3 ]
+		Path 5 with ratio (0.01): [ v0 v5 v7 v4 v3 ]
+		Path 6 with ratio (0.01): [ v0 v8 v5 v7 v4 v3 ]
+	Request 5 (v2 -> v4):
+		Path 1 with ratio (0.61): [ v2 v6 v4 ]
+		Path 2 with ratio (0.35): [ v2 v7 v4 ]
+		Path 3 with ratio (0.04): [ v2 v8 v5 v7 v4 ]
+
+
+>>> ORACLE (1) = 42.21
+	Request 1 (v8 -> v9):
+		Path 1 with ratio (1.00): [ v8 v6 v2 v9 ]
+	Request 2 (v5 -> v0):
+		Path 1 with ratio (1.00): [ v5 v0 ]
+	Request 3 (v3 -> v7):
+		Path 1 with ratio (1.00): [ v3 v7 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v4 v3 ]
+	Request 5 (v2 -> v4):
+		Path 1 with ratio (1.00): [ v2 v6 v4 ]
+
+>>> ORACLE (2) = 62.32
+	Request 1 (v8 -> v9):
+		Path 1 with ratio (1.00): [ v8 v6 v2 v9 ]
+	Request 2 (v5 -> v0):
+		Path 1 with ratio (1.00): [ v5 v0 ]
+	Request 3 (v3 -> v7):
+		Path 1 with ratio (1.00): [ v3 v6 v7 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v8 v5 v3 ]
+	Request 5 (v2 -> v4):
+		Path 1 with ratio (1.00): [ v2 v7 v4 ]
+
+>>> ORACLE (3) = 102.98
+	Request 1 (v8 -> v9):
+		Path 1 with ratio (1.00): [ v8 v6 v2 v9 ]
+	Request 2 (v5 -> v0):
+		Path 1 with ratio (1.00): [ v5 v0 ]
+	Request 3 (v3 -> v7):
+		Path 1 with ratio (1.00): [ v3 v7 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v8 v5 v7 v4 v3 ]
+	Request 5 (v2 -> v4):
+		Path 1 with ratio (1.00): [ v2 v7 v4 ]
+
+ONLINE run the solver with different eta and oracles...
+	ONLINE (eta  = 1.00; oracle = 1) = 37.80
+	ONLINE (eta  = 1.00; oracle = 2) = 37.80
+	ONLINE (eta  = 1.00; oracle = 3) = 37.80
+	ONLINE (eta  = 0.90; oracle = 1) = 37.80
+	ONLINE (eta  = 0.90; oracle = 2) = 37.80
+	ONLINE (eta  = 0.90; oracle = 3) = 37.80
+	ONLINE (eta  = 0.80; oracle = 1) = 37.80
+	ONLINE (eta  = 0.80; oracle = 2) = 51.16
+	ONLINE (eta  = 0.80; oracle = 3) = 44.11
+	ONLINE (eta  = 0.70; oracle = 1) = 37.80
+	ONLINE (eta  = 0.70; oracle = 2) = 51.16
+	ONLINE (eta  = 0.70; oracle = 3) = 44.11
+	ONLINE (eta  = 0.60; oracle = 1) = 42.21
+	ONLINE (eta  = 0.60; oracle = 2) = 51.16
+	ONLINE (eta  = 0.60; oracle = 3) = 44.11
+	ONLINE (eta  = 0.51; oracle = 1) = 42.21
+	ONLINE (eta  = 0.51; oracle = 2) = 51.16
+	ONLINE (eta  = 0.51; oracle = 3) = 44.11
+	ONLINE (eta  = 0.41; oracle = 1) = 42.21
+	ONLINE (eta  = 0.41; oracle = 2) = 51.16
+	ONLINE (eta  = 0.41; oracle = 3) = 53.36
+	ONLINE (eta  = 0.31; oracle = 1) = 42.21
+	ONLINE (eta  = 0.31; oracle = 2) = 51.16
+	ONLINE (eta  = 0.31; oracle = 3) = 53.36
+	ONLINE (eta  = 0.21; oracle = 1) = 42.21
+	ONLINE (eta  = 0.21; oracle = 2) = 51.16
+	ONLINE (eta  = 0.21; oracle = 3) = 53.36
+	ONLINE (eta  = 0.11; oracle = 1) = 42.21
+	ONLINE (eta  = 0.11; oracle = 2) = 51.16
+	ONLINE (eta  = 0.11; oracle = 3) = 53.36
+	ONLINE (eta  = 0.01; oracle = 1) = 42.21
+	ONLINE (eta  = 0.01; oracle = 2) = 62.32
+	ONLINE (eta  = 0.01; oracle = 3) = 91.82
+
+>>> BEST ONLINE (eta  = 1.00; oracle = 1) = 37.80
+	Request 1 (v8 -> v9):
+		Path 1 with ratio (1.00): [ v8 v6 v2 v9 ]
+	Request 2 (v5 -> v0):
+		Path 1 with ratio (1.00): [ v5 v0 ]
+	Request 3 (v3 -> v7):
+		Path 1 with ratio (1.00): [ v3 v7 ]
+	Request 4 (v0 -> v3):
+		Path 1 with ratio (1.00): [ v0 v5 v3 ]
+	Request 5 (v2 -> v4):
+		Path 1 with ratio (1.00): [ v2 v6 v4 ]
