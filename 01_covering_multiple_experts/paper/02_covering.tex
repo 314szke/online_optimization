@@ -128,6 +128,9 @@ Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in 
 otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
 \end{compactenum}
 
+\medskip
+
+\noindent \textit{Note:} To avoid the possible division by 0 in the denominator of the objective function's logarithm, we can use a dummy expert, who sets each variable to some small value and then follows the greedy heuristic to solve the problem at each arriving constraint. The presence of this expert only changes the competitive ratio to $O(log K + 1)$. Additionally, upon the arrival of the first constraint, we treat the denominator as $1$.
 
 \subsection{Analysis}
 As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i}^{t},\ \mu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
