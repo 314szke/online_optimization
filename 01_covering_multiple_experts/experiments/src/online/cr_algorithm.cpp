@@ -30,7 +30,7 @@ const DoubleVec_t& CR_Algorithm::solve()
         convex_model.revealNextConstraint();
         lp_solver.addNewConstraints(t);
 
-        DoubleVec_t w = frank_wolfe.solve(_model, _experts, t);
+        DoubleVec_t w = frank_wolfe.solve();
         verifyWeights(w);
         roundWeightsIfNeeded(w);
         const DoubleMat_t& s = _experts.getSolutions((t - 1));

@@ -1,6 +1,7 @@
 #include "frank_wolfe.h"
 
-#include "visualization/print.hpp"
+#include <iomanip>
+#include <sstream>
 
 
 FrankWolfe::FrankWolfe(const Config& config, ConvexModel& model, LP_Solver& solver) :
@@ -10,22 +11,14 @@ FrankWolfe::FrankWolfe(const Config& config, ConvexModel& model, LP_Solver& solv
     _solver(solver),
     _model(model)
 {
-    x.resize(_model.getNbVariables());
-    x_prev.resize(_model.getNbVariables());
-    v.resize(_model.getNbVariables());
-    d.resize(_model.getNbVariables());
-    temp.resize(_model.getNbVariables());
-
-    for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
-        x[i] = 1.0;
-        x_prev[i] = 0.0;
-        v[i] = 0.0;
-        d[i] = 0.0;
-        temp[i] = 0.0;
-    }
+    x.resize(_model.getNbVariables(), 1.0);
+    x_prev.resize(_model.getNbVariables(), 0.0);
+    v.resize(_model.getNbVariables(), 0.0);
+    d.resize(_model.getNbVariables(), 0.0);
+    temp.resize(_model.getNbVariables(), 0.0);
 }
 
-const DoubleVec_t& FrankWolfe::solve(const OfflineModel& off_model, const Experts& experts, uint32_t constr_limit)
+const DoubleVec_t& FrankWolfe::solve()
 {
     // Set initial feasible solution
     for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
@@ -44,7 +37,6 @@ const DoubleVec_t& FrankWolfe::solve(const OfflineModel& off_model, const Expert
         // Calculate v
         _model.calculateObjectiveValueDerivative(x, x_prev);
         v = _solver.solve();
-        verifyFeasibility(off_model, experts, constr_limit);
 
         // Calculate the distance
         euclid_norm = 0.0;
@@ -70,10 +62,12 @@ const DoubleVec_t& FrankWolfe::solve(const OfflineModel& off_model, const Expert
         }
     }
 
-    // Round tiny x
+    // Save x for objective value calculation
     for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
+        x[i] = round(x[i]);
         x_prev[i] = x[i];
     }
+
     return x;
 }
 
@@ -107,64 +101,11 @@ double FrankWolfe::getObjectiveValue(double eta)
     return _model.getObjectiveValue(temp, x_prev);
 }
 
-void FrankWolfe::verifyFeasibility(const OfflineModel& off_model, const Experts& experts, uint32_t constr_limit)
+double FrankWolfe::round(double value)
 {
-    const DoubleVec_t& b = off_model.getBound(0);
-
-    for (uint32_t t = 0; t < constr_limit; t++) {
-        const DoubleMat_t& A_hat = _model.getCoefficient(t+1);
-        double value = 0.0;
-        for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
-            value += A_hat[0][i] * v[i];
-        }
-        if (value < b[t]) {
-
-            if ((b[t] - value) > 0.001) {
-                std::stringstream message;
-                message << "ERROR: The LP really gave an infeasible solution for constraint " << (constr_limit - 1) << " !" << std::endl;
-                throw std::runtime_error(message.str());
-            }
-        }
-    }
-
-    const DoubleMat_t& A = off_model.getCoefficient(0);
-
-    for (uint32_t t = 0; t < constr_limit; t++) {
-        const DoubleMat_t& s_hat = experts.getTightSolutions(t);
-        double value = 0.0;
-        for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
-            double temp_x = 0.0;
-            for (uint32_t k = 0; k < experts.getNbExperts(); k++) {
-                temp_x += s_hat[k][i] * v[(i + (k * off_model.getNbVariables()))];
-            }
-            value += A[t][i] * temp_x;
-        }
-        if (value < b[t]) {
-            if ((b[t] - value) > 0.001) {
-                std::stringstream message;
-                message << "ERROR: The LP gave an infeasible solution for constraint " << (constr_limit - 1) << " !" << std::endl;
-                throw std::runtime_error(message.str());
-            }
-        }
-    }
-
-
-    for (uint32_t t = 0; t < constr_limit; t++) {
-        const DoubleMat_t& s = experts.getSolutions(t);
-        double value = 0.0;
-        for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
-            double temp_x = 0.0;
-            for (uint32_t k = 0; k < experts.getNbExperts(); k++) {
-                temp_x += s[k][i] * v[(i + (k * off_model.getNbVariables()))];
-            }
-            value += A[t][i] * temp_x;
-        }
-        if (value < b[t]) {
-            if ((b[t] - value) > 0.001) {
-                std::stringstream message;
-                message << "ERROR: The tight solutions satisfy the constraints, but not solutions at constraint " << (constr_limit - 1) << " !" << std::endl;
-                throw std::runtime_error(message.str());
-            }
-        }
-    }
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << value;
+    double y;
+    ss >> y;
+    return y;
 }

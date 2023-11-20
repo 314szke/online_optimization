@@ -153,7 +153,7 @@ void InputGenerator::generateExperts()
     }
 
     f_out << std::fixed << std::setprecision(15);
-    f_out << nb_experts << std::endl;
+    f_out << (nb_experts + 1) << std::endl; // +1 for the dummy expert
 
     OfflineModel off_model(_arg_parser.data_file);
     LP_Solver off_solver(off_model, 0);
@@ -162,6 +162,9 @@ void InputGenerator::generateExperts()
 
     OnlineModel on_model(off_model);
     LP_Solver on_solver(on_model, 0);
+
+    double one_over_k = 1.0 / static_cast<double>(nb_experts + 1);
+    DoubleVec_t dummy_solution(off_model.getNbVariables(), one_over_k);
 
     DoubleMat_t min_solution(nb_online_expert);
     for (uint32_t k = 0; k < nb_online_expert; k++) {
@@ -186,6 +189,23 @@ void InputGenerator::generateExperts()
     double constr_value;
 
     for (uint32_t j = 1; j < (nb_constraints + 1); j++) {
+        on_model.revealNextConstraint();
+        on_solver.addNewConstraints(j);
+        DoubleVec_t solution = on_solver.solve();
+        Solution::RoundSolutionIfNeeded(off_model, solution, j);
+
+        // Dummy expert
+        for (uint32_t i = 0; i < (nb_variables - 1); i++) {
+            if (dummy_solution[i] < solution[i]) {
+                dummy_solution[i] = solution[i];
+            }
+            f_out << dummy_solution[i] << " ";
+        }
+        if (dummy_solution[(nb_variables - 1)] < solution[(nb_variables - 1)]) {
+            dummy_solution[(nb_variables - 1)] = solution[(nb_variables - 1)];
+        }
+        f_out << dummy_solution[(nb_variables - 1)] << std::endl;
+
         // Perfect experts
         for (uint32_t k = 0; k < nb_perfect_expert; k++) {
             for (uint32_t i = 0; i < (nb_variables - 1); i++) {
@@ -193,11 +213,6 @@ void InputGenerator::generateExperts()
             }
             f_out << optimal_solution[(nb_variables - 1)] << std::endl;
         }
-
-        on_model.revealNextConstraint();
-        on_solver.addNewConstraints(j);
-        DoubleVec_t solution = on_solver.solve();
-        Solution::RoundSolutionIfNeeded(off_model, solution, j);
 
         // Imperfect experts
         for (uint32_t k = 0; k < nb_online_expert; k++) {
@@ -242,6 +257,7 @@ void InputGenerator::generateExperts()
                     constr_value += A[(j-1)][i] * random_solution[k][i];
                 }
             }
+            Solution::RoundSolutionIfNeeded(off_model, random_solution[k], j);
 
             for (uint32_t i = 0; i < (nb_variables - 1); i++) {
                 f_out << random_solution[k][i] << " ";
