@@ -104,7 +104,7 @@ double FrankWolfe::getObjectiveValue(double eta)
 double FrankWolfe::round(double value)
 {
     std::stringstream ss;
-    ss << std::fixed << std::setprecision(2) << value;
+    ss << std::fixed << std::setprecision(5) << value;
     double y;
     ss >> y;
     return y;

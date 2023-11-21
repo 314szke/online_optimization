@@ -256,7 +256,7 @@ void Experts::setTightSolution(uint32_t k, uint32_t t)
 
 void Experts::verifySolutionFeasibility(double value, double limit, uint32_t k, uint32_t t)
 {
-    if (value < limit) {
+    if (value < (limit - 0.0001)) {
         std::stringstream message;
         message << "ERROR: expert " << k << " gave infeasible suggestion for constraint " << t << " !" << std::endl;
         throw std::runtime_error(message.str());

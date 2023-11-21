@@ -136,7 +136,7 @@ void InputGenerator::generateModel()
             f_out << " <= " ;
         }
         random_double = bound_dist(engine);
-        f_out << random_double << std::endl;
+        f_out << (random_double + 0.0001) << std::endl;
     }
 
     f_out.close();

@@ -21,7 +21,7 @@ LP_Solver::LP_Solver(const BaseModel& model, uint32_t verbosity) :
         std::stringstream ss;
         ss << "x_" << i;
         if (_model.useBoxConstraints()) {
-            GRBVar var = lp_model->addVar(0, 1, 0, GRB_CONTINUOUS, ss.str());
+            GRBVar var = lp_model->addVar(0.0, 1.0001, 0, GRB_CONTINUOUS, ss.str());
             variables.push_back(var);
         } else {
             GRBVar var = lp_model->addVar(0, std::numeric_limits<double>::infinity(), 0, GRB_CONTINUOUS, ss.str());
