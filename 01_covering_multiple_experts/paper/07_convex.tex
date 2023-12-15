@@ -1,25 +1,9 @@
+%!TEX root = ./main.tex
 %!TEX root = ../main.tex
 
-\section{Online non-linear covering with multiple experts}
+\section{Online \emph{convex} covering with multiple experts}
 
-
-
-General CP formulation:
-\begin{align*}
-    \min \ & f(x^T) \\
-    %
-    \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
-    %
-    x_i^t & \geq \sum_{k=1}^{K} s_{k,i}^{t} w_{k}^{t} & \forall\ t ,\ i\\
-    %
-    \sum_{i}^{n} a_i^t x_i^t  & \geq 1   &\forall\ t\\
-    %
-    x_{i}^{t} &\geq x_{i}^{t-1}   &\forall\ i,t\\
-    %
-    w_{k}^{t},\ x_{i}^{t} & \ge 0 & \forall\ k,i,t
-\end{align*}
-
-\noindent Transformed CP using configurations:
+While linear programs are suitable to represent many optimization problems, they are too simple to capture some practically relevant problems (for example, makespan minimization and congestion management). We take a step further towards a general framework, and propose an algorithm with multiple exerts for problems with convex objectives and linear constraints.
 
 \begin{figure}[ht]
     \begin{mdframed}
@@ -36,27 +20,10 @@ General CP formulation:
             %
             && w_{k}^{t}, y_{S}^{t}, z_{S}^{t} & \ge 0 & \forall\ k,S,t
         \end{align*}
-        %\vspace{5pt}
     \end{mdframed}
     \caption{Formulation of the relaxation of the \texttt{LIN-COMB} benchmark}
-    \label{fig:relaxation}
+    \label{fig:relaxation2}
 \end{figure}
-
-\clearpage
-
-\noindent Example with load-balancing:
-
-\begin{align*}
-    \min \ \max_{i} \ & \sum_{t=1}^{T} (l_i^t - l_i^{t-1})\\
-    %
-    \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
-    %
-    x_i^t & \geq \sum_{k=1}^{K} s_{k,i}^{t} w_{k}^{t} & \forall\ t ,\ i\\
-    %
-    l_i^t & = \sum_{t'=1}^{t} p_i^{t'} x_i^{t'} & \forall\ t ,\ i\\
-    %
-    w_{k}^{t},\ x_{i}^{t},\ l_i^t & \ge 0 & \forall\ k,i,t
-\end{align*}
 
 \begin{figure}[ht]
     \begin{mdframed}
@@ -71,12 +38,12 @@ General CP formulation:
         %
             && \alpha^{t}, \beta_{i}^{t}, \xi_{S}^{t} & \ge 0 & \forall\ i,t
         \end{align*}
-        %\vspace{5pt}
     \end{mdframed}
     \caption{Dual formulation of the relaxation of the \texttt{LIN-COMB} benchmark}
-    \label{fig:dual}
+    \label{fig:dual2}
 \end{figure}
 
+\clearpage
 
 \paragraph{Algorithm.}
 

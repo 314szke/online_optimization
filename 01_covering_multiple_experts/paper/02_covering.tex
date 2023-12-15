@@ -1,6 +1,6 @@
 %!TEX root = ./main.tex
 
-\section{Online covering with multiple experts}	\label{sec:covering}
+\section{Online \emph{linear} covering with multiple experts}	\label{sec:covering}
 
 Our proposed algorithm solves online covering problems by creating linear combinations of the solutions proposed by $K$ experts in an online manner.
 Recall that we evaluate the performance of our algorithm with the \texttt{LIN-COMB} benchmark (formalized on \cref{fig:benchmark}), which consists of the best linear combination of the experts' solution at each step.
@@ -94,7 +94,7 @@ Consider time $t$. If after scaling down (at the first step in the procedure) th
 	Hence, there exists $\hat{s}_{i,k}^{t} \in \bigl[ \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}}, s_{i,k}^{t} \bigr]$ for every $i$, where $1 \leq i \leq n$, such that $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
 \end{proof}
 
-\clearpage
+\noindent \paragraph{Remark.} Our proposed algorithm solves a convex program at each time step to set the current value of the variables. The convex program's objective uses an entropy-like function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$. However, we display all other occurrences of the competitive ratio as $O(\log(K))$ for simplicity. Additionally, at time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
 
 \paragraph{Algorithm.}
 
@@ -129,8 +129,6 @@ otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
 \end{compactenum}
 
 \medskip
-
-\noindent \textit{Note:} To avoid the possible division by 0 in the denominator of the objective function's logarithm, we can use a dummy expert, who sets each variable to some small value and then follows the greedy heuristic to solve the problem at each arriving constraint. The presence of this expert only changes the competitive ratio to $O(log K + 1)$. Additionally, upon the arrival of the first constraint, we treat the denominator as $1$.
 
 \subsection{Analysis}
 As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i}^{t},\ \mu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
@@ -194,8 +192,6 @@ Since $\sum_{i} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$, using the KKT conditions, we g
 &\leq 0
 \end{align*}
 \end{proof}
-
-\clearpage
 
 \begin{theorem} \label{covering-theorem}
 The algorithm's cost is at most $O(\ln(K \rho))$-competitive in the \texttt{LIN-COMB} benchmark.
@@ -267,7 +263,7 @@ The above corresponding transformations hold since:
       \caption{Structural overview of the algorithm's components. $E_1,\ E_2, \dots\ E_K$ correspond to the experts of the online problem.
       On the second layer, we integrate the best standard online algorithm with our algorithm. }
   \label{fig:algo-layers}
-   \vspace{-0.5cm}
+   \vspace{-0.8cm}
 \end{wrapfigure}
 
 	If the value of $s_{i,k}^{t}$ is in $\{0,1\}$ for every $i,k,t$, then

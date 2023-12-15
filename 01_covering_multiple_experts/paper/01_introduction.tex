@@ -6,24 +6,24 @@
 % main objective: compare the best combination of experts.
 % So for in the literature, always compare to the best expert (ex., regret)
 
-The domain of algorithms with predictions \cite{MitzenmacherVassilvitskii20:Beyond-the-Worst-Case} - or learning augmented algorithms - emerged recently and grown immensely at the intersection of (discrete) algorithm design and machine learning (ML).
-Combining ML techniques with traditional algorithm design methods enables online algorithms to benefit from predictions that can infer future information from patterns in past data. Online algorithms with predictions can obtain performance guarantees beyond the worst-case analysis and provide fine-tuned solutions to various problems. In the literature, many significant problems have new learning-augmented results, for example, scheduling \cite{LattanziLavastida20:Online-scheduling,Mitzenmacher20:Scheduling-with}, caching (paging) \cite{LykourisVassilvtiskii18:Competitive-caching,Rohatgi20:Near-optimal-bounds,AntoniadisCoester20:Online-metric}, ski rental \cite{GollapudiPanigrahi19:Online-algorithms,KumarPurohit18:Improving-online,AngelopoulosDurr20:Online-Computation}, counting sketches \cite{HsuIndyk19:Learning-Based-Frequency}, bloom filters \cite{KraskaBeutel18:The-case-for-learned,Mitzenmacher18:A-model-for-learned}, and metric task systems \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms}.
+The domain of algorithms with predictions \cite{MitzenmacherVassilvitskii20:Beyond-the-Worst-Case}  (or learning-augmented algorithms) emerged recently and grew immensely at the intersection of (discrete) algorithm design and machine learning (ML).
+Combining ML techniques with traditional algorithm design methods enables online algorithms to benefit from predictions that can infer future information from patterns in past data. Online algorithms with predictions can obtain performance guarantees beyond the worst-case analysis and provide fine-tuned solutions to various problems. In the literature, many significant problems have new learning-augmented results, for example, scheduling \cite{LattanziLavastida20:Online-scheduling,Mitzenmacher20:Scheduling-with}, caching (paging) \cite{LykourisVassilvtiskii18:Competitive-caching,Rohatgi20:Near-optimal-bounds,AntoniadisCoester20:Online-metric}, ski rental \cite{GollapudiPanigrahi19:Online-algorithms,KumarPurohit18:Improving-online,AngelopoulosDurr20:Online-Computation}, counting sketches \cite{HsuIndyk19:Learning-Based-Frequency}, bloom filters \cite{KraskaBeutel18:The-case-for-learned,Mitzenmacher18:A-model-for-learned}, and metrical task systems \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms}.
 
-Even though predictions provide a glimpse of the future, there is no mathematical guarantee of their accuracy. Adjusting the algorithm's trust in the predictions is a significant challenge since online algorithms must make irrevocable decisions at each time step. Ideally, if the predictions are accurate, the algorithm should perform well compared to the offline setting. In contrast, if the predictions are misleading, the algorithm should maintain a competitive solution, similar to the online setting where no predictive information is available. In other words, online algorithms with predictions are expected to bring the best of both worlds: mathematical performance guarantees of classical algorithms and good future prediction capabilities of machine learning methods.
+Even though predictions provide a glimpse of the future, there is no mathematical guarantee for their accuracy. Adjusting the algorithm's trust in the predictions is a significant challenge since online algorithms must make irrevocable decisions at each time step. Ideally, if the predictions are accurate, the algorithm should perform well compared to the offline setting. In contrast, if the predictions are misleading, the algorithm should maintain a competitive solution, similar to the online setting where no predictive information is available. In other words, online algorithms with predictions are expected to bring the best of both worlds: mathematical performance guarantees of classical algorithms and good future prediction capabilities of machine learning methods.
 
-Predictions can come from multiple sources (heuristics, oracles, randomized methods, etc.), but we ignore their nature and call all of them \emph{experts}.  An algorithm's consistency with the experts' suggestions is typically measured by comparing the algorithm's result with the solution of the \emph{best} expert. A representative example is the popular notion of regret in online learning, which fueled the development of many powerful algorithms and techniques.
+Predictions can come from multiple sources (for example: heuristics, oracles, and randomized methods), but we ignore their nature and call all of them \emph{experts}.  An algorithm's consistency with the experts' suggestions is typically measured by comparing the algorithm's result with the solution of the \emph{best} expert. A representative example is the popular notion of regret in online learning, which fueled the development of many powerful algorithms and techniques.
 
 A natural research question is whether it is possible to design competitive algorithms with mathematical performance guarantees with a stronger benchmark than the best expert. Comparing an algorithm with a stronger benchmark could provide deeper insights into the learning process and give better ways of exploiting the experts' predictions.
 
 Taking a broader view, we can study whether combining predictions of several experts is similar to combining multiple online algorithms and whether we can expect to achieve better solutions with the combination. Assuming that we do not know in advance which of the given algorithms would perform best on the upcoming requests, can we combine the algorithms in some generic way to obtain a competitive online strategy? This has been a long-standing question in the community of online algorithms \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}. To find an answer, it is a crucial to understand to what extent such an online strategy can benefit from the input of multiple algorithms and what is a suitable benchmark to evaluate its performance.
 
-While in a completely general setting such an online strategy and a corresponding benchmark may not exist, in our paper we propose
-an algorithm for online linear problems with covering constraints that is competitive with a new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
+While in a completely general setting such an online strategy and a corresponding benchmark may not exist, in this paper we propose
+two algorithms for online linear and convex problems with covering constraints that are competitive with the new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
 
 \subsection{Model and Problem}
 
 \paragraph{Covering problem with experts.}
-We have $n$ resources and each resource $i$ has a cost per unit $c_{i}$ that we know in advance ($1 \leq i \leq n$).
+In the linear problem setting, we have $n$ resources and each resource $i$ has a cost per unit $c_{i}$ that we know in advance ($1 \leq i \leq n$).
 Let $x_{i}$ be a non-negative variable representing the amount chosen from resource $i$.
 The total cost of a solution $(x_{i})_{i=1}^{n}$ is $\sum_{i=1}^{n} c_{i} x_{i}$.
 The problem includes $K$ experts and the problem's (covering type) constraints are revealed online (one by one).
@@ -33,6 +33,7 @@ to satisfy the new constraint, while maintaining the satisfaction of the previou
 Our goal is to design such an algorithm and minimize $\sum_{i=1}^{n} c_{i} x_{i}^{T}$ subject to
 all online covering constraints $t$, where $1 \leq t \leq T$. The value $T$ is the last time a constraint is released, and it is not known by the algorithm.
 
+The convex problem setting is analogous to the linear one, since we consider convex problems with linear constraints. The only difference compared to the previous paragraph is the total cost of the solution $(x_{i})_{i=1}^{n}$, which becomes $f(x)$, where $f$ is a convex function.
 
 \paragraph{Experts.} In our model, the experts' predictions are also online solutions. In other words, the experts' solutions
 fulfill the following properties:
@@ -41,7 +42,7 @@ fulfill the following properties:
 	\item for every expert $k$ and for every time $t$ and for every resource $i$, the previous expert solutions are irrevocable, therefore $s_{i,k}^{t} \geq s_{i,k}^{t'}$ for all $t' \leq t$.
 \end{enumerate}
 These properties can be verified online. If some experts do not satisfy them, we simply ignore those experts both in the decision-making and in the benchmark.
-A crucial remark: we do \emph{not} assume that the experts' solutions must be tight at each constraint $t$, meaning that $\sum_{i=1}^{n} a_{i}^{t} s_{i,k}^{t} = 1 ~ \forall t, k$.
+A crucial remark: we do \emph{not} assume that the experts' solutions must be tight at each constraint $t$, requiring $\sum_{i=1}^{n} a_{i}^{t} s_{i,k}^{t} = 1 ~ \forall t, k$.
 This assumption is unrealistic and cannot be maintained in an online manner (see the discussion in Appendix~\ref{appix-tight-solutions}).
 Besides, assuming tight constraint satisfaction would simplify the problem, while intuitively,
 the difficulty of designing competitive algorithms comes from the lack of obvious ways to distinguish
@@ -54,7 +55,7 @@ The linear combination can be changed over time, and it can be different from pr
 However, the benchmark's decisions are also online, so it cannot decrease the value of the decision variables ($x_{i}$).
 We refer to our benchmark with the name \texttt{LIN-COMB} from now on.
 
-The \texttt{LIN-COMB} benchmark's formal description is a linear program, visible on \cref{fig:benchmark}.
+The \texttt{LIN-COMB} benchmark's formal description is visible on \cref{fig:benchmark}.
 Let $w_{k}^{t} \geq 0$ be the weight assigned by the \texttt{LIN-COMB} benchmark to expert $k$ (where $1 \leq k \leq K$) at time~$t$.
 Since we consider a linear combination, the constraint $ \sum_{k=1}^{K} w_{k}^{t} = 1$ must hold.
 %In the linear program, we consider the relaxed version of this constraint, where $\sum_{k=1}^{K} w_{k}^{t} \geq 1$.
@@ -63,6 +64,33 @@ however, $x_{i}^{t}$ must be larger than $x_{i}^{t-1}$.
 Therefore, we set $x_{i}^{t} = \max\bigl\{\sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t},\ x_{i}^{t-1}\bigr\}$.
 In other words, given the chosen weights, if  $\sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} < x_{i}^{t-1}$ then $x_{i}^{t} \gets x_{i}^{t-1}$,
 otherwise $x_{i}^{t} \gets \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}$.
+
+\begin{figure}[ht]
+	\begin{mdframed}
+	%	\begin{spacing}{0.1}
+		\begin{align*}
+			\text{Linear objective:} && \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \min \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T}\bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
+			\text{Convex objective:} && \min f(x^{T}) &\\
+	%	\end{align*}
+	%	subject to
+	%	\end{spacing}
+	%	\begin{align*}
+		&& & \\
+		\text{Subject to (in both cases):} &&
+			\sum_{k=1}^{K} w_{k}^{t} &= 1  && \forall\ t \\
+			%
+			&& x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} && \forall\ i, t\\
+			%
+			&& x_{i}^{t} &\geq x_{i}^{t-1} && \forall\ i, t\\
+			%
+			&& w_{k}^{t} &\geq 0  && \forall\ t, k
+		\end{align*}
+		where $1 \leq t \leq T$, $1 \leq i \leq n$, and $f$ is convex.
+		\vspace{5pt}
+	\end{mdframed}
+	\caption{Formulation of the \texttt{LIN-COMB} benchmark for both the linear and convex problems}
+	\label{fig:benchmark}
+	\end{figure}
 
 Since every expert's solution is feasible by our assumptions, at each time $t$ and for all resource $i$ (where $1 \leq i \leq n$),
 the constructed solution $x_{i}^{t} \geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}$ constitutes a feasible solution to the covering constraints of the original covering problem.
@@ -92,42 +120,17 @@ where the second inequality holds due to the feasibility of the experts' solutio
 %    && w_{k}^{t},\ y_{i}^{t} & \ge 0 & \forall\ 1 \leq t \leq T,\ 1 \leq i \leq n,\ 1 \leq k \leq K
 %\end{align*}
 %
-We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. By setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$
-where $k^{*}$ we get the best expert in hindsight (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i,t$).
-
-\begin{figure}
-\begin{mdframed}
-%	\begin{spacing}{0.1}
-	\begin{align*}
-		&& \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \min \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T}\bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
-%	\end{align*}
-%	subject to
-%	\end{spacing}
-%	\begin{align*}
-	\text{subject to} &&
-		\sum_{k=1}^{K} w_{k}^{t} &= 1  && \forall\ t \\
-		%
-		&& x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} && \forall\ i, t\\
-		%
-		&& x_{i}^{t} &\geq x_{i}^{t-1} && \forall\ i, t\\
-		%
-		&& w_{k}^{t} &\geq 0  && \forall\ t, k
-	\end{align*}
-	where $1 \leq t \leq T$ and $1 \leq i \leq n$.
-	\vspace{5pt}
-\end{mdframed}
-\caption{Formulation of the \texttt{LIN-COMB} benchmark}
-\label{fig:benchmark}
-\end{figure}
+We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
+where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
 
 \subsection{Our approach and contribution}
 
-To design competitive algorithms with the new benchmark, we consider a primal-dual approach. First, we relax the linear program formulation of \texttt{LIN-COMB} (visible on \cref{fig:benchmark}), which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark.
+To design competitive algorithms with the new benchmark, we consider a primal-dual approach. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. The formulations of the relaxation and its dual is detailed in \cref{sec:covering}.
 
-At every time step during the execution, our algorithm constructs decisions based on the solution of a convex program. Our approach is inspired by the
+At every time step during the execution, our algorithms construct decisions based on the solution of a convex program. Our approach is inspired by the
 convex regularization method of \cite{BuchbinderChen14:Competitive-Analysis}. The objective of the convex program is a shifted entropy function.
 These functions have been widely used, in particular in the recent breakthrough related to $k$-server \cite{BubeckCohen18:K-server-via-multiscale,BuchbinderGupta19:k-servers-with}
-and metrical tasks problems \cite{BubeckCohen21:Metrical-task},
+and metrical task system problems \cite{BubeckCohen21:Metrical-task},
 in which the entropy functions are shifted by constant parameters.
 A \emph{novel} point in our approach is that the entropy function is shifted by the average of the experts' solutions.
 Moreover, regarding the constraints of the convex program, instead of using the experts' solutions directly,
@@ -141,29 +144,31 @@ Let $\rho$ be the maximum ratio between the experts' solutions on the resources.
 	\rho := \max_{i} \max_{t',t''} \biggl\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} \biggr\}  \textnormal{ s.t. } \sum_{k=1}^{K} s_{i,k}^{t''} > 0.
 \]
 Informally, $\rho$ represents the discrepancy across the experts' predictions.
-Our main result is an algorithm that has an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark.
-In particular, for $0$-$1$ optimization problems, where the experts provide integer (deterministic or randomized) solutions, our algorithm is $O(\ln K)$-competitive with \texttt{LIN-COMB}.
-An interesting feature of our algorithm is its resilience to the fluctuation of the quality of predictions (as discussed in the section below and illustrated in the experiments).
+Our main results are two algorithms. The first one (which provides solutions for online linear covering) has an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark. The second one (for online convex covering) achieves an objective cost at most $O(\ln(K\rho)) \cdot \frac{\lambda}{(1-\mu\ln(K\rho))}$ times the cost of \texttt{LIN-COMB}, where $\lambda$ and $\mu$ are the ($\lambda$-$\mu$)-smoothness parameters of the objective function.
+In particular, for $0$-$1$ optimization problems, where the experts provide integer (deterministic or randomized) solutions, our first algorithm is $O(\ln(K))$-competitive with \texttt{LIN-COMB}, and the second one is $O(\ln(K)) \cdot \frac{\lambda}{(1-\mu\ln(K))}$-competitive.
+An interesting feature of our algorithms is their resilience to the fluctuation of the quality of predictions (discussed in \cref{subsec:related-works} and illustrated with experiments in \cref{sec:exp}).
 
-\subsection{Related work and discussions}
-
-\begin{wrapfigure}{r}{0.4\textwidth}
- \vspace{-0.8cm}
-  \begin{center}
-    \includegraphics[width=0.4\textwidth]{../paper/Img/consistency_robustness.png}
-  \end{center}
-  \vspace{-1cm}
-  \caption{Robustness-Consistency}
-  \label{fig:robustness-consistency}
-   \vspace{-0.5cm}
-\end{wrapfigure}
+\subsection{Related work and discussions} \label{subsec:related-works}
 
 Much of the research focusing on surpassing worst-case performance guarantees is motivated by the spectacular advances of machine learning (ML). Specifically, ML methods can detect patterns among the arriving input requests and provide valuable insights for the online algorithms regarding future requests. \cite{LykourisVassilvtiskii18:Competitive-caching} introduced a general framework to integrate ML predictions into classical algorithm designs to surpass the worst-case performance limit.
 As a result, many practically relevant online problems were revisited to enhance existing classical algorithms with ML predictions (see the aforementioned \cite{LattanziLavastida20:Online-scheduling,Mitzenmacher20:Scheduling-with,LykourisVassilvtiskii18:Competitive-caching,Rohatgi20:Near-optimal-bounds,AntoniadisCoester20:Online-metric,GollapudiPanigrahi19:Online-algorithms,KumarPurohit18:Improving-online,AngelopoulosDurr20:Online-Computation,HsuIndyk19:Learning-Based-Frequency,KraskaBeutel18:The-case-for-learned,Mitzenmacher18:A-model-for-learned,AntoniosEtAll23:mixing-predictions-metric-algorithms}).
 
 On a high-level view, we aim to design algorithms that are robust (competitive) to the offline optimal solution and also consistent with the expert's predictions. Ideally, the performance of the designed algorithm should surpass previous bounds whenever the predictions are reliable (low errors).
 However, most learning-augmented algorithms suffer when the error rates are neither very low nor very high, resulting in prediction confidence that is neither very low nor very high.
-Figure~\ref{fig:robustness-consistency} provides a general picture of the performance of an algorithm with predictions, which is representative for many problems (for example, \cite{BamasMaggoriSvensson20:primal-dual-method,KeviNguyen23:Primal-Dual-Algorithms}). In the figure, $\eta$ indicates the confidence in the predictions (or equivalently the error rate of predictions). The learning-augmented algorithm's performance bound is the maximum value of the green and orange curves (gray shaded area on the figure). We can observe that when $0.4 \leq \eta \leq 0.9$,
+Figure~\ref{fig:robustness-consistency} provides a general picture of the performance of an algorithm with predictions, which is representative for many problems (for example, \cite{BamasMaggoriSvensson20:primal-dual-method,KeviNguyen23:Primal-Dual-Algorithms}).
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\vspace{-1.2cm}
+	\begin{center}
+		\includegraphics[width=0.4\textwidth]{../paper/Img/consistency_robustness.png}
+	\end{center}
+	\vspace{-1cm}
+	\caption{Robustness-Consistency}
+	\label{fig:robustness-consistency}
+	\vspace{-0.2cm}
+\end{wrapfigure}
+
+\noindent In the figure, $\eta$ indicates the confidence in the predictions (or equivalently the error rate of predictions). The learning-augmented algorithm's performance bound is the maximum value of the green and orange curves (gray shaded area on the figure). We can observe that when $0.4 \leq \eta \leq 0.9$,
 the algorithm's performance guarantee is worse than the classical worst-case guarantee (that can be achieved by simply ignoring all predictions).
 Intuitively, in the case of neither very low nor very high confidence in the predictions, the algorithm has a hard time deciding if it should follow the predictions or the best-known standard algorithm in the worst-case paradigm.
 It naturally raises the question of whether one can surely guarantee to achieve at least a constant factor of the worst-case guarantee (where the constant is as close to 1 as possible), assuring the resilience of the output solutions despite the quality of the predictions.
@@ -186,7 +191,7 @@ However, the inverse is not true: a solution $\hat{\vect{x}}^{t} \in \hat{X}$ in
 a linear combination of the experts' solutions.
 The \texttt{DYNAMIC} benchmark in \cite{AnandGe22:Online-Algorithms} relied on the assumption that at every time step
 the experts' solutions are tight. This assumption is unrealistic and impossible to maintain in online solutions (see Appendix~\ref{appix-tight-solutions}).
-\cite{AnandGe22:Online-Algorithms} claimed an $O(\log K)$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
+\cite{AnandGe22:Online-Algorithms} claimed an $O(\ln K)$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
 Unfortunately, this is \emph{incorrect}; we show an example in Appendix~\ref{sec:counter-example}
 in which their algorithm's performance guarantee is unbounded in the \texttt{DYNAMIC}
 benchmark.
