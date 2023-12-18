@@ -171,13 +171,13 @@ Figure~\ref{fig:robustness-consistency} provides a general picture of the perfor
 \noindent In the figure, $\eta$ indicates the confidence in the predictions (or equivalently the error rate of predictions). The learning-augmented algorithm's performance bound is the maximum value of the green and orange curves (gray shaded area on the figure). We can observe that when $0.4 \leq \eta \leq 0.9$,
 the algorithm's performance guarantee is worse than the classical worst-case guarantee (that can be achieved by simply ignoring all predictions).
 Intuitively, in the case of neither very low nor very high confidence in the predictions, the algorithm has a hard time deciding if it should follow the predictions or the best-known standard algorithm in the worst-case paradigm.
-It naturally raises the question of whether one can surely guarantee to achieve at least a constant factor of the worst-case guarantee (where the constant is as close to 1 as possible), assuring the resilience of the output solutions despite the quality of the predictions.
-Our algorithm, together with the new benchmark, provides an answer to this question.
+It naturally raises the question whether we can achieve at least a constant factor of the worst-case guarantee (where the constant is as close to 1 as possible), while assuring a resilient output solution regardless of the predictions' quality.
+Our algorithm with the new benchmark provides an answer to this question.
 
 
-The paper of \cite{AnandGe22:Online-Algorithms} is closely related to ours and studies the design of algorithms with multiple experts.
+The paper of \cite{AnandGe22:Online-Algorithms} is the closest to ours, which also studies the design of algorithms with multiple experts.
 They consider a \texttt{DYNAMIC} benchmark that is intuitively
-the minimum cost solution that is supported by at least one expert solution at each step. Formally:
+the minimum cost solution that is supported by at least one expert solution at each time step. Formally:
 \[\texttt{DYNAMIC} = \min_{\hat{\textbf{x}} \in \hat{X}} \sum_{i=1}^{n} c_i \hat{x}_i \textnormal{, where}\]
 %
 \[\hat{X} = \{\hat{\vect{x}} : \forall\ i \in [n],\ \forall\ t \in [T],\ \exists\ k \in [K]\ \textnormal{ such that } s_{i,k}^{t} \le \hat{x}_i \}\]
@@ -190,14 +190,14 @@ therefore, for any $i$ and $t$, there exists $k$ such that $x_{i}^{t} \geq s_{i,
 However, the inverse is not true: a solution $\hat{\vect{x}}^{t} \in \hat{X}$ in \texttt{DYNAMIC} is not necessarily
 a linear combination of the experts' solutions.
 The \texttt{DYNAMIC} benchmark in \cite{AnandGe22:Online-Algorithms} relied on the assumption that at every time step
-the experts' solutions are tight. This assumption is unrealistic and impossible to maintain in online solutions (see Appendix~\ref{appix-tight-solutions}).
-\cite{AnandGe22:Online-Algorithms} claimed an $O(\ln K)$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
-Unfortunately, this is \emph{incorrect}; we show an example in Appendix~\ref{sec:counter-example}
-in which their algorithm's performance guarantee is unbounded in the \texttt{DYNAMIC}
-benchmark.
+the experts' solutions are tight. This assumption does not allow the representation of some realistic problems and it is impossible to maintain in online solutions (see Appendix~\ref{appix-tight-solutions}).
+\cite{AnandGe22:Online-Algorithms} claimed an $O(\ln(K))$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
+Unfortunately, their benchmark is too strong, which makes their claim \emph{incorrect}; we show an example in Appendix~\ref{sec:counter-example}
+in which their algorithm's performance guarantee is unbounded in their \texttt{DYNAMIC}
+benchmark. We believe that with a different benchmark their algorithm could be $O(\ln(K))$-competitive, however, we did not manage to fix their proof.
 
 
-Integrating multiple predictions into the online algorithm design was a topic of other papers as well.
+Integrating multiple predictions into online algorithms was a topic of other papers as well.
 As an example, \cite{GollapudiPanigrahi19:skirental-multiple-predictions} studied the ski rental problem with multiple predictions.
 The authors defined a consistency metric, which compares the performance of their algorithm to the optimal solution, given that at least one prediction (among the $k$ predictions) is optimal.
 %By carefully integrating every prediction in their algorithm design, the authors managed to reduce the overall prediction error rate and obtain the best possible performance guarantee for their algorithm. During their analysis, they defined a consistency metric, which compares the performance of their algorithm to the optimal solution, given that at least one prediction (among the $k$ predictions) is correct.
@@ -206,8 +206,12 @@ The authors defined a consistency metric, which compares the performance of thei
 They compared the performance of their algorithm to the best possible solution obtained on the union of the suggestions. Recently, \cite{DinitzIm:Algorithms-with} studied the use of multiple predictors for several problems such as matching, load balancing, and non-clairvoyant scheduling. They provided algorithms competitive to the best predictor for such problems.
 An important remark: all the above benchmarks are captured within \texttt{LIN-COMB}.
 
-Furthermore, \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms} proposed an algorithm with multiple experts for the metrical task system problem. Their benchmark allows switching from one expert to another at each time step, but it does not allow combinations of experts or any solution not suggested by one of the experts. In our \texttt{LIN-COMB} benchmark, the linear combinations that evolve over time could result in a solution that is not suggested by one of the experts and potentially they can be much more efficient. In \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms} there is a cost for state transitions, which is appropriate for their problems, but in many other problems, the smooth transition with additional costs from previous decisions to new ones is not allowed (past decisions are immutable). Therefore, the results of \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms} are not applicable to our setting.
+Furthermore, \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms} proposed an algorithm with multiple experts for the metrical task system problem. Their benchmark allows switching from one expert to another at each time step, but it does not allow combinations of experts or any solution not suggested by one of the experts. In our \texttt{LIN-COMB} benchmark, the linear combinations that evolve over time could result in a solution that is not suggested by one of the experts and potentially, they can be much more efficient. In \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms} there is a cost for state transitions, which is appropriate for their problems, but in many other problems, the smooth transition with additional costs from previous decisions to new ones is not allowed (past decisions are immutable). Therefore, the results of \cite{AntoniosEtAll23:mixing-predictions-metric-algorithms} are not applicable to our setting.
 
 Combining online algorithms into a new algorithm to achieve better results than the individual input algorithms has been a long-standing online algorithm design question \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}.
 Its intrinsic difficulty is similar to the issue we mentioned earlier: when the performance of the given input algorithms (or heuristics) is unclear (especially in the online setting), it is challenging to create a combination that can surpass the performance of the included algorithms.
 Following the current development of online algorithm design techniques with multiple predictions, this subject has been renewed with different machine learning approaches. Our paper contributes to this line of research.
+
+\subsection{Paper overview}
+
+In this paper we show two algorithms to solve online \emph{linear} and online \emph{convex} covering problems with multiple experts. While the convex setting includes the linear one, our proposed algorithm is simpler for the linear case. Therefore, \cref{sec:covering} details our first algorithm for the linear case, and afterwards, in \cref{sec:convex} we detail the extension to the convex case. \cref{sec:exp} shows empirical results, and we conclude in \cref{sec:conclusion}.

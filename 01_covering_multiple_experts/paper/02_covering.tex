@@ -2,8 +2,8 @@
 
 \section{Online \emph{linear} covering with multiple experts}	\label{sec:covering}
 
-Our proposed algorithm solves online covering problems by creating linear combinations of the solutions proposed by $K$ experts in an online manner.
-Recall that we evaluate the performance of our algorithm with the \texttt{LIN-COMB} benchmark (formalized on \cref{fig:benchmark}), which consists of the best linear combination of the experts' solution at each step.
+Our first proposed algorithm solves online linear covering problems by creating linear combinations of the solutions proposed by $K$ experts in an online manner.
+Recall that we evaluate the performance of our algorithm with the \texttt{LIN-COMB} benchmark (formalized on \cref{fig:benchmark}), which consists of the best linear combination of the experts' solution at each time step.
 
 Since our \texttt{LIN-COMB} benchmark is a linear combination of the experts' solutions, the equality $ \sum_{k=1}^{K} w_{k}^{t} = 1$ must hold, where $w_{k}^{t} \geq 0$ is the weight assigned to expert $k$ (where $1 \leq k \leq K$) at time $t$. In the following, we formulate a relaxed version of the \texttt{LIN-COMB} formulation, where
 $\sum_{k=1}^{K} w_{k}^{t} \geq 1$. Additionally, the relaxed formulation enables us to avoid the (online) hard constraint requiring $w_{k}^{t} s_{i,k}^{t} \geq w_{k}^{t-1} s_{i,k}^{t-1}$ to hold, and instead, we introduce a new variable, $y_{i}^{t}$, to represent the increase of $x_{i}^{t}$ compared to $x_{i}^{t-1}$. When $w_{k}^{t} s_{i,k}^{t} < w_{k}^{t-1} s_{i,k}^{t-1}$ during the execution, we set the contribution of $i$ at time $t$ to be 0, and therefore, $y_{i}^{t} = 0$.
@@ -34,7 +34,7 @@ Due to the relaxed constraint, the optimal solution of the relaxed linear progra
 		\begin{align*}
 			&& \max \sum_{t=1}^{T} & \alpha^{t} \\
 		%
-			(x_{k}^{t}) \qquad && \alpha^{t} + \sum_{i=1}^{n} s_{i,k}^{t} ( \beta_{i}^{t+1} - \beta_{i}^{t})   &\leq 0  &\forall\ k,t\\
+			(w_{k}^{t}) \qquad && \alpha^{t} + \sum_{i=1}^{n} s_{i,k}^{t} ( \beta_{i}^{t+1} - \beta_{i}^{t})   &\leq 0  &\forall\ k,t\\
 		%
 			(y_{i}^{t}) \qquad && \beta_{i}^{t}   &\leq c_{i}  &\forall\ i,t \\
 		%
@@ -49,17 +49,17 @@ Due to the relaxed constraint, the optimal solution of the relaxed linear progra
 
 According to the theorem of weak duality, any feasible solution of the dual program lower bounds any feasible solution of the primal program, and therefore, any feasible dual solution also lower bounds our \texttt{LIN-COMB} benchmark. Following the chain of lower bounds, our approach to design a competitive algorithm is as follows. At every time step $t$, we build solutions for all $x_{i}^{t}$ together with the solutions for the dual problem $(\alpha^{t}, \beta_{i}^{t})$. Then, we bound the cost of the algorithm to that of the dual. It is important to emphasize that the designed solution for every $x_{i}^{t}$ must be feasible to the covering constraints, but it may \emph{not necessarily} be a linear combination of the experts' solutions.
 
-\subsection{Competitive Algorithm} \label{sec:algo}
+\subsection{Algorithm description and performance analysis} \label{sec:algo}
 
 \paragraph{Preprocessing.}
 Recall that by our assumptions, the experts' solutions are always feasible and non-decreasing. At the arrival of the $t^{\text{th}}$ constraint, expert $k$ (where $1 \leq k \leq K$) provides a feasible solution $s_{k}^{t} = (s_{i,k}^{t})_{i=1}^{n}$, such that $s_{i,k}^{t} \ge s_{i,k}^{t'}$ for all $t' \le t$ and all $i$ where $1 \le i \le n$. These assumptions do not exclude the possibility for the experts to provide malicious solutions that instruct the algorithm to use an unnecessarily large amount of resources.
-Note that contrary to the assumption in \cite{AnandGe22:Online-Algorithms}, we can \emph{not} expect the experts' solutions to be always tight.
+To regardless maintain online solutions, we do \emph{not} expect the experts' solutions to be always tight (a difference compared to the assumptions in \cite{AnandGe22:Online-Algorithms}).
 %Either the solutions come from an offline method and guarantee tightness as in \cite{BamasMaggoriSvensson20:primal-dual-method}, or the solutions are constructed online by the experts and do not guarantee tightness.
 (In Appendix~\ref{appix-tight-solutions}
 we show an example that tight solutions cannot be maintained in an online manner.)
 
 
-To circumvent this issue, we preprocess the experts' solutions at each iteration. During the preprocessing, every solution $s_k^t$ is scaled down to make it as tight as possible on the $t^{\text{th}}$ constraint, while always maintaining $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i$. Additionally, after the down-scaling, we create an auxiliary solution $\hat{s}_k^t$ that is tight for the $t^{\text{th}}$ constraint. This solution is useful for our algorithm, and we create it with the following procedure.
+To circumvent the issue of malicious suggestions, we preprocess the experts' solutions at each iteration. During the preprocessing, every solution $s_k^t$ is scaled down to make it as tight as possible on the $t^{\text{th}}$ constraint, while always maintaining $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i$. Additionally, after the down-scaling, we create an auxiliary solution $\hat{s}_k^t$ that is tight for the $t^{\text{th}}$ constraint. This auxiliary solution is useful for our algorithm and its analysis, but it does not directly participate in forming the actual solution. (Our algorithm only sets the weights of the experts and does not change the experts' solutions.) The auxiliary solution $\hat{s}_k^t$ is created with the following procedure.
 
 After the down-scaling, do the following for each expert $k$.
 \begin{compactenum}
@@ -79,25 +79,28 @@ $\hat{s}_{i,k}^{t} \leq s_{i,k}^{t}$ and $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}
 \end{lemma}
 %
 \begin{proof}
-Let us fix an expert $k$. We prove the lemma by induction. At time step $t=1$, one can always scale down the solution $s_{i,k}^{1} \geq 0$ such that the first constraint becomes tight.
-Assume that the lemma holds until $t-1$, $\sum_{i=1}^{n} a_{i}^{t-1} \hat{s}_{i,k}^{t-1} = 1$ and $\hat{s}_{i,k}^{t-1} \leq s_{i,k}^{t-1}$.
-Consider time $t$. If after scaling down (at the first step in the procedure) the $t^{\text{th}}$ constraint becomes tight, then we are done. Otherwise, we have
+Let us fix an expert $k$. We prove the lemma by induction. At time step $t=1$, we can always scale down the solution $s_{i,k}^{1} \geq 0$ such that the first constraint becomes tight.
+Assume that the lemma holds until $t-1$, so $\sum_{i=1}^{n} a_{i}^{t-1} \hat{s}_{i,k}^{t-1} = 1$ and $\hat{s}_{i,k}^{t-1} \leq s_{i,k}^{t-1}$.
+Consider time $t$. If after the down-scaling (during the first prepocessing step) the $t^{\text{th}}$ constraint becomes tight, then we are done. Otherwise, we have
 	%
 	\begin{align*}
-		1 &< \sum_{i=1}^{n} a_{i}^{t} s_{i,k}^{t} = \sum_{i \in I} a_{i}^{t} s_{i,k}^{t} + \sum_{i \notin I} a_{i}^{t} s_{i,k}^{t}, \\
+		1 &< \sum_{i=1}^{n} a_{i}^{t} s_{i,k}^{t} = \sum_{i \in I} a_{i}^{t} s_{i,k}^{t} + \sum_{i \notin I} a_{i}^{t} s_{i,k}^{t}  & \\
 		%
-		1 &= \sum_{i=1}^{n} a_{i}^{t-1} \hat{s}_{i,k}^{t-1} =  \sum_{i = 1}^{n} a_{i}^{t} \biggl( \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}} \biggr) \\
+		& & \text{and} \\
+		%
+		1 &= \sum_{i=1}^{n} a_{i}^{t-1} \hat{s}_{i,k}^{t-1} =  \sum_{i = 1}^{n} a_{i}^{t} \biggl( \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}} \biggr) & \\
 		&\geq  \sum_{i \in I} a_{i}^{t} \biggl( \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}} \biggr)
-		+ \sum_{i \notin I} a_{i}^{t} s_{i,k}^{t}
+		+ \sum_{i \notin I} a_{i}^{t} s_{i,k}^{t} &
 	\end{align*}
 	%
 	Hence, there exists $\hat{s}_{i,k}^{t} \in \bigl[ \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}}, s_{i,k}^{t} \bigr]$ for every $i$, where $1 \leq i \leq n$, such that $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
 \end{proof}
 
-\noindent \paragraph{Remark.} Our proposed algorithm solves a convex program at each time step to set the current value of the variables. The convex program's objective uses an entropy-like function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$. However, we display all other occurrences of the competitive ratio as $O(\log(K))$ for simplicity. Additionally, at time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
+\noindent \paragraph{Remark.} Our proposed algorithm solves a convex program at each time step to set the current value of the variables. The convex program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$. However, we display all other occurrences of the competitive ratio as $O(\log(K))$ for simplicity. Additionally, at time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
+
+\clearpage
 
 \paragraph{Algorithm.}
-
 
 At the arrival of the $t^{\text{th}}$ constraint,
 \begin{compactenum}
@@ -105,7 +108,7 @@ At the arrival of the $t^{\text{th}}$ constraint,
 %
 \begin{align*}
 && \min_{w} \biggl\{\sum_{i=1}^{n} c_{i}  \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr) &
-					 \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t}}{ \sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right)
+					 \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t}}{ \sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right)
 					 		- \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k} \biggr] \biggr\} \\
 %\end{align*}
 %%
@@ -114,7 +117,7 @@ At the arrival of the $t^{\text{th}}$ constraint,
 %\begin{align*}
     (\gamma^{t})  && \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k} \biggr) &\geq 1 \qquad \forall\ t\\
 %
-    (\lambda_{i}^{t}) && \sum_{k=1}^{K}  w_{i,k} &\geq 1 \qquad \forall\ i\\
+    (\lambda_{i}) && \sum_{k=1}^{K}  w_{i,k} &\geq 1 \qquad \forall\ i\\
 %
     (\mu_{i}^{t}) && \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} &\geq 0 \qquad \forall\ i,t
 \end{align*}
@@ -124,29 +127,29 @@ where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$.
 Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the convex program.
 (We can set $w_{i,k} = 0$ for all $k$ beforehand.)
 	%
-	\item For all $i$ if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t}$;
+	\item For all $i$, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t}$;
 otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
 \end{compactenum}
 
 \medskip
 
 \subsection{Analysis}
-As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i}^{t},\ \mu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
+As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i},\ \mu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
 
 \begin{align*}
-   \biggl[ \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k}  \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) - 1 \biggr] \gamma^{t} &= 0 \qquad \forall t \\
-   \biggl[ \sum_{k=1}^{K}  w_{i,k}^{t}  - 1 \biggr] \lambda_{i}^{t} &= 0 \qquad \forall i, t \\
-   \biggl[ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} \biggr] \mu_{i}^{t} &= 0 \qquad \forall i, t \\
+   \biggl[ \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) - 1 \biggr] \gamma^{t} &= 0 \qquad \forall\ t \\
+   \biggl[ \sum_{k=1}^{K}  w_{i,k}^{t}  - 1 \biggr] \lambda_{i} &= 0 \qquad \forall\ i, t \\
+   \biggl[ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} \biggr] \mu_{i}^{t} &= 0 \qquad \forall\ i, t \\
 %
- c_{i} s_{ik}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
-    	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i}^{t} - s_{i,k}^{t} \mu_{i}^{t} &= 0	\qquad \forall i,k,t \\
+ c_{i} s_{i,k}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
+    	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i} - s_{i,k}^{t} \mu_{i}^{t} &= 0	\qquad \forall\ i,k,t \\
 	%
-	\gamma^{t}, \lambda_{i}^{t}, \mu_{i}^{t} &\geq 0 \qquad \forall i, t
+	\gamma^{t}, \lambda_{i}, \mu_{i}^{t} &\geq 0 \qquad \forall\ i, t
 \end{align*}
 
 Moreover, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\mu_{i}^{t} = 0$, then
 \begin{align}	\label{eq:KKT}
-   c_{i} s_{ik}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
+   c_{i} s_{i,k}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
     	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i}^{t} = 0
 \end{align}
 
