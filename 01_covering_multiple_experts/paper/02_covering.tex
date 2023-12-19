@@ -2,6 +2,8 @@
 
 \section{Online \emph{linear} covering with multiple experts}	\label{sec:covering}
 
+\subsection{Benchmark relaxation for the algorithm}
+
 Our first proposed algorithm solves online linear covering problems by creating linear combinations of the solutions proposed by $K$ experts in an online manner.
 Recall that we evaluate the performance of our algorithm with the \texttt{LIN-COMB} benchmark (formalized on \cref{fig:benchmark}), which consists of the best linear combination of the experts' solution at each time step.
 
@@ -49,7 +51,7 @@ Due to the relaxed constraint, the optimal solution of the relaxed linear progra
 
 According to the theorem of weak duality, any feasible solution of the dual program lower bounds any feasible solution of the primal program, and therefore, any feasible dual solution also lower bounds our \texttt{LIN-COMB} benchmark. Following the chain of lower bounds, our approach to design a competitive algorithm is as follows. At every time step $t$, we build solutions for all $x_{i}^{t}$ together with the solutions for the dual problem $(\alpha^{t}, \beta_{i}^{t})$. Then, we bound the cost of the algorithm to that of the dual. It is important to emphasize that the designed solution for every $x_{i}^{t}$ must be feasible to the covering constraints, but it may \emph{not necessarily} be a linear combination of the experts' solutions.
 
-\subsection{Algorithm description and performance analysis} \label{sec:algo}
+\subsection{Algorithm description} \label{sec:algo}
 
 \paragraph{Preprocessing.}
 Recall that by our assumptions, the experts' solutions are always feasible and non-decreasing. At the arrival of the $t^{\text{th}}$ constraint, expert $k$ (where $1 \leq k \leq K$) provides a feasible solution $s_{k}^{t} = (s_{i,k}^{t})_{i=1}^{n}$, such that $s_{i,k}^{t} \ge s_{i,k}^{t'}$ for all $t' \le t$ and all $i$ where $1 \le i \le n$. These assumptions do not exclude the possibility for the experts to provide malicious solutions that instruct the algorithm to use an unnecessarily large amount of resources.
@@ -127,13 +129,13 @@ where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$.
 Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the convex program.
 (We can set $w_{i,k} = 0$ for all $k$ beforehand.)
 	%
-	\item For all $i$, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t}$;
+	\item For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
 otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
 \end{compactenum}
 
 \medskip
 
-\subsection{Analysis}
+\subsection{Performance Analysis}
 As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i},\ \mu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
 
 \begin{align*}
@@ -147,17 +149,18 @@ As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambd
 	\gamma^{t}, \lambda_{i}, \mu_{i}^{t} &\geq 0 \qquad \forall\ i, t
 \end{align*}
 
-Moreover, if $\sum_{k=1}^{K} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\mu_{i}^{t} = 0$, then
-\begin{align}	\label{eq:KKT}
+Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\mu_{i}^{t} = 0$, then
+\begin{align}	\label{eq:KKT1}
    c_{i} s_{i,k}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
-    	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i}^{t} = 0
+    	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i} = 0
 \end{align}
 
+\clearpage
 
-\paragraph{Dual variables and feasibility.} We set the dual variables of the linear program relaxation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm.
+\paragraph{Dual variables and feasibility.} We set the dual variables of the linear program relaxation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm. The dual formulation is visible on \cref{fig:dual}.
 %
 \begin{align*}
-    \alpha^{t} &= \frac{1}{\ln(K\rho)}  \biggl( \gamma^{t} + \sum_{i} \lambda_{i}^{t} \biggr), \\
+    \alpha^{t} &= \frac{1}{\ln(K\rho)}  \biggl( \gamma^{t} + \sum_{i=1}^{n} \lambda_{i} \biggr), \\
     \beta_{i}^{t} &= \frac{1}{\ln(K\rho)} c_i \ln \left(\frac{ (1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}\right)
 \end{align*}
 %
@@ -170,14 +173,14 @@ The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem
 \begin{proof}
 We first prove that the $x_{i}^{t}$ variables satisfy the covering constraints by induction. At time 0, no constraint has been released yet, and every variable is set to 0. This all-zero solution is feasible. Let us assume that the algorithm provides feasible solutions up to time $t-1$. At time $t$, the algorithm maintains the inequality $x_{i}^{t} \geq x_{i}^{t-1}$, so all constraints $t'$ where $t' < t$ are satisfied. Besides, $x_{i}^{t}$ is always at least
 $\sum_{k} w_{i,k}^{t} s_{i,k}^{t}$, which is larger than $\sum_{k} w_{i,k}^{t} \hat{s}_{i,k}^{t}$ since $s_{i,k}^{t} \geq \hat{s}_{i,k}^{t}$
-for all $i,k$ by the preprocessing step. Hence, the constraint $t$ is also satisfied, formally,
+for all $i,k$ due to the preprocessing step. Hence, the constraint $t$ is also satisfied. Formally,
 $$
-\sum_{i=1}^{n} a_{i}^{t} x_{i}^{t}  \geq \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k} \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) \geq 1.
+\sum_{i=1}^{n} a_{i}^{t} x_{i}^{t}  \geq \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K} w_{i,k}^{t}  \hat{s}_{i,k}^{t} \biggr) \geq 1.
 $$
 
 In the remaining part of the proof, we show the feasibility of $\alpha^{t}$ and every $\beta_{i}^{t}$.
-Since $ \gamma^{t} \geq 0$ and $\lambda_{i}^{t} \geq 0$ for all $i$ and $t$, we get that $\alpha^{t} \geq 0$.
-In the definition of  $\beta_{i}^{t}$, the nominator of the logarithm term is always larger than the denominator, and it is smaller than $K\rho$ times the denominator. Consequently, $0 \leq \beta_{i}^{t} \leq c_{i}$. Furthermore,
+Since $ \gamma^{t} \geq 0$ and $\lambda_{i} \geq 0$ for all $i$ and $t$, we get that $\alpha^{t} \geq 0$.
+When we set $\beta_{i}^{t}$, the nominator of the logarithm term is always larger than the denominator, and it is smaller than $(K\rho)$-times the denominator. Consequently, $0 \leq \beta_{i}^{t} \leq c_{i}$. Furthermore,
 %
 \begin{align*}
     \beta_{i}^{t+1} - \beta_{i}^{t}
@@ -187,27 +190,29 @@ In the definition of  $\beta_{i}^{t}$, the nominator of the logarithm term is al
 Since $\sum_{i} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$, using the KKT conditions, we get:
 \begin{align*}
 \alpha^{t} + \sum_{i=1}^{n} s_{ik}^{t} \left(\beta_{i}^{t+1} - \beta_{i}^{t}\right)
-&= \frac{1}{\ln(K\rho)} \biggl( \gamma^{t} + \sum_{i} \lambda_{i}^{t} \biggr)
-	- \frac{1}{\ln(K\rho)}  \sum_{i=1}^{n} s_{i,k}^{t} c_i \ln \left( \frac{\sum_{k=1}^{K}  s_{ik}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1} + \delta_{i}^{t-1}} \right) \\
+&= \frac{1}{\ln(K\rho)} \biggl( \gamma^{t} + \sum_{i=1}^{n} \lambda_{i} \biggr)
+	- \frac{1}{\ln(K\rho)}  \sum_{i=1}^{n} s_{i,k}^{t} c_i \ln \left( \frac{\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1} + \delta_{i}^{t-1}} \right) \\
 %
-&= \frac{1}{\ln(K\rho)} \biggl[ \gamma^{t} + \sum_{i=1}^{n} \lambda_{i}^{t} - \sum_{i=1}^{n} \left( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} + \lambda_{i}^{t} + s_{i,k}^{t} \mu_{i}^{t} \right) \biggr] \\
+&= \frac{1}{\ln(K\rho)} \biggl[ \gamma^{t} + \sum_{i=1}^{n} \lambda_{i} - \sum_{i=1}^{n} \left( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} + \lambda_{i} + s_{i,k}^{t} \mu_{i}^{t} \right) \biggr] \\
 %
 &\leq 0
 \end{align*}
 \end{proof}
 
+\clearpage
+
 \begin{theorem} \label{covering-theorem}
-The algorithm's cost is at most $O(\ln(K \rho))$-competitive in the \texttt{LIN-COMB} benchmark.
+The algorithm is $O(\ln(K \rho))$-competitive with the \texttt{LIN-COMB} benchmark.
 \end{theorem}
 %
-\begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the dual problem of the \texttt{LIN-COMB} benchmark relaxation and for the original covering problem. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark - the best linear combination of the experts' solutions.
+\begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the dual problem of the \texttt{LIN-COMB} benchmark's relaxation and for the original covering problem. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the relaxation's dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark (the best linear combination of the experts' solutions).
 \begin{align}
 	 \sum_{i=1}^{n} &c_{i} (x_{i}^{t} - x_{i}^{t-1})
 		= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i}(x_{i}^{t} - x_{i}^{t-1}) &&  \notag \\
 		%
-		&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i}(x_{i}^{t} + \delta_{i}^{t}) \ln \frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t}} \\
+		&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i}(x_{i}^{t} + \delta_{i}^{t}) \ln \left(\frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t}}\right) \\
 		%
-		&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i} (x_{i}^{t} + \delta_{i}^{t}) \ln \frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}} \\
+		&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i} (x_{i}^{t} + \delta_{i}^{t}) \ln \left(\frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}}\right) \\
 		%
 		&= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i} \left[ \left(\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \frac{1}{K} \sum_{k=1}^{K} s_{i,k}^{t} \right)
 			\ln \left(\frac{ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}}  \right) \right] \\
@@ -222,15 +227,15 @@ The algorithm's cost is at most $O(\ln(K \rho))$-competitive in the \texttt{LIN-
 %%
 %\begin{align}
 %
-&=  \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^t + \lambda_{i}^{t} \biggr) \\
+&=  \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^t + \lambda_{i} \biggr) \\
 %
 %
-&\leq \sum_{i=1}^{n} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^t + \lambda_{i}^{t} \biggr) \notag \\
+&\leq \sum_{i=1}^{n} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^t + \lambda_{i} \biggr) \notag \\
 %
-&= \sum_{i=1}^{n} a_{i}^{t} \biggl(\sum_{k=1}^{K} w_{i,k}^{t} \hat{s}_{i,k}^{t} \biggr) \gamma^t + \sum_{i=1}^{n} \bigg( \sum_{k=1}^{K} w_{i,k}^{t} \biggr) \lambda_{i}^{t}
-+ \frac{1}{K}  \sum_{k=1}^{K} \biggl( \sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t}  \biggr) \gamma^t + \frac{1}{K} \sum_{k=1}^{K} \sum_{i=1}^{n} \lambda_{i}^{t} 		\notag \\
+&= \sum_{i=1}^{n} a_{i}^{t} \biggl(\sum_{k=1}^{K} w_{i,k}^{t} \hat{s}_{i,k}^{t} \biggr) \gamma^t + \sum_{i=1}^{n} \biggl( \sum_{k=1}^{K} w_{i,k}^{t} \biggr) \lambda_{i}
++ \frac{1}{K}  \sum_{k=1}^{K} \biggl( \sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t}  \biggr) \gamma^t + \frac{1}{K} \sum_{k=1}^{K} \sum_{i=1}^{n} \lambda_{i} 		\notag \\
 %
-&= 2 \gamma^{t} + 2\sum_{i=1}^{n} \lambda_{i}^{t} = \ln(K \rho) \alpha^{t}
+&= 2 \gamma^{t} + 2\sum_{i=1}^{n} \lambda_{i} = 2\ln(K \rho) \alpha^{t}
 \end{align}
 %
 The above corresponding transformations hold since:
@@ -238,21 +243,21 @@ The above corresponding transformations hold since:
 	\setcounter{enumi}{1}
 	\item follows from the inequality $a - b \leq a \ln(a/b)$ for all $0 < b \leq a$;
 	\item holds since $\delta_{i}^{t} \geq \delta_{i}^{t-1}$ (because $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i,k,t$);
-	\item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$;
-	\item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
+	\item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k}  s_{i,k}^{t} w_{i,k}^{t}$;
+	\item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
 	\setcounter{enumi}{5}
 	\item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$
-	(so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT}) applies;
+	(so $\sum_{k}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT1}) applies;
 	\item is true due to the complementary slackness conditions
-		and that $\sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
+		and that $\sum_{i} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
 \end{compactenum}
 \end{proof}
 
 \begin{corollary} \label{corollary}
-	For $0$-$1$ optimization problems in which experts provide integer (deterministic or randomized) solutions,
-	the algorithm is $O(\ln K)$-competitive in the \texttt{LIN-COMB} benchmark.
-	Subsequently, there exists an algorithm such that its performance is $O(\ln K)$-competitive in the \texttt{LIN-COMB}
-	benchmark and is up to a constant factor to the best guarantee in the worst-case benchmark
+	For $0$-$1$ optimization problems in which the experts provide integer (deterministic or randomized) solutions,
+	our algorithm is $O(\ln (K))$-competitive with the \texttt{LIN-COMB} benchmark.
+	Further, there exists an algorithm whose performance is $O(\ln (K))$-competitive with the \texttt{LIN-COMB}
+	benchmark and is up to a constant factor far from the best guarantee in the worst-case benchmark.
 \end{corollary}
 %
 \begin{proof}
@@ -269,25 +274,25 @@ The above corresponding transformations hold since:
    \vspace{-0.8cm}
 \end{wrapfigure}
 
-	If the value of $s_{i,k}^{t}$ is in $\{0,1\}$ for every $i,k,t$, then
+	\noindent If the value of $s_{i,k}^{t}$ is in $\{0,1\}$ for every $i,k,t$, then
 	\[
 	\rho = \max_{i} \max_{t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}
 	\leq \frac{K}{1}
 	\]
-	Therefore, the competitive ratio of the main algorithm in the \texttt{LIN-COMB} benchmark is $O(\log K \rho) = O(\log K^2)$.
+	Therefore, the competitive ratio of the our algorithm with the \texttt{LIN-COMB} benchmark is $O(\log (K \rho)) = O(\log (K^2))$.
 
- 	To obtain an algorithm that is competitive in both the \texttt{LIN-COMB} and the worst-case benchmarks, we proceed as follows (an illustration in \cref{fig:algo-layers}).
-	We first apply the main algorithm on the $K$ experts' predictions to obtain an online algorithm, named $A$.
-	Algorithm $A$ is $O(\ln K)$-competitive in the \texttt{LIN-COMB} benchmark. Let $B$ be the algorithm with the best worst-case guarantee.
-	One applies the main algorithm one more on two algorithms, $A$ and $B$. The final algorithm is $O(\ln 2)$-competitive to both $A$ and $B$.
-	In other words, its performance is $O(\ln K)$-competitive in the \texttt{LIN-COMB} benchmark and is up to a constant factor worse than the best guarantee in the worst-case benchmark.
+ 	To obtain an algorithm that is competitive with both the \texttt{LIN-COMB} and the worst-case benchmarks, we proceed as follows (\cref{fig:algo-layers} serves as an illustration).
+	We first apply the main algorithm on the $K$ experts' integer predictions to obtain an online algorithm, named $A$.
+	Algorithm $A$ is $O(\ln (K))$-competitive with the \texttt{LIN-COMB} benchmark. Let $B$ be the algorithm with the best worst-case guarantee.
+	We then apply the main algorithm one more time on two algorithms, $A$ and $B$. The final algorithm is $O(\ln (2))$-competitive with both $A$ and $B$.
+	In other words, its performance is $O(\ln (K))$-competitive with the \texttt{LIN-COMB} benchmark and is up to a constant factor worse than the best guarantee in the worst-case benchmark.
 
 \end{proof}
 
 By \cref{corollary}, given a $0$-$1$ optimization problem, if there are $K$ deterministic online algorithms, then
-we can design an algorithm that has a cost at most $O(\log K)$ times that of the best linear combination of those algorithms at any time.
+we can design an algorithm that has a cost at most $O(\log (K))$ times that of the best linear combination of those algorithms at any time.
 Similarly, if $K$ given online algorithms are randomized (they output $0$-$1$ solutions with probabilities), then our algorithm
-has an expected cost (randomization over the product of the distributions of those solutions) at most $O(\log K)$ times that of
+has an expected cost (randomization over the product of the distributions of those solutions) at most $O(\log(K))$ times that of
 the best linear combination of those algorithms at any time. Many practical problems admit $0$-$1$ solutions, for which our algorithm is of interest.
-Consider problems like network design, ski rental, TCP acknowledgement, facility location, etc. Given the fractional solutions constructed by our algorithm,
+Consider problems like network design, ski rental, TCP acknowledgement, facility location, and so on. Given the fractional solution of our algorithm,
 we can apply existing online rounding schemes to obtain integral solutions for such problems.
