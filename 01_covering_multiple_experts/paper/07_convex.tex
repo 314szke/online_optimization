@@ -151,30 +151,21 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
 \end{align*}
 %
 Recall that $\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
-%
-We can simplify $\gamma^{t}$ as:
-\begin{align*}
-    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n}  \biggl[ \nabla_{i} f(x^{t-1}) +  L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
-        & \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
-    & \quad + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
-\end{align*}
 
 \begin{lemma} \label{lem:covering-feasibility}
-The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem and the dual variables $(\alpha^{t}, \beta_{i}^{t}, \xi_S^t, \gamma^t)$ of the reformulated \texttt{LIN-COMB} benchmark's dual are feasible up to a factor of $\ln (K\rho)$.
+The original covering problem's $x_{i}^{t}$ solution set by the algorithm and the dual variables $(\alpha^{t}, \beta_{i}^{t}, \xi_S^t, \gamma^t)$ of the reformulated \texttt{LIN-COMB} benchmark are feasible up to a factor of $\ln (K\rho)$.
 \end{lemma}
 %
 \begin{proof}
 We first prove that the $x_{i}^{t}$ variables satisfy the covering constraints by induction. At time~0, no constraint has been released yet, and every variable is set to 0. This all-zero solution is feasible. Let us assume that the algorithm provides feasible solutions up to time $t-1$. At time~$t$, the algorithm maintains the inequality $x_{i}^{t} \geq x_{i}^{t-1}$, so all constraints $t'$ where $t' < t$ are satisfied. Besides, $x_{i}^{t}$ is always at least
 $\sum_{k} w_{i,k}^{t} s_{i,k}^{t}$, which is larger than $\sum_{k} w_{i,k}^{t} \hat{s}_{i,k}^{t}$ since $s_{i,k}^{t} \geq \hat{s}_{i,k}^{t}$
-for all $i,k$ due to the preprocessing step. Hence, the constraint $t$ is also satisfied, formally,
+for all $i,k$ due to the preprocessing step. Hence, constraint $t$ is also satisfied, formally,
 $$
 \sum_{i=1}^{n} a_{i}^{t} x_{i}^{t}  \geq \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K} \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) \geq 1.
 $$
 
-\clearpage
-
-In the remaining part of the proof, we show the feasibility of the dual solution. The constraints are visible on \cref{fig:ref-dual}.
-The first constraint follows from the KKT conditions.
+In the remaining part of the proof, we show the feasibility of the dual solution. The dual constraints are visible on \cref{fig:ref-dual}.
+The first constraint follows from the KKT conditions and from the fact that $\sum_{i} a_i^{t} \hat{s}_{i,k}^{t} = 1$.
 The second constraint is satisfied because
 %
 \begin{align*}
@@ -185,42 +176,32 @@ The second constraint is satisfied because
 %
 where the last inequality holds due to the $(\lambda,\mu)$-local-smoothness. After down-scaling the variables by a factor of $\ln (K\rho)$, the second dual constraint holds.
 
-The last constraint is satisfied due to the definition of dual variables. We need
+The last constraint is satisfied due to the definition of the dual variables. We need
 \begin{align*}
   \sum_{i \in S}\beta_{i}^{t} + \gamma^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq 0\\
   \sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq -\gamma^{t}
 \end{align*}
 %
-to hold. Let us fix a set $S$. By the simplified form of $\gamma^{t}$, we have
+to hold. Let us fix an arbitrary set $S$. Then,
 \begin{align*}
--\gamma^{t} &\geq     \frac{1}{\lambda} \sum_{i \in S} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
-        & \quad  + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
-    & \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
+\sum_{i \in S} \beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  = & \sum_{i \in S} \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+& \quad - \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) + \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t-1}) \\
+& \quad + \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) - \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t})\\
+& \le \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+& \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) + \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t-1}) \\
+& \quad + \frac{1}{\lambda} \sum_{i=1}^{n} \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) - \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t})\\
+& = - \gamma^{t}
 \end{align*}
-%
-Therefore, in order to prove the feasibility of this dual constraint, it is sufficient to prove that
-\begin{align*}
-\sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq     \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
-        & \quad  + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
-    & \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
-\end{align*}
-%
-Rearranging the right-hand side ($\gamma^{t}$ before the simplification), it is
-\begin{align*}
-& \frac{1}{\lambda} \sum_{i \in S} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
-        & + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \biggr] \\
-    &  - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
-\end{align*}
-which is exactly $\sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}$.
-
+It remains to show that every dual variable is positive. Due to the KKT conditions $\alpha^{t}$ is always positive.
 \end{proof}
 
 
 \begin{theorem} \label{covering-theorem}
-The algorithm's cost, up to some fixed constant, is at most $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive in the \texttt{LIN-COMB} benchmark.
+The algorithm is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.
 \end{theorem}
 %
-\begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the dual problem of the \texttt{LIN-COMB} benchmark relaxation and for the original covering problem. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark - the best linear combination of the experts' solutions.
+\begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the original covering problem and for the dual problem of the reformulated \texttt{LIN-COMB} benchmark. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark - the best linear combination of the experts' solutions.
+
 \begin{align}
 &f(x^{t}) - f(x^{t-1}) \leq \nabla f(x^{t-1}) (x^{t} - x^{t-1}) + \frac{2L}{2} \|x^{t} - x^{t-1} \|^{2} \\
 %
