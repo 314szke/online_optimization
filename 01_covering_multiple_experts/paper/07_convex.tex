@@ -75,7 +75,7 @@ During our algorithm's description and analysis, we use the following two notion
 
 \paragraph{Preprocessing.} We apply the preprocessing techniques of the previous algorithm to this algorithm as well, including the dummy expert to avoid division by zero. For details see \cref{sec:algo}.
 
-\paragraph{Algorithm.}
+\paragraph{Algorithm 2.} \label{algo-convex}
 
 At the arrival of the $t^{\text{th}}$ constraint,
 \begin{compactenum}
@@ -197,7 +197,7 @@ It remains to show that every dual variable is positive. Due to the KKT conditio
 
 
 \begin{theorem} \label{covering-theorem}
-The algorithm is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.
+Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.
 \end{theorem}
 %
 \begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the original covering problem and for the dual problem of the reformulated \texttt{LIN-COMB} benchmark. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark - the best linear combination of the experts' solutions.
@@ -207,9 +207,9 @@ The algorithm is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitiv
 %
 &\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] (x_{i}^{t} - x_{i}^{t-1}) &&  \notag \\
 %
-&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr](x_{i}^{t} + \delta_{i}^{t}) \ln \frac{x_{i}^{t-1} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t}} \\
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr](x_{i}^{t} + \delta_{i}^{t}) \ln \left(\frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t}} \right) \\
 %
-&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] (x_{i}^{t} + \delta_{i}^{t}) \ln \frac{x_{i}^{t-1} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}} \\
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] (x_{i}^{t} + \delta_{i}^{t}) \ln \left(\frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}} \right) \\
 %
 &= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr] \left[ \left(\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \frac{1}{K} \sum_{k=1}^{K} s_{i,k}^{t} \right)
             \ln \left(\frac{ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}}  \right) \right]\\
@@ -234,20 +234,20 @@ The algorithm is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitiv
 %
 The above corresponding transformations hold since:
 \begin{compactenum}[(1)]
-    \setcounter{enumi}{1}
+    \setcounter{enumi}{8}
     \item holds as $f$ is $2L$-smooth;
     \item follows from the inequality $a - b \leq a \ln(a/b)$ for all $0 < b \leq a$;
     \item holds since $\delta_{i}^{t} \geq \delta_{i}^{t-1}$ (because $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i,k,t$);
     \item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$;
     \item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
-    \setcounter{enumi}{5}
+    %\setcounter{enumi}{5}
     \item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$
     (so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT2}) applies;
     \item is true due to the complementary slackness conditions
         and that $\sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
 \end{compactenum}
 
-In the remaining, we are bounding $\sum_{t} \gamma^{t}$. Observe that
+\noindent It remains to bound $\sum_{t = 1}^{T} \gamma^{t}$. Observe that
 %
 \begin{align*}
 2\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
@@ -256,18 +256,18 @@ In the remaining, we are bounding $\sum_{t} \gamma^{t}$. Observe that
 %
 and
 \begin{align*}
-\sum_{i} (\nabla_{i} f(x^{t}) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)
-\leq \ln(K\rho) 2L\sqrt{n} \sum_{i} (x_{i}^{t} - x_{i}^{t-1})
+\sum_{i=1}^{n} (\nabla_{i} f(x^{t}) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)
+\leq \ln(K\rho) 2L\sqrt{n} \sum_{i=1}^{n} (x_{i}^{t} - x_{i}^{t-1})
 \end{align*}
-since $f$ is $2L$-smooth w.r.t $\ell_{2}$-norm.
+ince $f$ is $2L$-smooth w.r.t $\ell_{2}$-norm.
 Therefore,
 \begin{align*}
-\sum_{t=1}^{T} \gamma^{t} &\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{t} \sum_{i} (x_{i}^{t} - x_{i}^{t-1}) \\
-&\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i} x_{i}^{T}
+\sum_{t=1}^{T} \gamma^{t} &\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{t=1}^{T} \sum_{i=1}^{n} (x_{i}^{t} - x_{i}^{t-1}) \\
+&\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i=1}^{n} x_{i}^{T}
 \end{align*}
 Summing up, the dual objective is bounded as follows.
 \begin{align*}
-\sum_{t} (\alpha^{t} + \gamma^{t}) \geq \frac{1/2-\mu\ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i} x_{i}^{T}
+\sum_{t=1}^{T} (\alpha^{t} + \gamma^{t}) \geq \frac{1/2-\mu\ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i=1}^{n} x_{i}^{T}
 \end{align*}
 In $0-1$ optimization, $x_{i}^{T} \leq 1$.
 Hence, the theorem follows.
