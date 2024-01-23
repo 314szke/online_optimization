@@ -1,9 +1,9 @@
 model_file = 'new_model.lp'
 expert_file = 'new_model.pred'
 
-N = 10
-M = 10
-K = 10
+N = 50
+M = 50
+K = 50
 
 with open(model_file, 'w') as f:
     f.write(f'{N}\n')

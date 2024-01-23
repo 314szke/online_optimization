@@ -349,7 +349,9 @@ int32_t Experts::findInvalidSolution(const DoubleMatVec_t& sol_vec)
                     value += A[t][i] * sol_vec[t][k][i];
                 }
             if (value < 1.0) {
-                return t;
+                if (std::abs(value - 1.0) > epsilon) {
+                    return t;
+                }
             }
         }
     }

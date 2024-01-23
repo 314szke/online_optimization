@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     DoubleVec_t std_solution = std_algorithm.solve();
     Solution::RoundSolutionIfNeeded(offline_model, std_solution, offline_model.getNbConstraints());
     const double std_objective = std_algorithm.getObjectiveValue();
-    print_solution("MWA Online", std_objective, std_solution);
+    print_solution("MWU Online", std_objective, std_solution);
 
 
     // Online Solution with convex regularization 1st layer
