@@ -1,5 +1,6 @@
 #include "argument_parser.h"
 
+#include <iostream>
 #include <filesystem>
 #include <sstream>
 #include <stdexcept>
@@ -9,7 +10,8 @@
 ArgumentParser::ArgumentParser(int argc, char** argv) :
     _argc(argc),
     _argv(argv),
-    mode_generation(false)
+    mode_generation(false),
+    general_config("config/general.conf")
 {}
 
 void ArgumentParser::parse()
@@ -26,7 +28,7 @@ void ArgumentParser::parse()
 
     try {
         checkIfFileExists(data_file);
-        checkIfFileExists(config_file);
+        checkIfConfigFileExists(config_file);
         checkIfFileExists(expert_file);
     } catch(...) {
         mode_generation = true;
@@ -58,5 +60,19 @@ void ArgumentParser::checkIfFileExists(std::string& filename)
     std::filesystem::path file_path(filename);
     if (! std::filesystem::exists(file_path)) {
         throw std::runtime_error("file does not exist");
+    }
+}
+
+void ArgumentParser::checkIfConfigFileExists(std::string& filename)
+{
+    std::filesystem::path file_path(filename);
+    if (! std::filesystem::exists(file_path)) {
+        std::filesystem::path general_path(general_config);
+        if (! std::filesystem::exists(general_path)) {
+            throw std::runtime_error("file does not exist");
+        } else {
+            std::cout << "WARNING: No test specific config file found, using the general configuration file!" << std::endl;
+            config_file = general_config;
+        }
     }
 }

@@ -14,8 +14,8 @@ axes.set_xlabel("variables")
 axes.set_ylabel("experts")
 axes.set_zlabel("objective value")
 
-axes.set_xlim(9, 51)
-axes.set_ylim(9, 51)
+axes.set_xlim(10, 50)
+axes.set_ylim(10, 50)
 axes.set_zlim(0.0, 5.0)
 
 axes.set_xticks([10, 20, 30, 40, 50])

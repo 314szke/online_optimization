@@ -17,8 +17,10 @@ public:
 private:
     void displayUsage();
     void checkIfFileExists(std::string& filename);
+    void checkIfConfigFileExists(std::string& filename);
 
     int _argc;
     char** _argv;
     bool mode_generation;
+    std::string general_config;
 };

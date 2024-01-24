@@ -147,6 +147,8 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
         }
         if ((x_prev + avg_prev[i]) == 0.0) {
             log_value = 1.0;
+        } else if (((x + avg[i]) == 0)) {
+            log_value = 0;
         } else {
             log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
         }
