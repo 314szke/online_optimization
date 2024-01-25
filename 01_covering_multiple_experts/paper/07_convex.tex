@@ -9,7 +9,7 @@ While linear programs are suitable to represent many optimization problems, they
 The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
 The \texttt{LIN-COMB} benchmark's convex objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the convex objective function into a linear one.
 
-To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution, if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be a (relaxed) indicator variable for solution $S$. If $z_{S} = a$, for some $a \in (0,1]$, then every variable $x_{i} = a$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S}$ indicates the fraction with which the solution $S$ participates in the final solution. The new formulation is visible on \cref{fig:reformulation} and its dual on \cref{fig:ref-dual}. Intuitively, $y_S^{t}$ indicates the fractional increase of the usage of solution $S$ at time $t$. The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$, must be used as well. The third constrain guarantees that we have a linear combination of the feasible solutions.
+To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution, if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be a (relaxed) indicator variable for solution $S$. If $z_{S} = a$, for some $a \in (0,1]$, then every variable $x_{i} = a$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S}$ indicates the fraction with which the solution $S$ participates in the final solution. The new formulation is visible on \cref{fig:reformulation} and its dual on \cref{fig:ref-dual}. Intuitively, $y_S^{t}$ indicates the fractional increase of the usage of solution $S$ at time $t$. The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$, must be used as well. The third constrain guarantees that we have a linear combination of the feasible solutions. The variable $y_S^t$ keeps track of the objective increase in the fourth constraint. The last constraint formalizes the explicit requirement of the online setting, that the variables can not decrease. This constraint may seem redundant, but it is necessary for our proofs.
 
 \begin{figure}[ht]
     \begin{mdframed}
@@ -18,13 +18,15 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
             %
             (\alpha^{t}) \qquad && \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
             %
-            (\beta_{i}^{t}) \qquad && \sum_{S: i \in S} z_{S}^{t} &\geq \sum_{k=1}^{K} s_{i,k}^{t} w_{k}^{t}   &\forall\ i,t\\
+            (\beta_{i}^{t}) \qquad && \sum_{S: i \in S} z_{S}^{t} &= \sum_{k=1}^{K} s_{i,k}^{t} w_{k}^{t}   &\forall\ i,t\\
             %
-            (\gamma^{t}) \qquad && \sum_{S} z_{S}^{t} &\ge 1   &\forall\ t\\
+            (\gamma^{t}) \qquad && \sum_{S} z_{S}^{t} &= 1   &\forall\ t\\
             %
-            (\xi_{S}^{t}) \qquad && y_{S}^{t} &\geq z_{S}^{t} - z_{S}^{t-1}   &\forall\ S,t\\
+            (\xi_{S}^{t}) \qquad && y_{S}^{t} &= z_{S}^{t} - z_{S}^{t-1}   &\forall\ S,t\\
             %
-            && w_{k}^{t}, y_{S}^{t}, z_{S}^{t} & \ge 0 & \forall\ k,S,t
+            (\omega_{i}^{t}) \qquad && \sum_{k=1}^{K} s_{i,k}^{t} w_{k}^{t} & \geq \sum_{k=1}^{K} s_{i,k}^{t-1} w_{k}^{t-1}  & \forall\ i, t \\
+            %
+            && w_{k}^{t}, z_{S}^{t} & \ge 0 & \forall\ k,S,t
         \end{align*}
     \end{mdframed}
     \caption{Reformulation and relaxation of the \texttt{LIN-COMB} benchmark}
@@ -36,13 +38,13 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
         \begin{align*}
             && \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
         %
-            (w_{k}^{t}) \qquad && \alpha^{t} - \sum_{i=1}^{n} s_{i,k}^{t} \beta_{i}^{t}  &\leq 0  &\forall\ k,t\\
+            (w_{k}^{t}) \qquad && \alpha^{t} - \sum_{i=1}^{n} s_{i,k}^{t} \beta_{i}^{t} + \sum_{i=1}^{n} s_{i,k}^{t} \omega_{i}^{t} - \sum_{i=1}^{n} s_{i,k}^{t-1} \omega_{i}^{t-1}  &\leq 0  &\forall\ k,t\\
         %
-            (y_{S}^{t}) \qquad && \xi_{S}^{t}   &\leq c_{S}  &\forall\ S,t \\
+            (y_{S}^{t}) \qquad && \xi_{S}^{t}   &= c_{S}  &\forall\ S,t \\
         %
             (z_{S}^{t}) \qquad && \sum_{i \in S}\beta_{i}^{t} + \gamma^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq 0  &\forall\ S,t \\
         %
-            && \alpha^{t}, \beta_{i}^{t}, \gamma^{t}, \xi_{S}^{t} & \ge 0 & \forall\ S,i,t
+            && \alpha^{t}, \omega_{i}^{t} & \ge 0 & \forall\ S,i,t
         \end{align*}
     \end{mdframed}
     \caption{Dual formulation of the reformulation of the \texttt{LIN-COMB} benchmark}
@@ -134,8 +136,6 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
         - a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} = 0
 \end{align}
 
-\clearpage
-
 \paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the Lipschitz-smoothness of $f$ (see the definitions at \cref{sec:f-properties}).
 %
 \begin{align*}
@@ -147,7 +147,9 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
     %
     \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
         & \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \biggr] \\
-    & \quad + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
+    & \quad + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1}) \\
+    %
+    \omega_{i}^{t} &= 0
 \end{align*}
 %
 Recall that $\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
