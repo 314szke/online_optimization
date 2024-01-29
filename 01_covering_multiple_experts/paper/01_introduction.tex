@@ -125,26 +125,25 @@ where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ a
 
 \subsection{Our approach and contribution}
 
-To design competitive algorithms with the new benchmark, we consider a primal-dual approach. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. The formulations of the relaxation and its dual is detailed in \cref{sec:covering}.
+\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. The formulations of the relaxation and its dual is detailed in \cref{sec:covering} for linear problems and in \cref{sec:convex} for convex problems.
 
-At every time step during the execution, our algorithms construct decisions based on the solution of a convex program. Our approach is inspired by the
-convex regularization method of \cite{BuchbinderChen14:Competitive-Analysis}. The objective of the convex program is a shifted entropy function.
+Both of our proposed algorithms set the decision variables at every time step based on the solution of an internal convex program. Our approach is inspired by the
+convex regularization method of \cite{BuchbinderChen14:Competitive-Analysis}, where the objective of the convex program is a shifted entropy function.
 These functions have been widely used, in particular in the recent breakthrough related to $k$-server \cite{BubeckCohen18:K-server-via-multiscale,BuchbinderGupta19:k-servers-with}
 and metrical task system problems \cite{BubeckCohen21:Metrical-task},
 in which the entropy functions are shifted by constant parameters.
-A \emph{novel} point in our approach is that the entropy function is shifted by the average of the experts' solutions.
-Moreover, regarding the constraints of the convex program, instead of using the experts' solutions directly,
-we define auxiliary solutions that guarantee tight constraint satisfaction and use them in the constraints.
-Intuitively, this eliminates/modifies the malicious experts' solutions.
-%We detail the construction of these auxiliary variables in the preprocessing paragraph of \cref{sec:algo}.
 
-Let $\rho$ be the maximum ratio between the experts' solutions on the resources. Formally,
+\paragraph{Novelty.} A novel point in our approach is that the entropy function is shifted by the average of the experts' solutions.
+Moreover, regarding the constraints of the convex program, instead of using the experts' solutions directly,
+we define auxiliary solutions that guarantee tight constraint satisfaction. We only use these tight solutions in the constraints and they play a crucial role in the proofs.
+
+\paragraph{Results.} Let $\rho$ be the maximum ratio between the experts' solutions on the resources. Formally,
 %We define the following parameter to establish the competitive ratio of our algorithm.
 \[
 	\rho := \max_{i} \max_{t',t''} \biggl\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} \biggr\}  \textnormal{ s.t. } \sum_{k=1}^{K} s_{i,k}^{t''} > 0.
 \]
 Informally, $\rho$ represents the discrepancy across the experts' predictions.
-Our main results are two algorithms. The first one (which provides solutions for online linear covering) has an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark. The second one (for online convex covering) achieves an objective cost at most $O(\ln(K\rho)) \cdot \frac{\lambda}{(1-\mu\ln(K\rho))}$ times the cost of \texttt{LIN-COMB}, where $\lambda$ and $\mu$ are the ($\lambda$-$\mu$)-smoothness parameters of the objective function.
+Our main result consists of two algorithms. The first one (which provides solutions for online linear covering) has an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark. The second one (for online convex covering) achieves an objective cost at most $O(\ln(K\rho)) \cdot \frac{\lambda}{(1-\mu\ln(K\rho))}$ times the cost of \texttt{LIN-COMB}, where $\lambda$ and $\mu$ are the ($\lambda$,$\mu$)-smoothness parameters of the objective function.
 In particular, for $0$-$1$ optimization problems, where the experts provide integer (deterministic or randomized) solutions, our first algorithm is $O(\ln(K))$-competitive with \texttt{LIN-COMB}, and the second one is $O(\ln(K)) \cdot \frac{\lambda}{(1-\mu\ln(K))}$-competitive.
 An interesting feature of our algorithms is their resilience to the fluctuation of the quality of predictions (discussed in \cref{subsec:related-works} and illustrated with experiments in \cref{sec:exp}).
 
@@ -172,7 +171,7 @@ Figure~\ref{fig:robustness-consistency} provides a general picture of the perfor
 the algorithm's performance guarantee is worse than the classical worst-case guarantee (that can be achieved by simply ignoring all predictions).
 Intuitively, in the case of neither very low nor very high confidence in the predictions, the algorithm has a hard time deciding if it should follow the predictions or the best-known standard algorithm in the worst-case paradigm.
 It naturally raises the question whether we can achieve at least a constant factor of the worst-case guarantee (where the constant is as close to 1 as possible), while assuring a resilient output solution regardless of the predictions' quality.
-Our algorithm with the new benchmark provides an answer to this question.
+Our algorithms with the new benchmark provides an answer to this question.
 
 
 The paper of \cite{AnandGe22:Online-Algorithms} is the closest to ours, which also studies the design of algorithms with multiple experts.
@@ -191,10 +190,10 @@ However, the inverse is not true: a solution $\hat{\vect{x}}^{t} \in \hat{X}$ in
 a linear combination of the experts' solutions.
 The \texttt{DYNAMIC} benchmark in \cite{AnandGe22:Online-Algorithms} relied on the assumption that at every time step
 the experts' solutions are tight. This assumption does not allow the representation of some realistic problems and it is impossible to maintain in online solutions (see Appendix~\ref{appix-tight-solutions}).
-\cite{AnandGe22:Online-Algorithms} claimed an $O(\ln(K))$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
-Unfortunately, their benchmark is too strong, which makes their claim \emph{incorrect}; we show an example in Appendix~\ref{sec:counter-example}
+Further, \cite{AnandGe22:Online-Algorithms} claimed an $O(\ln(K))$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
+Unfortunately, their benchmark is too strong; we show an example in Appendix~\ref{sec:counter-example}
 in which their algorithm's performance guarantee is unbounded in their \texttt{DYNAMIC}
-benchmark. We believe that with a different benchmark their algorithm could be $O(\ln(K))$-competitive, however, we did not manage to fix their proof.
+benchmark. We believe that with a different benchmark their algorithm could be $O(\ln(K))$-competitive, however, we did not manage to prove this.
 
 
 Integrating multiple predictions into online algorithms was a topic of other papers as well.
