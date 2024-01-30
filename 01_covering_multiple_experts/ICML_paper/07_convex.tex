@@ -13,6 +13,7 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
 
 \begin{figure}[ht]
     \begin{mdframed}
+        \vspace{-8pt}
         \begin{align*}
             && \min \sum_{t = 1}^{T} \sum_{S} & c_S y_S^t \\
             %
@@ -31,8 +32,13 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
     \label{fig:reformulation}
 \end{figure}
 
+The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
+
+\clearpage
+
 \begin{figure}[ht]
     \begin{mdframed}
+        \vspace{-8pt}
         \begin{align*}
             && \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
         %
@@ -48,8 +54,6 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
     \caption{Dual formulation of the reformulation of the \texttt{LIN-COMB} benchmark}
     \label{fig:ref-dual}
 \end{figure}
-
-The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
 
 \subsection{Convex objective function properties} \label{sec:f-properties}
 
@@ -74,6 +78,8 @@ During our algorithm's description and analysis, we use the following two notion
 \subsection{Algorithm description}
 
 \paragraph{Preprocessing.} We apply the preprocessing techniques of the previous algorithm to this algorithm as well, including the dummy expert to avoid division by zero. For details see \cref{sec:algo}.
+
+\clearpage
 
 \paragraph{Algorithm 2.} \label{algo-convex}
 
@@ -133,6 +139,8 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
  s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
         - a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} = 0
 \end{align}
+
+\clearpage
 
 \paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the Lipschitz-smoothness of $f$ (see the definitions at \cref{sec:f-properties}).
 %
@@ -208,6 +216,7 @@ where the equality holds due to $\log(a/b) - \log(a/c) = \log(c/b)$.
 It remains to show that $\alpha^t$ and $\beta_i^t$ are positive. Due to the KKT conditions both variables are always positive, so the lemma holds.
 \end{proof}
 
+\clearpage
 
 \begin{theorem} \label{convex-covering-theorem}
 Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.

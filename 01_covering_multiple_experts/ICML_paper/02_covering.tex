@@ -71,13 +71,12 @@ To circumvent the issue of malicious suggestions, we preprocess the experts' sol
 	becomes tight on the $t^{\text{th}}$ constraint.
 \end{compactenum}
 
-\begin{lemma}
-Following the preprocessing procedure, we can always obtain the solutions $\hat{s}_{i,k}^{t}$ such that
-$\hat{s}_{i,k}^{t} \leq s_{i,k}^{t}$ and $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
-\end{lemma}
-%
-\begin{proof} See \cref{appix-proofs}.
-\end{proof}
+\begin{restatable}{lemma}{preprocessinglemma}
+	\label{lem:preprocessing}
+	Following the preprocessing procedure, we can always obtain the solutions $\hat{s}_{i,k}^{t}$ such that
+	$\hat{s}_{i,k}^{t} \leq s_{i,k}^{t}$ and $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
+\end{restatable}
+For the proof of \cref{lem:preprocessing} see \cref{appix-proofs}.
 
 \paragraph{Prerequisites.} Our proposed algorithm solves an internal convex program to set the value of $(x_i^t)_{i=1}^n$ at each time step $t$. The convex program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$, so to simplify the notation, we display all other occurrences of the competitive ratio as $O(\log(K))$. At time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
 
@@ -148,15 +147,14 @@ where the logarithm contains the same fraction as above.
 %
 where we recall that
 \[
-	\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}
+	\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}.
 \]
 
-\begin{lemma} \label{lem:covering-feasibility}
-The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem and the dual variables $(\alpha^{t}, \beta_{i}^{t})$ of the \texttt{LIN-COMB} benchmark's linear program relaxation are feasible.
-\end{lemma}
-%
-\begin{proof} See \cref{appix-proofs}.
-\end{proof}
+\begin{restatable}{lemma}{coveringfeasibility}
+	\label{lem:covering-feasibility}
+	The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem and the dual variables $(\alpha^{t}, \beta_{i}^{t})$ of the \texttt{LIN-COMB} benchmark's linear program relaxation are feasible.
+\end{restatable}
+For the proof of \cref{lem:covering-feasibility} see \cref{appix-proofs}.
 
 \begin{theorem} \label{covering-theorem}
 Algorithm 1 is $O(\ln(K \rho))$-competitive with the \texttt{LIN-COMB} benchmark.

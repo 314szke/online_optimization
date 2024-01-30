@@ -2,11 +2,7 @@
 
 \section{Missing proofs from \cref{sec:covering}} \label{appix-proofs}
 
-\setcounter{theorem}{2}
-\begin{lemma}
-    Following the preprocessing procedure, we can always obtain the solutions $\hat{s}_{i,k}^{t}$ such that
-    $\hat{s}_{i,k}^{t} \leq s_{i,k}^{t}$ and $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
-\end{lemma}
+\preprocessinglemma*
 %
 \begin{proof}
 Let us fix an expert $k$. We prove the lemma by induction. At time step $t=1$, we can always scale down the solution $s_{i,k}^{1} \geq 0$ such that the first constraint becomes tight.
@@ -26,11 +22,9 @@ Consider time $t$. If after the down-scaling (during the first prepocessing step
     Hence, there exists $\hat{s}_{i,k}^{t} \in \bigl[ \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}}, s_{i,k}^{t} \bigr]$ for every $i$, where $1 \leq i \leq n$, such that $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
 \end{proof}
 
-\begin{lemma}
-    The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem and the dual variables $(\alpha^{t}, \beta_{i}^{t})$ of the \texttt{LIN-COMB} benchmark's linear program relaxation are feasible.
-\end{lemma}
-    %
-    \begin{proof}
+\coveringfeasibility*
+%
+\begin{proof}
     We first prove that the $x_{i}^{t}$ variables satisfy the covering constraints by induction. At time 0, no constraint has been released yet, and every variable is set to 0. This all-zero solution is feasible. Let us assume that the algorithm provides feasible solutions up to time $t-1$. At time $t$, the algorithm maintains the inequality $x_{i}^{t} \geq x_{i}^{t-1}$, so all constraints $t'$ where $t' < t$ are satisfied. Besides, $x_{i}^{t}$ is always at least
     $\sum_{k} w_{i,k}^{t} s_{i,k}^{t}$, which is larger than $\sum_{k} w_{i,k}^{t} \hat{s}_{i,k}^{t}$ since $s_{i,k}^{t} \geq \hat{s}_{i,k}^{t}$
     for all $i,k$ due to the preprocessing step. Hence, the constraint $t$ is also satisfied. Formally,
