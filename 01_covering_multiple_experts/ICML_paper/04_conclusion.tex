@@ -2,12 +2,12 @@
 
 \section{Conclusion} \label{sec:conclusion}
 
-We introduce a dynamic \texttt{LIN-COMB} benchmark in the setting of multiple expert predictions beyond the traditional static benchmark of the best expert in hindsight
-and give a competitive algorithm for the online covering problem in this benchmark.
-Our approach can provide valuable insights into the learning processes related to predictions,
-in particular, in aggregating information from predictions to improve the performance of existing algorithms,
-and how to combine online algorithms, an important subject in the online algorithm design community \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}.
-The experiments support the fact that our algorithm can differentiate between good and adversarial experts to some extent.
+We introduce a dynamic \texttt{LIN-COMB} benchmark in the setting of multiple expert predictions, which goes beyond the traditional static best expert in hindsight benchmark. We give two competitive algorithms for the online linear and convex covering problems in this benchmark.
 
-An interesting open question is to design competitive algorithms in the \texttt{LIN-COMB} benchmark for different classes of problems,
-such as packing problems and problems with non-linear objectives.
+By \cref{corollary}, given a $0$-$1$ optimization problem, if there are $K$ deterministic online algorithms, then
+we can design an algorithm that has a cost at most $O(\log (K))$ times that of the best linear combination of those algorithms at any time.
+Similarly, if $K$ given online algorithms are randomized (they output $0$-$1$ solutions with probabilities), then our algorithm
+has an expected cost (randomization over the product of the distributions of those solutions) at most $O(\log(K))$ times that of
+the best linear combination of those algorithms at any time. Many practical problems admit $0$-$1$ solutions, for which our algorithm is of interest.
+Consider problems like network design, ski rental, TCP acknowledgement, facility location, and so on. Given the fractional solution of our algorithm,
+we can apply existing online rounding schemes to obtain integral solutions for such problems.

@@ -7,9 +7,9 @@
 Our first proposed algorithm solves online linear covering problems by creating linear combinations of the solutions proposed by $K$ experts in an online manner.
 Recall that we evaluate the performance of our algorithm with the \texttt{LIN-COMB} benchmark (formalized on \cref{fig:benchmark}), which consists of the best linear combination of the experts' solution at each time step.
 
-Since our \texttt{LIN-COMB} benchmark is a linear combination of the experts' solutions, the equality $ \sum_{k=1}^{K} w_{k}^{t} = 1$ must hold, where $w_{k}^{t} \geq 0$ is the weight assigned to expert $k$ (where $1 \leq k \leq K$) at time~$t$. In the following, we formulate a relaxed version of the \texttt{LIN-COMB} formulation, where
-$\sum_{k=1}^{K} w_{k}^{t} \geq 1$. Additionally, the relaxed formulation enables us to avoid the (online) hard constraint requiring $w_{k}^{t} s_{i,k}^{t} \geq w_{k}^{t-1} s_{i,k}^{t-1}$ to hold, and instead, we introduce a new variable, $y_{i}^{t}$, to represent the increase of $x_{i}^{t}$ compared to $x_{i}^{t-1}$. When $w_{k}^{t} s_{i,k}^{t} < w_{k}^{t-1} s_{i,k}^{t-1}$ during the execution, we set the contribution of $i$ at time $t$ to be 0, and therefore, $y_{i}^{t} = 0$.
-The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the relaxed constraint, the optimal solution of the relaxed linear program is a lower bound of our \texttt{LIN-COMB} benchmark. The dual of the relaxation is displayed on Figure~\ref{fig:dual}.
+Since our \texttt{LIN-COMB} benchmark is a linear combination of the experts' solutions, the equality $ \sum_{k=1}^{K} w_{k}^{t} = 1$ must hold, where $w_{k}^{t} \geq 0$ is the weight assigned to expert $k$ at time~$t$. In the following, we formulate a relaxed version of \texttt{LIN-COMB}, where
+$\sum_{k=1}^{K} w_{k}^{t} \geq 1$. The relaxed formulation also enables us to avoid the (online) hard constraint requiring $w_{k}^{t} s_{i,k}^{t} \geq w_{k}^{t-1} s_{i,k}^{t-1}$ to hold. Instead, we introduce a new variable, $y_{i}^{t}$, to represent the increase of $x_{i}^{t}$ compared to $x_{i}^{t-1}$. When $w_{k}^{t} s_{i,k}^{t} < w_{k}^{t-1} s_{i,k}^{t-1}$ during the execution, we set the contribution of $i$ at time $t$ to be 0, and therefore, $y_{i}^{t} = 0$.
+The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the relaxation, the optimal solution of the relaxed linear program is a lower bound of our \texttt{LIN-COMB} benchmark. The dual of the relaxation is displayed on Figure~\ref{fig:dual}.
 
 
 \begin{figure}[ht]
@@ -25,7 +25,7 @@ The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the re
 		\end{align*}
 		%\vspace{5pt}
 	\end{mdframed}
-	\caption{Formulation of the relaxation of the \texttt{LIN-COMB} benchmark}
+	\caption{The relaxation of the \texttt{LIN-COMB} benchmark}
 	\label{fig:relaxation}
 \end{figure}
 
@@ -42,7 +42,7 @@ The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the re
 		\end{align*}
 		%\vspace{5pt}
 	\end{mdframed}
-	\caption{Dual formulation of the relaxation of the \texttt{LIN-COMB} benchmark}
+	\caption{The dual of the \texttt{LIN-COMB} benchmark's relaxation}
 	\label{fig:dual}
 \end{figure}
 
@@ -96,7 +96,7 @@ Consider time $t$. If after the down-scaling (during the first prepocessing step
 	Hence, there exists $\hat{s}_{i,k}^{t} \in \bigl[ \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}}, s_{i,k}^{t} \bigr]$ for every $i$, where $1 \leq i \leq n$, such that $\sum_{i=1}^{n} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$.
 \end{proof}
 
-\noindent \paragraph{Remark.} Our proposed algorithm solves a convex program at each time step to set the current value of the variables. The convex program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$. However, we display all other occurrences of the competitive ratio as $O(\log(K))$ for simplicity. Additionally, at time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
+\paragraph{Prerequisites.} Our proposed algorithm solves an internal convex program to set the value of $(x_i^t)_{i=1}^n$ at each time step $t$. The convex program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$, so to simplify the notation, we display all other occurrences of the competitive ratio as $O(\log(K))$. At time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
 
 \clearpage
 
