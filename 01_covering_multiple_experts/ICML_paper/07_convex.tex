@@ -57,14 +57,14 @@ The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original
 
 \subsection{Convex objective function properties} \label{sec:f-properties}
 
-During our algorithm's description and analysis, we use the following two notions of function smoothness. We assume that the original covering problem's convex objective function $f$ is $L$ Lipschitz-smooth and $(\lambda, \mu)$-locally-smooth.
+During our algorithm's description and analysis, we use the following two notions of function smoothness. We assume that the original covering problem's objective function $f$ is convex, $L$ Lipschitz-smooth, and $(\lambda, \mu)$-locally-smooth.
 
 \begin{definition}[Lipschitz-smoothness]
     A function $f$ is Lipschitz-smooth with a constant $L$, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
     \[\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|\]
 \end{definition}
 
-\begin{definition}[$(\lambda,\mu)$-local-smoothness\cite{Thang20:Online-Primal-Dual}]
+\begin{definition}[$(\lambda,\mu)$-local-smoothness \cite{Thang20:Online-Primal-Dual}]
     Let $\mathcal{E}$ be a set of $n$ resources.
     A differentiable function $F: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
     if for every set $S \subseteq \mathcal{E}$, and for every set of $|S|$ arbitrary vectors $\vect{x}^{i} \in [0,1]^{n}$ where $i \in S$, the following inequality holds:
@@ -85,28 +85,28 @@ During our algorithm's description and analysis, we use the following two notion
 
 At the arrival of the $t^{\text{th}}$ constraint,
 \begin{compactenum}
-	\item solve the following convex program and set $w^t$ to be the obtained optimal solution
+\item solve the following convex program and set $w^t$ to be the obtained optimal solution
 
 \begin{align*}
 \min_{w} \biggl\{\sum_{i=1}^{n}
-    \nabla_{i} & f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
-                     \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}\right)
-                                    - \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k} \biggr] \\
-            %
-            &+ \frac{L}{2}\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr) \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t} \biggr)
-                \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}\right) \\
-            %
-            &- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr)^{2}
-        \biggr\}
+\nabla_{i} & f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
+\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}\right)
+- \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k} \biggr] \\
+%
+&+ \frac{L}{2}\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr) \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t} \biggr)
+\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}\right) \\
+%
+&- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr)^{2}
+\biggr\}
 \end{align*}
 %
 \noindent subject to:
 %
 \begin{align*}
     (\theta^{t})  && \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k} \biggr) &\geq 1 && \forall\ t\\
-%
+    %
     (\chi_{i}) && \sum_{k=1}^{K}  w_{i,k} &\geq 1 && \forall\ i\\
-%
+    %
     (\nu_{i}^{t}) && \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} &\geq 0 && \forall\ i,t
 \end{align*}
 %
@@ -114,11 +114,10 @@ where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the Lipschi
 %and recall that we set $\rho = \max_{i} \max_{t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
 Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the convex program.
 (We can set $w_{i,k} = 0$ for all $k$ beforehand.)
-	%
-	\item For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
+%
+\item For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
 otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
 \end{compactenum}
-
 
 \subsection{Performance analysis}
 As $w^{t}$ is the optimal solution of the convex program and ($\theta^t,\ \chi_{i},\ \nu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
@@ -271,7 +270,7 @@ The above corresponding transformations hold since:
 
 \clearpage
 
-\noindent The objective of the dual includes $\sum_{t = 1}^{T} \gamma^{t}$ as well, so it remains to bound this sum. We recall that the simplified version of $\gamma^t$ is
+\noindent The objective of the dual includes $\sum_{t = 1}^{T} \gamma^{t}$ as well, so it remains to bound this sum. Recall the simplified version of $\gamma^t$:
 \begin{align*}
     \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
     	& \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
@@ -294,7 +293,7 @@ and after bounding the following term
 we get that
 \begin{align*}
 \sum_{t=1}^{T} \gamma^{t} &\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{t=1}^{T} \sum_{i=1}^{n} (x_{i}^{t} - x_{i}^{t-1}) \\
-&\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i=1}^{n} x_{i}^{T}
+&\geq - \frac{\mu \ln (K\rho)}{\lambda} f(x^{T}) - \ln(K\rho) \frac{4L}{\lambda} \sqrt{n} \sum_{i=1}^{n} x_{i}^{T}.
 \end{align*}
 Considering both parts of the proof so far, we bound the dual objective as follows:
 \begin{align*}

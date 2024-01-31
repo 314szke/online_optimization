@@ -29,7 +29,7 @@ Algorithm 1 of \cite{AnandGe22:Online-Algorithms} scales down the problem with $
 
 \subsection{Counter example}
 
-In the following example we reveal in an online manner a linear program parametrized by $L$ with $K$ experts and observe the behavior of Algorithm $1$ (from \cite{AnandGe22:Online-Algorithms}).
+In the following example we reveal in an online manner a linear program parametrized by $L$ with $K$ experts and observe the behavior of Algorithm $1$ (from \cite{AnandGe22:Online-Algorithms}). This example is an extension of the pathological input for the multiplicative weight update algorithm.
 
 \medskip
 
@@ -40,24 +40,24 @@ In the following example we reveal in an online manner a linear program parametr
 %
 \begin{align*}
      & \ \ \ \ x_{1} + x_{2} + \dots + x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
-\textnormal{Expert}_{1}: & \ \ \ \ \ 1 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
-\textnormal{Expert}_{2}: & \ \ \ \ \ 0 \ \ \ \ \ 1 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
+\textnormal{Expert}_{1}: & \hspace{0.5cm} 1 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{2}: & \hspace{0.5cm} 0 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
      \vdots  & \\
-\textnormal{Expert}_{K-1}: & \ \ \ \ \ 0 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 1  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
-\textnormal{Expert}_{K}: & \ \ \ \ \ 0 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 1 \ \ \ \ \ \ 0 \\
-     & \ \ \ \ \ \ \ \ \ \ x_{2} + \dots + x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
-\textnormal{Expert}_{1}: & \ \ \ \ \ 1 \ \ \ \ \ 1 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
-\textnormal{Expert}_{2}: & \ \ \ \ \ 0 \ \ \ \ \ 1 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
+\textnormal{Expert}_{K-1}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{K}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 1 \hspace{0.8cm} 0 \\
+     & \hspace{1.15cm} x_{2} + \dots + x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
+\textnormal{Expert}_{1}: & \hspace{0.5cm} 1 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{2}: & \hspace{0.5cm} 0 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
      \vdots  & \\
-\textnormal{Expert}_{K-1}: & \ \ \ \ \ 0 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 1  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
-\textnormal{Expert}_{K}: & \ \ \ \ \ 0 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 1 \ \ \ \ \ \ 0 \\
+\textnormal{Expert}_{K-1}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{K}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 1 \hspace{0.8cm} 0 \\
      \vdots  & \\
-     & \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
-\textnormal{Expert}_{1}: & \ \ \ \ \ 1 \ \ \ \ \ 1 \ \ \ \ \dots \ \ \ \ 1  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
-\textnormal{Expert}_{2}: & \ \ \ \ \ 0 \ \ \ \ \ 1 \ \ \ \ \dots \ \ \ \ 1  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
+     & \hspace{2.7cm} x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
+\textnormal{Expert}_{1}: & \hspace{0.5cm} 1 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{2}: & \hspace{0.5cm} 0 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
      \vdots  & \\
-\textnormal{Expert}_{K-1}: & \ \ \ \ \ 0 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 1  \ \ \ \ \ \ \ \ \ \ \ 0 \ \ \ \ \ \ 0 \\
-\textnormal{Expert}_{K}: & \ \ \ \ \ 0 \ \ \ \ \ 0 \ \ \ \ \dots \ \ \ \ 0  \ \ \ \ \ \ \ \ \ \ \ 1 \ \ \ \ \ \ 0 \\
+\textnormal{Expert}_{K-1}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{K}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 1 \hspace{0.8cm} 0 \\
 \end{align*}
 
 During the first constraint of every batch, the experts' solutions form an identity matrix. With each disappearing variable in the consecutive constraints, experts who suggested to use variables which are no longer available, choose to set the variable with the smallest index. Consequently, $(K-1)$ experts suggest to use variable $x_{(K-1)}$ and one expert suggests to use $x_K$ during the last constraint in the first batch. The pattern of the experts' solutions are identical for each batch. The constraints of the $l^{th}$ batch ($ 1 \le l \le L)$ are:
@@ -76,12 +76,12 @@ The objective value of Algorithm $1$ (from \cite{AnandGe22:Online-Algorithms}) o
 %
 \begin{proof}
 The optimal solution $\vect{x}^{*}$ of the \texttt{DYNAMIC} benchmark is the solution in which $x^{*}_{LK+1} = 1$ and $x^{*}_{i} = 0$ for $i \neq LK + 1$.
-We verify that $\vect{x}^{*} \in \hat{X}$. For each $i \neq l K$ where $1 \leq l \leq L$, for each constraint $m$, $x^{*}_{i} \geq 0 = x_{i}(m,K)$.
-For $i = l K$  where $1 \leq l \leq L$, for each constraint $m$, $x^{*}_{i} \geq 0 = x_{i}(m,1) = x_{i}(m,2) = \ldots = x_{i}(m,K-1)$.
+We verify that $\vect{x}^{*} \in \hat{X}$. For each $i \neq l K$ where $1 \leq l \leq L$, and for each constraint $m$, $x^{*}_{i} \geq 0 = x_{i}(m,K)$.
+For $i = l K$, and for each constraint $m$, $x^{*}_{i} \geq 0 = x_{i}(m,1) = x_{i}(m,2) = \ldots = x_{i}(m,K-1)$.
 Moreover, $\vect{x}^{*}$ satisfies all constraints (since variable $x_{LK+1}$ appears in all constraints).
 Hence, $\vect{x}^{*} \in \hat{X}$. Subsequently, the objective value of the \texttt{DYNAMIC} benchmark is $1$.
 
-     By the design of Algorithm $1$, the increasing rate of $x_{LK+1}$ is zero throughout the execution, and the variables which are not part of the current constraint are not increased. During the first constraint of each batch, the increasing rate of the first $K$ variables in the batch is $1/K$, since the increasing rate of variable $x_i$ is $(x_i + \frac{1}{K} \sum_{s=1}^{K} x_i(j,s))$ and initially every variable is set to zero. At the second constraint, the increasing rate of the second variable in the batch is higher than the other variables' increasing rate, because the first expert also uses this variable in its solution. Therefore, the increasing rate of the second variable is $(x_{(l-1) K + 2} + 2/K)$, while the other remaining expert variables in the constraint have an increasing rate of $(x_i + 1/K)$. Following the same reasoning (apart from the first constraint in the batch), the variable with the smallest index in the constraint has a higher increasing rate, than the other variables. During the last constraint of each batch, the increasing rate of the last two remaining expert variables are
+     By the design of Algorithm $1$, the increasing rate of $x_{LK+1}$ is zero throughout the execution, and the variables which are not part of the current constraint are not increased. During the first constraint of each batch, the increasing rate of the first $K$ variables in the batch is $1/K$, since the increasing rate of variable $x_i$ is $(x_i + \frac{1}{K} \sum_{s=1}^{K} x_i(1,s))$ and initially every variable is set to zero. At the second constraint, the increasing rate of the second variable in the batch is higher than the other variables' increasing rate, because the first expert also uses this variable in its solution. Therefore, the increasing rate of the second variable is $(x_{(l-1) K + 2} + 2/K)$, while the other remaining expert variables in the constraint have an increasing rate of $(x_i + 1/K)$. Following the same reasoning (apart from the first constraint in the batch), the variable with the smallest index in the constraint has a higher increasing rate, than the other variables. During the last constraint of each batch, the increasing rate of the last two remaining expert variables are
      $(x_{(l-1) K + (K-1)} + (K-1)/K)$ and $(x_{lK} + 1/K)$. Keeping the increasing rates and the constraint satisfaction in mind, we can lower bound the value of each variable:
      %
      \begin{align*}
@@ -100,4 +100,4 @@ Hence, $\vect{x}^{*} \in \hat{X}$. Subsequently, the objective value of the \tex
 
 \subsection{Comparison}
 
-In this specific counter-example, the \texttt{LIN-COMB} benchmark is equivalent to the static best-expert benchmark, i.e., the solution of Expert$_K$. The objective value of \texttt{LIN-COMB} is $L$ (since the optimal solution sets $x_{lK}$ variables for $1 \leq l \leq L$  to one and other variables to 0). In this counter-example, the objective value of our algorithm is $O(L\log K)$. Consequently, our proposed algorithm is $O(\log K)$ competitive in the \texttt{LIN-COMB} benchmark.
+In this specific counter-example, the \texttt{LIN-COMB} benchmark is equivalent to the static best-expert benchmark, i.e., the solution of Expert$_K$. The objective value of \texttt{LIN-COMB} is $L$ (since the optimal solution sets $x_{lK}$ variables for $1 \leq l \leq L$  to 1 and other variables to 0). In this counter-example, the objective value of our algorithm is $O(L\log K)$. Consequently, our proposed algorithm is $O(\log K)$ competitive in the \texttt{LIN-COMB} benchmark.
