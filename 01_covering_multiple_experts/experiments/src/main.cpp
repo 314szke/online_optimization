@@ -34,6 +34,7 @@ int main(int argc, char** argv)
     // Set up the model
     Config config(arg_parser.config_file);
     OfflineModel offline_model(arg_parser.data_file);
+    DummyExpert dummy_expert(config.epsilon, offline_model);
 
     // Optimal Offline Solution
     LP_Solver lp_solver(offline_model, config.gurobi_verbosity);
@@ -52,7 +53,7 @@ int main(int argc, char** argv)
 
 
     // Online Solution with convex regularization 1st layer
-    Experts experts(offline_model, config, arg_parser.expert_file);
+    Experts experts(offline_model, dummy_expert, config, arg_parser.expert_file);
     CR_Algorithm cr_algorithm(offline_model, config, experts);
     DoubleVec_t online_solution = cr_algorithm.solve();
     Solution::RoundSolutionIfNeeded(offline_model, online_solution, offline_model.getNbConstraints());
@@ -79,7 +80,7 @@ int main(int argc, char** argv)
 
 
     // Second layer online solution with convex regularization
-    Experts second_experts(offline_model, config, tmp_file_name);
+    Experts second_experts(offline_model, dummy_expert, config, tmp_file_name);
     CR_Algorithm second_cr_algorithm(offline_model, config, second_experts);
     DoubleVec_t second_online_solution = second_cr_algorithm.solve();
     Solution::RoundSolutionIfNeeded(offline_model, second_online_solution, offline_model.getNbConstraints());

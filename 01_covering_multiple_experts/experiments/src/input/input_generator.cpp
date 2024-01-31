@@ -163,9 +163,6 @@ void InputGenerator::generateExperts()
     OnlineModel on_model(off_model);
     LP_Solver on_solver(on_model, 0);
 
-    double one_over_k = 1.0 / static_cast<double>(nb_experts + 1);
-    DoubleVec_t dummy_solution(off_model.getNbVariables(), one_over_k);
-
     DoubleMat_t min_solution(nb_online_expert);
     for (uint32_t k = 0; k < nb_online_expert; k++) {
         min_solution[k].resize(off_model.getNbVariables(), 0.0);
@@ -193,18 +190,6 @@ void InputGenerator::generateExperts()
         on_solver.addNewConstraints(j);
         DoubleVec_t solution = on_solver.solve();
         Solution::RoundSolutionIfNeeded(off_model, solution, j);
-
-        // Dummy expert
-        for (uint32_t i = 0; i < (nb_variables - 1); i++) {
-            if (dummy_solution[i] < solution[i]) {
-                dummy_solution[i] = solution[i];
-            }
-            f_out << dummy_solution[i] << " ";
-        }
-        if (dummy_solution[(nb_variables - 1)] < solution[(nb_variables - 1)]) {
-            dummy_solution[(nb_variables - 1)] = solution[(nb_variables - 1)];
-        }
-        f_out << dummy_solution[(nb_variables - 1)] << std::endl;
 
         // Perfect experts
         for (uint32_t k = 0; k < nb_perfect_expert; k++) {

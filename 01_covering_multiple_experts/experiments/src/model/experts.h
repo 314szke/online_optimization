@@ -2,13 +2,14 @@
 
 #include "base/parsed_object.h"
 #include "config/config.h"
+#include "input/dummy_expert.h"
 #include "offline_model.h"
 #include "types/local_types.h"
 
 
 class Experts : private ParsedObject {
 public:
-    Experts(const OfflineModel& model, const Config& config, const std::string& expert_file);
+    Experts(const OfflineModel& model, const DummyExpert& dummy_expert, const Config& config, const std::string& expert_file);
 
     uint32_t getNbExperts() const;
     const DoubleMat_t& getSolutions(const int64_t t) const;
@@ -32,6 +33,7 @@ private:
     const DoubleVec_t& b;
     const DoubleMat_t& A;
 
+    uint32_t nb_real_experts;
     uint32_t nb_experts;
     DoubleVec_t objective_values;
     DoubleMat_t avg_solutions;

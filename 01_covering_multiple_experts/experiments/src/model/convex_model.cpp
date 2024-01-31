@@ -114,11 +114,7 @@ double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w
             x += s[k][i] * w[(i + (k * _offline_model.getNbVariables()))];
             x_prev += s_prev[k][i] * w_prev[(i + (k * _offline_model.getNbVariables()))];
         }
-        if (((x + avg[i]) == 0) || ((x_prev + avg_prev[i]) == 0)) {
-            log_value = 0;
-        } else {
-            log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
-        }
+        log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
         value += c_lp[i] * ((x + avg[i]) * log_value);
         value -= c_lp[i] * x;
     }
@@ -145,13 +141,7 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
             x += s[k][i] * w[(i + (k * _offline_model.getNbVariables()))];
             x_prev += s_prev[k][i] * w_prev[(i + (k * _offline_model.getNbVariables()))];
         }
-        if ((x_prev + avg_prev[i]) == 0.0) {
-            log_value = 1.0;
-        } else if (((x + avg[i]) == 0)) {
-            log_value = 0;
-        } else {
-            log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
-        }
+        log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
             c[(i + (k * _offline_model.getNbVariables()))] = c_lp[i] * s[k][i] * log_value;
         }

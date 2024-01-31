@@ -9,11 +9,12 @@ static const std::regex SOLUTION_PATTERN("^\\s*(?:[0-9]+(?:\\.[0-9]+)?\\s+)*[0-9
 static const std::regex VALUE_PATTERN("([0-9]+(?:\\.[0-9]+)?)");
 
 
-Experts::Experts(const OfflineModel& model, const Config& config, const std::string& expert_file) :
+Experts::Experts(const OfflineModel& model, const DummyExpert& dummy_expert, const Config& config, const std::string& expert_file) :
     off_model(model),
     epsilon(config.epsilon),
     b(model.getBound(0)),
     A(model.getCoefficient(0)),
+    nb_real_experts(0),
     nb_experts(0)
 {
     f_in.open(expert_file);
@@ -26,7 +27,9 @@ Experts::Experts(const OfflineModel& model, const Config& config, const std::str
     solutions.resize(off_model.getNbConstraints());
     tight_solutions.resize(off_model.getNbConstraints());
 
-    nb_experts = readInteger();
+    nb_real_experts = readInteger();
+    nb_experts = nb_real_experts + 1; // +1 for dummy expert
+
     for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
         solutions[t].resize(nb_experts);
         tight_solutions[t].resize(nb_experts);
@@ -54,7 +57,7 @@ Experts::Experts(const OfflineModel& model, const Config& config, const std::str
     std::stringstream ss;
     bool invalid = false;
     for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
-        for (uint32_t k = 0; k < nb_experts; k++) {
+        for (uint32_t k = 0; k < nb_real_experts; k++) {
             readLine();
             if (std::regex_match(line, match, SOLUTION_PATTERN)) {
                 for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
@@ -76,6 +79,11 @@ Experts::Experts(const OfflineModel& model, const Config& config, const std::str
                 message << "ERROR: suggestion for constraint " << t << " and expert " << k << " has invalid format!" << std::endl;
                 throw std::runtime_error(message.str());
             }
+        }
+        // Add dummy expert to all experts
+        const DoubleVec_t& dummy_solution = dummy_expert.getSolution(t+1); // time aligned with online constraints
+        for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
+            solutions[t][(nb_experts - 1)][i] = dummy_solution[i];
         }
     }
 
