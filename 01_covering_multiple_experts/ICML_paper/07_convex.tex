@@ -119,7 +119,7 @@ otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
 \end{compactenum}
 
 \subsection{Performance analysis}
-As $w^{t}$ is the locally optimal solution of the non-linear program and ($\theta^t,\ \chi_{i},\ \nu_{i}^{t}$) is the locally optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
+As $w^{t}$ is the locally optimal solution of the non-linear program and ($\theta^t,\ \chi_{i},\ \nu_{i}^{t}$) is the locally optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold (Theorem 12.1 on page 321 \cite{NocedalWright:FirstOrderOptimalityConditions}).
 
 \begin{align*}
    \biggl[ \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) - 1 \biggr] \theta^{t} &= 0 \qquad \forall \ t \\
@@ -199,7 +199,7 @@ Now let us fix an arbitrary set $S$. Then, following the simplified form of $\ga
             & \quad + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
         & \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
 \end{align*}
-because $\nabla_{i} f(x^{t}) \geq \nabla_{i} f(x^{t-1})$ due to convexity of $f$, the logarithm terms are always positive, and we restrict the sum to a subset.
+because the terms are positive and we restrict the sum to a subset. $\nabla_{i} f(x^{t}) \geq \nabla_{i} f(x^{t-1})$ due to convexity of $f$, and either $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} \geq x_{i}^{t-1}$ and the logarithm term is non-negative, or $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} < x_{i}^{t-1}$ and the logarithm term is also negative, making their product positive.
 %
 We have to show that the following is true to satisfy the third constraint:
 \begin{align*}
