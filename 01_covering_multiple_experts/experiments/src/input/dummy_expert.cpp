@@ -5,8 +5,8 @@
 #include "offline/lp_solver.h"
 
 
-DummyExpert::DummyExpert(const double epsilon, const OfflineModel& off_model) :
-    init_value(epsilon),
+DummyExpert::DummyExpert(const OfflineModel& off_model) :
+    init_value(0.0001),
     dummy_solution(off_model.getNbConstraints() + 1)
 {
     OnlineModel on_model(off_model);

@@ -7,7 +7,7 @@
 class DummyExpert
 {
 public:
-    DummyExpert(const double epsilon, const OfflineModel& off_model);
+    DummyExpert(const OfflineModel& off_model);
     const DoubleVec_t& getSolution(const uint32_t time) const;
 private:
     double init_value;

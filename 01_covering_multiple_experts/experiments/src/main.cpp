@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     // Set up the model
     Config config(arg_parser.config_file);
     OfflineModel offline_model(arg_parser.data_file);
-    DummyExpert dummy_expert(config.epsilon, offline_model);
+    DummyExpert dummy_expert(offline_model);
 
     // Optimal Offline Solution
     LP_Solver lp_solver(offline_model, config.gurobi_verbosity);
