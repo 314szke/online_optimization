@@ -4,7 +4,7 @@
 
 In this section we include the experiments of the first algorithm for problems with a linear objective function.
 
-\textbf{Implementation.} The first step of our first proposed algorithm is to solve a convex program. In the experiments, we approximate the optimal solution of this program using a vanilla Frank-Wolfe implementation. The linear minimization step within Frank-Wolfe is solved with the Gurobi optimizer.
+\textbf{Implementation.} The first step of our first proposed algorithm is to solve an internal convex program. In the experiments, we approximate the optimal solution of this program using a vanilla Frank-Wolfe implementation. The linear minimization step within Frank-Wolfe is solved with the Gurobi optimizer.
 
 \textbf{Comparison.} The best standard online algorithm for general covering problems without experts is the online multiplicative weight update (MWU) algorithm. In the experiments we compare our algorithm with the MWU algorithm. When a new constraint arrives in the online problem, the MWU algorithm increases each variable $x_i$ in the constraint with a rate of $\frac{a^t_i}{c_i}(x_i + 1/n)$, where $n$ is the total number of variables. We also compare our results with the optimum offline solution (that knows the whole instance in advance) and the average solution of the experts.
 

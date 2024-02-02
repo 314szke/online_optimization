@@ -79,7 +79,7 @@ To circumvent the issue of malicious suggestions, we preprocess the experts' sol
 \end{restatable}
 For the proof of \cref{lem:preprocessing} see \cref{appix-proofs}.
 
-\paragraph{Prerequisites.} Our proposed algorithm solves an internal convex program to set the value of $(x_i^t)_{i=1}^n$ at each time step $t$. The convex program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving the convex program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$, so to simplify the notation, we display all other occurrences of the competitive ratio as $O(\log(K))$. At time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
+\paragraph{Prerequisites.} Our proposed algorithm solves an internal convex program to set the value of $(x_i^t)_{i=1}^n$ at each time step $t$. The internal program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving this program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$, so to simplify the notation, we display all other occurrences of the competitive ratio as $O(\log(K))$. At time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
 
 \paragraph{Algorithm.} The algorithm is visible on \cref{fig:algo1}.
 
@@ -234,6 +234,6 @@ The justification for the previous transformations:
 	In other words, its performance is $O(\ln (K))$-competitive with the \texttt{LIN-COMB} benchmark and is up to a constant factor worse than the best guarantee in the worst-case benchmark.
 \end{proof}
 
-\section{Online \emph{convex} covering with experts}
+\section{Online \emph{non-linear} covering with experts}
 
 Linear programs are suitable to represent many optimization problems, and they are an essential tool in optimization. However, some practically relevant problems (for example, makespan minimization and congestion management) have non-linear objective functions. We take a step further towards a general framework which can handle such problems as well, and propose an algorithm with multiple experts for $0$-$1$ optimization problems with convex objectives and linear constraints. Due to the page limitations, we only detail this setting in \cref{sec:convex}.

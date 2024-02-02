@@ -1,13 +1,13 @@
 %!TEX root = ./main.tex
 
-\section{Online \emph{convex} covering with experts} \label{sec:convex}
+\section{Online \emph{non-linear} covering with experts} \label{sec:convex}
 
 \subsection{Benchmark reformulation for the algorithm}
 
-While linear programs are suitable to represent many optimization problems, they are not expressive enough to capture some practically relevant problems (for example, makespan minimization and congestion management). This section takes a step further towards a general framework and proposes an algorithm with multiple experts for $0$-$1$ optimization problems with convex objectives and linear constraints.
+While linear programs are suitable to represent many optimization problems, they are not expressive enough to capture some practically relevant problems (for example, makespan minimization and congestion management). This section takes a step further towards a general framework and proposes an algorithm with multiple experts for $0$-$1$ optimization problems with non-linear objectives and linear constraints.
 
 The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
-The \texttt{LIN-COMB} benchmark's convex objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the convex objective function into a linear one.
+The \texttt{LIN-COMB} benchmark's non-linear objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the non-linear objective function into a linear one.
 
 To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution, if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be a (relaxed) indicator variable for solution $S$. If $z_{S} = a$, for some $a \in (0,1]$, then every variable $x_{i} = a$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S}$ indicates the fraction with which the solution $S$ participates in the final solution. The new formulation is visible on \cref{fig:reformulation} and its dual on \cref{fig:ref-dual}. Intuitively, $y_S^{t}$ indicates the fractional increase of the usage of solution $S$ at time $t$. The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$, must be used as well. The third constrain guarantees that we have a linear combination of the feasible solutions.
 
@@ -55,9 +55,9 @@ The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original
     \label{fig:ref-dual}
 \end{figure}
 
-\subsection{Convex objective function properties} \label{sec:f-properties}
+\subsection{Non-linear objective function properties} \label{sec:f-properties}
 
-For vectors $x, y \in \mathcal{R}^{n}$, we say that $x \geq y$ iff $x_{i} \geq y_{i}$ for all $1 \leq i \leq n$. 
+For vectors $x, y \in \mathcal{R}^{n}$, we say that $x \geq y$ iff $x_{i} \geq y_{i}$ for all $1 \leq i \leq n$.
 In this section, we consider objective function $f$ that satisfies the following properties:
 \begin{itemize}
 	\item $f$ is non-decreasing, i.e., $f(x) \geq f(y)$ for all $x \geq y$,
@@ -83,9 +83,9 @@ Moreover, the objective function also satisfies the gradient-Lipschitz and $(\la
     and equals 0 otherwise.
 \end{definition}
 
-Note that the notation of gradient-Lipschitz is also called smoothness in literature. The notation of $(\lambda,\mu)$-locally-smoothness, introduced in \cite{Thang20:Online-Primal-Dual}, is rooted in the work of \cite{Roughgarden15:Intrinsic-Robustness} 
-in the domain of algorithmic game theory in which it is termed the smoothness argument. 
-To avoid confusion, we use the terms gradient-Lipschitzness and $(\lambda,\mu)$-locally-smoothness with the abovementioned definitions. 
+Note that the notation of gradient-Lipschitz is also called smoothness in literature. The notation of $(\lambda,\mu)$-locally-smoothness, introduced in \cite{Thang20:Online-Primal-Dual}, is rooted in the work of \cite{Roughgarden15:Intrinsic-Robustness}
+in the domain of algorithmic game theory in which it is termed the smoothness argument.
+To avoid confusion, we use the terms gradient-Lipschitzness and $(\lambda,\mu)$-locally-smoothness with the abovementioned definitions.
 
 \subsection{Algorithm description}
 
@@ -123,7 +123,7 @@ At the arrival of the $t^{\text{th}}$ constraint,
 \end{align*}
 %
 where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the gradient-Lipschitz constant of $f$.
-Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the convex program.
+Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the internal non-linear program.
 (We can set $w_{i,k} = 0$ for all $k$ beforehand.)
 %
 \item For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
@@ -211,7 +211,7 @@ Now let us fix an arbitrary set $S$. Then, following the simplified form of $\ga
             & \quad + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
         & \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
 \end{align*}
-because the terms are positive and we restrict the sum to a subset. $\nabla_{i} f(x^{t}) \geq \nabla_{i} f(x^{t-1})$ due to convexity of $f$, and either $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} \geq x_{i}^{t-1}$ and the logarithm term is non-negative, or $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} < x_{i}^{t-1}$ and the logarithm term is also negative, making their product positive.
+because the terms are positive and we restrict the sum to a subset. $\nabla_{i} f(x^{t}) \geq \nabla_{i} f(x^{t-1})$ due to the properties of $f$ (see \cref{sec:f-properties}), and either $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} \geq x_{i}^{t-1}$ and the logarithm term is non-negative, or $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} < x_{i}^{t-1}$ and the logarithm term is also negative, making their product positive.
 %
 We have to show that the following is true to satisfy the third constraint:
 \begin{align*}
