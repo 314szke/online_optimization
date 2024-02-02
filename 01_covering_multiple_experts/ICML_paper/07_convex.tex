@@ -57,10 +57,10 @@ The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original
 
 \subsection{Convex objective function properties} \label{sec:f-properties}
 
-During our algorithm's description and analysis, we use the following two notions of function smoothness. We assume that the original covering problem's objective function $f$ is convex, $L$ Lipschitz-smooth, and $(\lambda, \mu)$-locally-smooth.
+During our algorithm's description and analysis, we use the following two notions of function smoothness. We assume that the original covering problem's objective function $f$ is convex, non-decreasing (meaning $\nabla_i f(x^t) > \nabla_i f(x^{t-1})$ if $x_i^t$ > $x_i^{t-1}$), $L$-gradient-Lipschitz, and $(\lambda, \mu)$-locally-smooth.
 
-\begin{definition}[Lipschitz-smoothness]
-    A function $f$ is Lipschitz-smooth with a constant $L$, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
+\begin{definition}[$L$-gradient-Lipschitz]
+    A function $f$ is $L$-gradient-Lipschitz, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
     \[\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|\]
 \end{definition}
 
@@ -110,7 +110,7 @@ At the arrival of the $t^{\text{th}}$ constraint,
     (\nu_{i}^{t}) && \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} &\geq 0 && \forall\ i,t
 \end{align*}
 %
-where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the Lipschitz-smoothness constant of $f$.
+where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the gradient-Lipschitz constant of $f$.
 Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the convex program.
 (We can set $w_{i,k} = 0$ for all $k$ beforehand.)
 %
@@ -140,7 +140,7 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
 
 \clearpage
 
-\paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the non-linear program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the Lipschitz-smoothness of $f$ (see the definitions at \cref{sec:f-properties}).
+\paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the non-linear program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the L-gradient-Lipschitz of $f$ (see the definitions at \cref{sec:f-properties}).
 %
 \begin{align*}
     \alpha^{t} &= \frac{1}{\lambda}  \biggl( \theta^{t} + \sum_{i=1}^{n} \chi_{i} \biggr), \\
