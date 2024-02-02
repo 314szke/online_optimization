@@ -156,7 +156,7 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
 \begin{align*}
     \alpha^{t} &= \frac{1}{\lambda}  \biggl( \theta^{t} + \sum_{i=1}^{n} \chi_{i} \biggr), \\
     %
-    \beta_{i}^{t} &= \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    \beta_{i}^{t} &= \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr)  \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
     %
     \xi_{S}^{t} &= \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) - \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t-1})\\
     %
