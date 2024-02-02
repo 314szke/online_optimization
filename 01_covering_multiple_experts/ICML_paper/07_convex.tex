@@ -57,7 +57,15 @@ The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original
 
 \subsection{Convex objective function properties} \label{sec:f-properties}
 
-During our algorithm's description and analysis, we use the following two notions of function smoothness. We assume that the original covering problem's objective function $f$ is convex, non-decreasing (meaning $\nabla_i f(x^t) > \nabla_i f(x^{t-1})$ if $x_i^t$ > $x_i^{t-1}$), $L$-gradient-Lipschitz, and $(\lambda, \mu)$-locally-smooth.
+For vectors $x, y \in \mathcal{R}^{n}$, we say that $x \geq y$ iff $x_{i} \geq y_{i}$ for all $1 \leq i \leq n$. 
+In this section, we consider objective function $f$ that satisfies the following properties:
+\begin{itemize}
+	\item $f$ is non-decreasing, i.e., $f(x) \geq f(y)$ for all $x \geq y$,
+	\item the gradient of $f$ is non-decreasing on all coordinates, i.e., $\nabla_{i} f(x) = \partial f(x)/\partial x_{i} \geq \nabla_{i} f(y) := \partial f(y)/\partial y_{i}$ for all $x \geq y$.
+\end{itemize}
+%
+Moreover, the objective function also satisfies the gradient-Lipschitz and $(\lambda,\mu)$-locally-smooth properties below.
+
 
 \begin{definition}[$L$-gradient-Lipschitz]
     A function $f$ is $L$-gradient-Lipschitz, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
@@ -65,15 +73,19 @@ During our algorithm's description and analysis, we use the following two notion
 \end{definition}
 
 \begin{definition}[$(\lambda,\mu)$-local-smoothness \cite{Thang20:Online-Primal-Dual}]
-    Let $\mathcal{E}$ be a set of $n$ resources.
-    A differentiable function $F: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
-    if for every set $S \subseteq \mathcal{E}$, and for every set of $|S|$ arbitrary vectors $\vect{x}^{i} \in [0,1]^{n}$ where $i \in S$, the following inequality holds:
+    %Let $\mathcal{E}$ be a set of $n$ resources.
+    A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
+    if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
     \begin{equation*}	\label{eq:min-local-smooth}
-    \sum_{i \in S} \nabla_{i} F(\vect{x}^{i}) \leq \lambda F\bigl( \vect{1}_{S} \bigr) + \mu F\bigl( \vect{x} \bigr)
+    \sum_{i \in S} \nabla_{i} f(x) \leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu f\bigl( x \bigr)
     \end{equation*}
-    where $\vect{x}$ is a vector whose every coordinate $x_{i'} = \max_{i}\{x^{i}_{i'}\}$ (formally, $\vect{x} := \bigvee_{i \in S} \vect{x}^{i}$);
-    and $\nabla_{i} F(\vect{x})$ denotes $\partial F(\vect{x})/\partial x_{i}$.
+    where $\nabla_{i} F(x)$ denotes $\partial F(x)/\partial x_{i}$ and $\vect{1}_{S}$ is the vector where the entry of the $i^{\text{th}}$ coordinate equals 1 if $i \in S$
+    and equals 0 otherwise.
 \end{definition}
+
+Note that the notation of gradient-Lipschitz is also called smoothness in literature. The notation of $(\lambda,\mu)$-locally-smoothness, introduced in \cite{Thang20:Online-Primal-Dual}, is rooted in the work of \cite{Roughgarden15:Intrinsic-Robustness} 
+in the domain of algorithmic game theory in which it is termed the smoothness argument. 
+To avoid confusion, we use the terms gradient-Lipschitzness and $(\lambda,\mu)$-locally-smoothness with the abovementioned definitions. 
 
 \subsection{Algorithm description}
 
