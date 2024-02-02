@@ -101,14 +101,14 @@ At the arrival of the $t^{\text{th}}$ constraint,
 
 \begin{align*}
 \min_{w} \biggl\{\sum_{i=1}^{n}
-\nabla_{i} & f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
+&\nabla_{i} f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
 \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}\right)
 - \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k} \biggr] \\
 %
-&+ \frac{L}{2}\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr) \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t} \biggr)
+&+ \frac{L}{2}\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t}  - 2\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - 2\delta_{i}^{t-1} \biggr) \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t} \biggr)
 \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}\right) \\
 %
-&- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  - 2x_{i}^{t-1} - \delta_{i}^{t} \biggr)^{2}
+&- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t}  - 2\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - 2\delta_{i}^{t-1} \biggr)^{2}
 \biggr\}
 \end{align*}
 %
@@ -138,7 +138,7 @@ As $w^{t}$ is the locally optimal solution of the non-linear program and ($\thet
    \biggl[ \sum_{k=1}^{K}  w_{i,k}^{t}  - 1 \biggr] \chi_{i} &= 0 \qquad \forall\ i, t \\
    \biggl[ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} \biggr] \nu_{i}^{t} &= 0 \qquad \forall\ i, t \\
 %
- s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+ s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
         - a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i} - s_{i,k}^{t} \nu_{i}^{t} &= 0	\qquad \forall\ i,k,t \\
     %
     \theta^{t}, \chi_{i}, \nu_{i}^{t} &\geq 0 \qquad \forall\ i, t
@@ -146,11 +146,10 @@ As $w^{t}$ is the locally optimal solution of the non-linear program and ($\thet
 
 Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} = 0$, then
 \begin{align}	\label{eq:KKT2}
- s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
-        - a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} = 0
+ s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \ln & \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \notag \\ 
+        &- a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} = 0
 \end{align}
 
-\clearpage
 
 \paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the non-linear program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the L-gradient-Lipschitz of $f$ (see the definitions at \cref{sec:f-properties}).
 %
@@ -161,7 +160,7 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
     %
     \xi_{S}^{t} &= \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) - \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t-1})\\
     %
-    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
         & \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) -  \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \biggr] \\
     & \quad + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
 \end{align*}
@@ -198,27 +197,31 @@ The last constraint is satisfied due to the definition of the dual variables. We
   \sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq -\gamma^{t}
 \end{align*}
 %
-to hold. We can simplify $\gamma^{t}$ as follows:
+to hold. We can rewrite $\gamma^{t}$ as follows:
 \begin{align*}
-    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
     	& \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
 	& \quad + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
 \end{align*}
 %
 Now let us fix an arbitrary set $S$. Then, following the simplified form of $\gamma^t$, we have
 \begin{align*}
-    -\gamma^{t} &\geq     \frac{1}{\lambda} \sum_{i \in S} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    -\gamma^{t} &\geq     \frac{1}{\lambda} \sum_{i \in S} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
             & \quad + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
         & \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
 \end{align*}
-because the terms are positive and we restrict the sum to a subset. $\nabla_{i} f(x^{t}) \geq \nabla_{i} f(x^{t-1})$ due to the properties of $f$ (see \cref{sec:f-properties}), and either $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} \geq x_{i}^{t-1}$ and the logarithm term is non-negative, or $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} < x_{i}^{t-1}$ and the logarithm term is also negative, making their product positive.
+%
+since the terms in the first two lines are positive and we restrict the sum to a subset. In particilar, $\nabla_{i} f(x^{t}) \geq \nabla_{i} f(x^{t-1})$ by assumption of function $f$, and either $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} \geq \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t-1} + \delta_{i}^{t-1}$ and the logarithm term is non-negative, or $\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} < \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t-1} + \delta_{i}^{t-1}$ and the logarithm term is also negative, making their product non-negative.
 %
 We have to show that the following is true to satisfy the third constraint:
 \begin{align*}
-    \sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  & = \sum_{i \in S} \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    \sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  
+    %
+    & = \sum_{i \in S} \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
         & \quad - \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) + \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t-1}) \\
         & \quad + \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right) - \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t}) \\
-    & =     \frac{1}{\lambda} \sum_{i \in S} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+       %
+    & =     \frac{1}{\lambda} \sum_{i \in S} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
             & \quad + \frac{1}{\lambda} \sum_{i \in S} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
             & \quad - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1}) \\
     & \leq - \gamma^t
@@ -254,6 +257,9 @@ Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive 
 &= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) s_{i,k}^{t} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr]
             \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \notag \\
 %
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) s_{i,k}^{t} \biggl[ \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]
+            \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \\
+%
 &=  \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} + \chi_{i}^{t} \biggr)  \\
 %
 &\leq \sum_{i=1}^{n} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} + \chi_{i}^{t} \biggr) \notag \\
@@ -275,17 +281,17 @@ The above corresponding transformations hold since:
     \item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$;
     \item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
     %\setcounter{enumi}{5}
-    \item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$
-    (so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT2}) applies;
+    \item since again, $x_{i}^{t} > x_{i}^{t-1} \geq 0$, we have $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$ and 
+    	it always holds that $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
+    \item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$ (so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT2}) applies;
     \item is true due to the complementary slackness conditions
         and that $\sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
 \end{compactenum}
 
-\clearpage
 
 \noindent The objective of the dual includes $\sum_{t = 1}^{T} \gamma^{t}$ as well, so it remains to bound this sum. Recall the simplified version of $\gamma^t$:
 \begin{align*}
-    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  - x_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
+    \gamma^{t} &= -  \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[  L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]  \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{ik}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
     	& \quad - \frac{1}{\lambda} \sum_{i=1}^{n} \biggl[ \nabla_{i} f(x^{t}) - \nabla_{i} f(x^{t-1}) \biggr] \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{ik}^{t}w_{i,k}^{t}  + \delta_{i}^{t}} \right)  \\
 	& \quad + \frac{\mu}{\lambda} \ln(K\rho) f(x^{t}) - \frac{\mu}{\lambda} \ln(K\rho) f(x^{t-1})
 \end{align*}
