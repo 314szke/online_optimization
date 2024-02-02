@@ -12,7 +12,7 @@ $\sum_{k=1}^{K} w_{k}^{t} \geq 1$. The relaxed formulation also enables us to av
 The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the relaxation, the optimal solution of the relaxed linear program is a lower bound of our \texttt{LIN-COMB} benchmark. The dual of the relaxation is displayed on Figure~\ref{fig:dual}.
 
 
-\begin{figure}[ht]
+\begin{figure}
 	\begin{mdframed}
 		\vspace{-10pt}
 		\begin{align*}
@@ -30,7 +30,7 @@ The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the re
 	\label{fig:relaxation}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}
 	\begin{mdframed}
 	\vspace{-10pt}
 		\begin{align*}
@@ -42,13 +42,12 @@ The relaxed formulation is visible on Figure~\ref{fig:relaxation}. Due to the re
 		%
 			&& \alpha_{i}^{t},\ \beta_{i}^{t} & \ge 0 & \forall\ i,t
 		\end{align*}
-		%\vspace{5pt}
 	\end{mdframed}
 	\caption{The dual of the \texttt{LIN-COMB} benchmark's relaxation}
 	\label{fig:dual}
+	\vspace{-5pt}
 \end{figure}
 
-\break
 
 According to the theorem of weak duality, any feasible solution of the dual program lower bounds any feasible solution of the primal program, and therefore, any feasible dual solution also lower bounds our \texttt{LIN-COMB} benchmark. Following the chain of lower bounds, our approach to design a competitive algorithm is as follows. At every time step $t$, we build solutions for all $x_{i}^{t}$ together with the solutions for the dual problem $(\alpha^{t}, \beta_{i}^{t})$. Then, we bound the cost of the algorithm to that of the dual. It is important to emphasize that the designed solution for every $x_{i}^{t}$ must be feasible to the covering constraints, but it may \emph{not necessarily} be a linear combination of the experts' solutions.
 

@@ -84,29 +84,6 @@ where the second inequality holds due to the feasibility of the experts' solutio
 We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
 where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
 
-\begin{figure}
-	\begin{mdframed}
-		\vspace{-10pt}
-	%	\begin{spacing}{0.1}
-		\begin{align*}
-			\text{Linear:} && \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \min \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T} \bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
-			\text{Non-linear:} && \min f(x^{T})\\
-		\text{s.t.} &&
-			\sum_{k=1}^{K} w_{k}^{t} &= 1  \hspace{2.85cm} \forall\ t \\
-			%
-			&& x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} \hspace{1.518cm}  \forall\ i, t\\
-			%
-			&& x_{i}^{t} &\geq x_{i}^{t-1} \hspace{2.338cm} \forall\ i, t\\
-			%
-			&& w_{k}^{t} &\geq 0  \hspace{2.85cm} \forall\ t, k
-		\end{align*}
-		where $1 \leq t \leq T$, $1 \leq i \leq n$, and $f$ is non-linear.
-		\vspace{5pt}
-	\end{mdframed}
-	\caption{Formulation of the \texttt{LIN-COMB} benchmark for both the linear and non-linear problems with linear covering-type constraints}
-	\label{fig:benchmark}
-\end{figure}
-
 \subsection{Our approach and contribution}
 
 \paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. The formulations of the relaxation and its dual are detailed in \cref{sec:covering} for linear problems and in \cref{sec:convex} for non-linear problems.
@@ -140,6 +117,29 @@ We provide an algorithm that achieves an objective cost at most $O(\ln(K\rho)) \
 In particular, for $0$-$1$ optimization problems, where the experts provide integer (deterministic or randomized) solutions, our first algorithm is $O(\ln(K))$-competitive with \texttt{LIN-COMB}, and the second one is $O(\ln(K)) \cdot \frac{\lambda}{(1-\mu\ln(K))}$-competitive.
 An interesting feature of our algorithms is their resilience to the fluctuation of the quality of predictions (discussed in \cref{subsec:related-works} and illustrated with experiments in \cref{sec:exp}).
 
+\begin{figure}[!ht]
+	\begin{mdframed}
+		%\vspace{-10pt}
+	%	\begin{spacing}{0.1}
+		\begin{align*}
+			\text{Linear:} && \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \min \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T} \bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
+			\text{Non-linear:} && \min f(x^{T})\\
+		\text{s.t.} &&
+			\sum_{k=1}^{K} w_{k}^{t} &= 1  \hspace{2.85cm} \forall\ t \\
+			%
+			&& x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} \hspace{1.518cm}  \forall\ i, t\\
+			%
+			&& x_{i}^{t} &\geq x_{i}^{t-1} \hspace{2.338cm} \forall\ i, t\\
+			%
+			&& w_{k}^{t} &\geq 0  \hspace{2.85cm} \forall\ t, k
+		\end{align*}
+		where $1 \leq t \leq T$, $1 \leq i \leq n$, and $f$ is non-linear.
+		%\vspace{5pt}
+	\end{mdframed}
+	\caption{Formulation of the \texttt{LIN-COMB} benchmark for both the linear and non-linear problems with linear covering-type constraints}
+	\label{fig:benchmark}
+\end{figure}
+
 \subsection{Related work and discussions} \label{subsec:related-works}
 
 Much of the research focusing on surpassing worst-case performance guarantees is motivated by the spectacular advances of machine learning (ML). Specifically, ML methods can detect patterns among the arriving input requests and provide valuable insights for the online algorithms regarding future requests. \cite{LykourisVassilvtiskii18:Competitive-caching} introduced a general framework to integrate ML predictions into classical algorithm designs to surpass the worst-case performance limit.
@@ -150,7 +150,7 @@ However, most learning-augmented algorithms suffer when the error rates are neit
 Figure~\ref{fig:robustness-consistency} provides a general picture of the performance of an algorithm with predictions, which is representative for many problems (for example, \cite{BamasMaggoriSvensson20:primal-dual-method,KeviNguyen23:Primal-Dual-Algorithms}).
 
 \begin{figure}
-\vspace{-10pt}
+	\vspace{-5pt}
     \centering
     \includegraphics[width=0.4\textwidth]{../paper/Img/consistency_robustness.png}
     \vspace{-0.7cm}
