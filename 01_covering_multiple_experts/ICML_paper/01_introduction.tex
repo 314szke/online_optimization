@@ -18,7 +18,7 @@ A natural research question is whether it is possible to design competitive algo
 Taking a broader view, we can study whether combining predictions of several experts is similar to combining multiple online algorithms and whether we can expect to achieve better solutions with the combination. Assuming that we do not know in advance which of the given algorithms would perform best on the upcoming requests, can we combine the algorithms in some generic way to obtain a competitive online strategy? This has been a long-standing question in the community of online algorithms \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}. To find an answer, it is a crucial to understand to what extent such an online strategy can benefit from the input of multiple algorithms and what is a suitable benchmark to evaluate its performance.
 
 While in a completely general setting such an online strategy and a corresponding benchmark may not exist, in this paper we propose
-two algorithms for online linear and convex problems with covering constraints that are competitive with the new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
+two algorithms for online linear and non-linear problems with covering constraints that are competitive with the new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
 
 \subsection{Model and Problem}
 
@@ -33,7 +33,7 @@ to satisfy the new constraint, while maintaining the satisfaction of the previou
 Our goal is to design an algorithm that minimizes $\sum_{i=1}^{n} c_{i} x_{i}^{T}$ subject to
 all online covering constraints $t$, where $1 \leq t \leq T$. The value $T$ is the last time a constraint is released, and it is not known by the algorithm.
 
-The convex problem setting is analogous to the linear one, since we consider convex problems with linear constraints. The only difference compared to the previous paragraph is the total cost of the solution $(x_{i}^t)_{i=1}^{n}$, which becomes $f(x^t)$, where $f$ is a convex function. 
+The non-linear problem setting is analogous to the linear one, since we consider non-linear problems with linear constraints. The only difference compared to the previous paragraph is the total cost of the solution $(x_{i}^t)_{i=1}^{n}$, which becomes $f(x^t)$, where $f$ is a non-linear function.
 
 \noindent \textbf{Experts.} \label{subsec:experts} In our model, the experts' predictions are also online solutions. In other words, the experts' solutions
 fulfill the following properties:
@@ -48,7 +48,7 @@ Besides, assuming tight constraint satisfaction would simplify the problem, whil
 the difficulty of designing competitive algorithms comes from the lack of obvious ways to distinguish
 good expert solutions from (probably many) non-efficient/misleading ones.
 
-\paragraph{Benchmark.}
+\noindent \textbf{Benchmark.}
 We consider a dynamic benchmark that captures the \emph{best linear combination} of all experts' solutions \emph{over time}.
 Informally, at any online time step, the benchmark can take a linear combination of the experts' solutions.
 The linear combination can be changed over time, and it can be different from previous combinations.
@@ -63,28 +63,6 @@ The solution of \texttt{LIN-COMB} at time $t$ is ideally $x_{i}^{t} = \sum_{k=1}
 however, $x_{i}^{t}$ must be larger than $x_{i}^{t-1}$.
 Therefore, we set $x_{i}^{t} = \max\bigl\{\sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t},\ x_{i}^{t-1}\bigr\}$.
 %
-\begin{figure}[ht]
-	\begin{mdframed}
-		\vspace{-10pt}
-	%	\begin{spacing}{0.1}
-		\begin{align*}
-			\text{Linear:} && \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \min \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T} \bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
-			\text{Convex:} && \min f(x^{T})\\
-		\text{s.t.} &&
-			\sum_{k=1}^{K} w_{k}^{t} &= 1  \hspace{2.85cm} \forall\ t \\
-			%
-			&& x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} \hspace{1.518cm}  \forall\ i, t\\
-			%
-			&& x_{i}^{t} &\geq x_{i}^{t-1} \hspace{2.338cm} \forall\ i, t\\
-			%
-			&& w_{k}^{t} &\geq 0  \hspace{2.85cm} \forall\ t, k
-		\end{align*}
-		where $1 \leq t \leq T$, $1 \leq i \leq n$, and $f$ is convex.
-		\vspace{5pt}
-	\end{mdframed}
-	\caption{Formulation of the \texttt{LIN-COMB} benchmark for both the linear and convex problems with linear covering-type constraints}
-	\label{fig:benchmark}
-	\end{figure}
 
 Since every expert's solution is feasible by our assumptions, at each time $t$ and for all resource $i$ (where $1 \leq i \leq n$),
 the constructed solution $x_{i}^{t} \geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}$ constitutes a feasible solution to the covering constraints of the original covering problem.
@@ -106,24 +84,47 @@ where the second inequality holds due to the feasibility of the experts' solutio
 We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
 where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
 
+\begin{figure}
+	\begin{mdframed}
+		\vspace{-10pt}
+	%	\begin{spacing}{0.1}
+		\begin{align*}
+			\text{Linear:} && \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \min \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T} \bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
+			\text{Non-linear:} && \min f(x^{T})\\
+		\text{s.t.} &&
+			\sum_{k=1}^{K} w_{k}^{t} &= 1  \hspace{2.85cm} \forall\ t \\
+			%
+			&& x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} \hspace{1.518cm}  \forall\ i, t\\
+			%
+			&& x_{i}^{t} &\geq x_{i}^{t-1} \hspace{2.338cm} \forall\ i, t\\
+			%
+			&& w_{k}^{t} &\geq 0  \hspace{2.85cm} \forall\ t, k
+		\end{align*}
+		where $1 \leq t \leq T$, $1 \leq i \leq n$, and $f$ is non-linear.
+		\vspace{5pt}
+	\end{mdframed}
+	\caption{Formulation of the \texttt{LIN-COMB} benchmark for both the linear and non-linear problems with linear covering-type constraints}
+	\label{fig:benchmark}
+\end{figure}
+
 \subsection{Our approach and contribution}
 
-\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. The formulations of the relaxation and its dual are detailed in \cref{sec:covering} for linear problems and in \cref{sec:convex} for convex problems.
+\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. The formulations of the relaxation and its dual are detailed in \cref{sec:covering} for linear problems and in \cref{sec:convex} for non-linear problems.
 
-Both of our proposed algorithms set the decision variables at every time step based on the solution of an internal convex program. 
-Our approach is inspired by the
-convex regularization method of \cite{BuchbinderChen14:Competitive-Analysis}. 
+Both of our proposed algorithms set the decision variables at every time step based on the solution of an internal program. Our approach is inspired by the
+convex regularization method of \cite{BuchbinderChen14:Competitive-Analysis}.
 When the objective cost is a linear function, it is well-known that the regularization function is a shifted entropy function.
 These functions have been widely used, in particular in the recent breakthrough related to $k$-server \cite{BubeckCohen18:K-server-via-multiscale,BuchbinderGupta19:k-servers-with}
 and metrical task system problems \cite{BubeckCohen21:Metrical-task},
 in which the entropy functions are shifted by constant parameters.
-A novel point in our approach is that the entropy function is shifted by the average of the experts' solutions.
-Moreover, regarding the constraints of the convex program, instead of using the experts' solutions directly,
-we define auxiliary solutions that guarantee tight constraint satisfaction. 
-Intuitively, this step is useful to avoid misleading experts' suggestions. 
 
-When the objective cost is non-linear function, it was not clear which regularization function should be used. 
-In our approach, we propose a regularizer by coupling the entropy-like function and the gradient-Lipschitz property of the objective. 
+A novel point in our approach is that the entropy function is shifted by the average of the experts' solutions.
+Moreover, regarding the constraints of the internal program, instead of using the experts' solutions directly,
+we define auxiliary solutions that guarantee tight constraint satisfaction.
+Intuitively, this step is useful to avoid misleading experts' suggestions.
+
+In the non-linear setting, there is no obvious choice for the regularization function.
+In our approach, we propose a regularizer by coupling the entropy-like function with the gradient-Lipschitz property of the original covering problem's objective function.
 This new regularization function allows us to analyze the non-linear objective setting with a similar analysis structure as the linear one.
 
 \paragraph{Results.} Let $\rho$ be the maximum ratio between the experts' solutions on the resources. Formally,
@@ -132,9 +133,10 @@ This new regularization function allows us to analyze the non-linear objective s
 	\rho := \max_{i} \max_{t',t''} \biggl\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} \biggr\}  \textnormal{ s.t. } \sum_{k=1}^{K} s_{i,k}^{t''} > 0.
 \]
 Informally, $\rho$ represents the discrepancy across the experts' predictions.
-Our main results are the following. 
-First, we present an algorithm for the online linear covering problem that achieves the objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark. Subsequently, building on the salient ideas of the linear objective, we extend our approach for the online non-linear objective covering problem. 
-We provide an algorithm that achieves an objective cost at most $O(\ln(K\rho)) \cdot \frac{\lambda}{(1-\mu\ln(K\rho))}$ times the cost of \texttt{LIN-COMB}, where $\lambda$ and $\mu$ are the ($\lambda$,$\mu$) are some parameters of the objective function (precisely, ($\lambda$,$\mu$) are smoothness parameters of the function that are defined later in the corresponding section).
+Our main results are the following.
+First, we present an algorithm for the online linear covering problem that achieves an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark. Building on the salient ideas of the linear case, we extend our approach for the online non-linear covering problem.
+We provide an algorithm that achieves an objective cost at most $O(\ln(K\rho)) \cdot \frac{\lambda}{(1-\mu\ln(K\rho))}$ times the cost of \texttt{LIN-COMB}, where ($\lambda$,$\mu$) are parameters of the non-linear objective function (precisely, ($\lambda$,$\mu$) are smoothness parameters of the objective function that we define later in the corresponding section).
+
 In particular, for $0$-$1$ optimization problems, where the experts provide integer (deterministic or randomized) solutions, our first algorithm is $O(\ln(K))$-competitive with \texttt{LIN-COMB}, and the second one is $O(\ln(K)) \cdot \frac{\lambda}{(1-\mu\ln(K))}$-competitive.
 An interesting feature of our algorithms is their resilience to the fluctuation of the quality of predictions (discussed in \cref{subsec:related-works} and illustrated with experiments in \cref{sec:exp}).
 
@@ -147,7 +149,7 @@ On a high-level view, we aim to design algorithms that are robust (competitive) 
 However, most learning-augmented algorithms suffer when the error rates are neither very low nor very high, resulting in prediction confidence that is neither very low nor very high.
 Figure~\ref{fig:robustness-consistency} provides a general picture of the performance of an algorithm with predictions, which is representative for many problems (for example, \cite{BamasMaggoriSvensson20:primal-dual-method,KeviNguyen23:Primal-Dual-Algorithms}).
 
-\begin{figure}[!ht]
+\begin{figure}
 \vspace{-10pt}
     \centering
     \includegraphics[width=0.4\textwidth]{../paper/Img/consistency_robustness.png}
@@ -202,5 +204,5 @@ Following the current development of online algorithm design techniques with mul
 
 \subsection{Paper overview}
 
-In this paper we show two algorithms to solve online \emph{linear} and online \emph{convex} covering problems with multiple experts. While the convex setting includes the linear one, our proposed algorithm is simpler for the linear case, so easier to understand. \cref{sec:covering} details our first algorithm for the linear case, and due to the page limitations, we detail in \cref{sec:convex} the extension to the convex setting. \cref{sec:exp} shows empirical results, and we conclude in \cref{sec:conclusion}. \cref{appix-tight-solutions} and \cref{sec:counter-example} further details some
-related work discussions, and \cref{appix-applications} shows some applications for the convex setting.
+In this paper we show two algorithms to solve online \emph{linear} and online \emph{non-linear} covering problems with multiple experts. While the non-linear setting includes the linear one, our proposed algorithm is simpler for the linear case, so easier to understand. \cref{sec:covering} details our first algorithm for the linear case, and due to the page limitations, we detail in \cref{sec:convex} the extension to the non-linear setting. \cref{sec:exp} shows empirical results, and we conclude in \cref{sec:conclusion}. \cref{appix-tight-solutions} and \cref{sec:counter-example} further details some
+related work discussions, and \cref{appix-applications} shows some applications for the non-linear setting.
