@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-result_file = 'worst_case_results2.csv'
+result_file = 'dummy_wc_result.csv'
 data = pd.read_csv(result_file, sep=';')
 
 figure, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3)
