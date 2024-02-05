@@ -48,31 +48,27 @@ Inspired by the approach of \cite{BamasMaggiori20:The-Primal-Dual-method}, our m
 $O\bigl( \frac{\lambda}{1 - \mu}  \cdot \ln \left(\frac{d}{\eta}\right) \bigr)$-robust algorithm for the non-linear online fractional covering problem, where $d$ is the maximum raw sparsity of the problem's constraints (maximum number of non-zero coefficients in a constraint).
 \end{restatable}
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-    \vspace{-1cm}
-    \begin{center}
-       \includegraphics[width=0.7\linewidth]{../../01_covering_multiple_experts/paper/Img/consistency_robustness.png}
-    \end{center}
-    \vspace{-0.6cm}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{../../01_covering_multiple_experts/paper/Img/consistency_robustness.png}
     \caption{Robustness-Consistency}
     \label{fig:worst-case}
-    \vspace{-1.4cm}
-\end{wrapfigure}
+\end{figure}
 
-\paragraph{Illustration.} Since Theroem~\ref{thm:covering} relies on several parameters, it may be challenging to appreciate its importance. As an example, when the objective function of our problem is a polynomial of degree~$k$, the competitive ratio of state-of-the-art online algorithms \emph{without} predictions is in $O(k^k log(d))$. Meanwhile, the consistency of our framework is $O(1 / (1-\eta))$ and the robustness is $O(k^k log(d/\eta))$. Figure~\ref{fig:worst-case} displays the case when $k = 1$, $d=5$, and the prediction oracle is perfect (the predictions correspond to the ground truth). The competitive ratio of our framework is the shaded area above the consistency and robustness curves. By choosing a small enough $\eta$ value, it is possible to surpass the previous worst-case bound of the state-of-the-art algorithm. If the polynomial degree of the objective function increases, the robustness curve and the state-of-the-art line will decrease drastically (multiplication with $1/k^k$). Similarly, if the prediction oracle is imperfect, the consistency line will tend downwards. However, if the oracle produces a solution at most up to a factor of $k^k$ times the optimal one, it is still possible to surpass previous worst-case guarantees.
+\subsubsection{Illustration.} Since Theroem~\ref{thm:covering} relies on several parameters, it may be challenging to appreciate its importance. As an example, when the objective function of our problem is a polynomial of degree~$k$, the competitive ratio of state-of-the-art online algorithms \emph{without} predictions is in $O(k^k log(d))$. Meanwhile, the consistency of our framework is $O(1 / (1-\eta))$ and the robustness is $O(k^k log(d/\eta))$. Figure~\ref{fig:worst-case} displays the case when $k = 1$, $d=5$, and the prediction oracle is perfect (the predictions correspond to the ground truth). The competitive ratio of our framework is the shaded area above the consistency and robustness curves. By choosing a small enough $\eta$ value, it is possible to surpass the previous worst-case bound of the state-of-the-art algorithm. If the polynomial degree of the objective function increases, the robustness curve and the state-of-the-art line will decrease drastically (multiplication with $1/k^k$). Similarly, if the prediction oracle is imperfect, the consistency line will tend downwards. However, if the oracle produces a solution at most up to a factor of $k^k$ times the optimal one, it is still possible to surpass previous worst-case guarantees.
 
 
 \subsection{Applications}
 We show the applicability of our framework through the following problems.
 
-\paragraph{Load Balancing.}
+\subsubsection{Load Balancing.}
 Load balancing is a classic problem in discrete optimization with wide-ranging applications (for example, resource management in data centres).
 This problem revolves around assigning jobs that arrive online to $m$ available unrelated machines while minimizing their maximum load. Our framework provides an $O(\frac{1}{1 - \eta})$-consistent and and $O\bigl((\log m) \log^{2} \frac{m}{\eta}\bigr)$-robust algorithm with fractional solution to this problem.
 
-\paragraph{Energy Minimization in Scheduling.}
+\subsubsection{Energy Minimization in Scheduling.}
 Reducing carbon emissions is a global effort in which energy-efficient algorithms play an essential role. For example, \cite{Albers10:Energy-efficient-algorithms} and \cite{GuCaiZengZhangJinDai:2019} studied energy-efficient algorithms for scheduling. Contrary to performance-oriented scheduling, our goal is to design an assignment policy of jobs to $m$ available machines, which can minimize the total energy consumption of the execution. Energy-related objective functions are typically polynomials of degree $k > 1$. Using our proposed framework, we can derive an $O(\frac{1}{1 - \eta})$-consistent and $O\bigl(k^{k} \log^{k} \frac{m}{\eta}\bigr)$-robust algorithm with fractional solutions for this energy minimization problem.
 
-\paragraph{Submodular Minimization.}
+\subsubsection{Submodular Minimization.}
 Submodular minimization is a widespread subject in optimization and machine learning (\cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}). We present a
 $O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \frac{\log (d/\eta)}{1 - \kappa_{f}} \bigr)$-robust algorithm
 for minimizing a submodular function under covering constraints where $\kappa_{f}$ is the curvature
@@ -94,7 +90,7 @@ To design online algorithms with predictions in a unified way, \cite{BamasMaggio
 
 \section{Preliminaries} \label{sec-prelim}
 
-\paragraph{Multilinear extension.}
+\subsection{Multilinear extension.}
 
 We follow the primal-dual approach of \cite{Thang20:Online-Primal-Dual} to design competitive algorithms for online fractional non-linear covering problems. This method uses the objective function's \emph{multilinear extension} to characterize how far the objective function is from being linear. Given a function $f: \{0,1\}^{n} \rightarrow \mathbb{R}^{+}$, its multilinear extension $F: [0,1]^{n} \rightarrow \mathbb{R}^{+}$
 is defined as $F(\vect{x}) := \sum_{S} \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e}) \cdot f(\vect{1}_{S})$
@@ -130,7 +126,7 @@ Definition \ref{def:min-local-smooth} addresses general functions with non-monot
 \end{definition}
 
 
-\paragraph{Covering Problem.}
+\subsection{Covering Problem.}
 Let $\mathcal{E}$ be a set of $n$ resources
 and let $f: \{0,1\}^{n} \rightarrow \mathbb{R}^{+}$ be an  \emph{arbitrary} non-decreasing function defined on the set.
 Let $x_{e} \in \{0,1\}$ be a variable indicating whether resource $e$ is selected.

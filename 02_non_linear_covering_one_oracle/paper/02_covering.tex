@@ -2,7 +2,7 @@
 
 \section{Primal-Dual Framework for  Covering Constraints}		\label{sec:covering}
 
-\paragraph{Formulation.}
+\subsection{Formulation.}
 We formulate the online covering problem that we described in the Preliminaries as a problem of finding the minimum cost solution among all the possible solutions. This formulation has an exponential number of variables and constraints; however, it allows us to transform the non-linear objective function into a linear one, which is crucial for our algorithm and proofs.
 
 Let $S \subseteq \mathcal{E}$ be a \emph{solution} if $\vect{1}_{S}$ corresponds to a feasible solution. Let $x_{e}$ be a variable indicating whether resource $e$ is selected.
@@ -33,7 +33,7 @@ x_{e}, z_{S} &\in \{0,1\} & & \forall e,\ \forall S \subseteq \mathcal{E}\\
 In the primal program, the first constraints are knapsack-constraints (\cite{CarrFleischer:2000}) of the given polytope, and they are equivalent to $\sum_{e \notin A} a_{e}^{t}(A) \ x_{e} \geq c^{t}(A)$. It is sufficient to satisfy constraints where $c^{t}(A) > 0$. The second primal constrain ensures that if a resource $e$ is chosen, the selected solution must contain $e$.
 The third constraint guarantees that \emph{one} solution is selected.
 
-\paragraph{Algorithm.}
+\subsection{Algorithm.}
 In our proposed algorithm, $\vect{x} \in [0, 1]^{|\mathcal{E}|}$ corresponds to the current solution of the algorithm. During the execution, we rely on the objective function's multilinear extension $F$, parametrized by $\lambda$ and $\mu$. We assume, that $F(\vect{x})$ is $(\lambda, C \mu)$-locally-smooth, where $C$ is a constant that arises from the algorithm's analysis (see Lemma~\ref{lem:prim-dual-feasible}). Algorithm~\ref{algo:covering} follows the scheme of \cite{Thang20:Online-Primal-Dual}, which uses both the primal and dual variables to solve the problem.
 
 We have two notions of time in our algorithm. First, at each discrete time step $t$, a new primal constraint arrives. Second, we have a continuous time $\tau$ throughout the execution. The solution of the algorithm increases gradually with time $\tau$.  To simplify the notations, when the context only uses the current time of the execution, $\vect{x}$ refers to $\vect{x}(\tau)$, the current solution at time $\tau$.
@@ -90,7 +90,7 @@ Starting from line \ref{algo-decrease}, the algorithm decreases some of the dual
 \cite{AzarBuchbinder16:Online-Algorithms}. This decrease is necessary to maintain the feasibility of the dual solution.
 
 
-\paragraph{Primal and dual variables.}
+\subsection{Primal and dual variables.}
 Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau'))$, for some primal solution $\vect{x}(\tau')$, where $\tau' \le \tau$. Moreover, $\vect{x}(\tau) \geq \bigvee_{\tau' \le \tau} \vect{x}(\tau')$ (each coordinate $x_{e}(\tau) = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $\vect{x}(\tau)$. We highlight that the proof if this lemma does \emph{not} require the gradient of $F$ to be monotone.
 (When this assumption is present, the algorithm can simply set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
 
@@ -119,7 +119,7 @@ where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-cover
 	We consider two cases $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
 	and $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
 
-	\paragraph{Case 1: $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
+	\textbf{Case 1: $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
 	In this case, by the algorithm's design, the value of $\beta_{e}$ remains unchanged at time~$\tau$ (line \ref{algo-covering:beta}) ($\frac{\partial \beta_{e}}{\partial \tau} = 0$).
 	The lemma's right-hand side's derivative according to $\tau$ is
 	\begin{align*}
@@ -144,7 +144,7 @@ where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-cover
 	The last inequality is due to the increasing rate of $x_{e}$.
 	The rate on the left-hand side is always larger than on the right-hand side, so the lemma inequality holds.
 
-	\paragraph{Case 2: $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
+	\textbf{Case 2: $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
 	In this case, by the algorithm's design, $\frac{1}{\lambda} \nabla_{e} F(\vect{x})$ is locally non-decreasing at $\tau$ (since otherwise,
 	by line \ref{algo-covering:beta}, $\beta_{e}$ is not maintained to be equal to $\frac{1}{\lambda} \nabla_{e} F(\vect{x})$).
 	Therefore, $\frac{\partial \beta_{e}}{\partial \tau} \geq 0$ and so $\partial \bigl(\frac{1}{\beta_{e}}\bigr)/\partial \tau \leq 0$.
@@ -292,7 +292,6 @@ We will use these parameters to derive the guarantees for the following problems
 
 \subsubsection{Load Balancing}
 
-\paragraph{Problem.}
 Load balancing is a classic problem in discrete optimization with wide-ranging applications (for example, resource management in data centres).
 This problem revolves around assigning jobs that arrive online to $m$ available unrelated machines while minimizing their maximum load.
 Each arriving job $j$ reveals its machine dependent execution time $p_{ij}$ where $i \in \{1, m\}$ is the machine's index. The load $\ell_{i}$ of machine $i$ is the total processing time of the jobs assigned
@@ -306,9 +305,9 @@ $O(\frac{1}{1 - \eta})$-consistent and $O\bigl((\log m) \log^{2} \frac{m}{\eta}\
 for the load balancing problem.
 \end{proposition}
 
+
 \subsubsection{Energy Minimization in Scheduling}
 
-\paragraph{Problem.}
 Reducing carbon emissions is a global effort in which energy-efficient algorithms play an essential role. For example, \cite{Albers10:Energy-efficient-algorithms} and \cite{GuCaiZengZhangJinDai:2019} studied energy-efficient algorithms for scheduling.
 
 Given $m$ unrelated machines, we need to assign jobs that arrive online. Each job $j$ has a release date $r_{j}$, a deadline $d_{j}$, and a vector of machine dependent processing times $p_{ij}$. Contrary to performance-oriented scheduling, our goal is to design an assignment policy which can minimize the total energy consumption of the execution. To achieve this, we can adjust the machines' speed $s_{ij}(t)$ during the time interval $[t,t+1)$ for the execution of job $j$. Every machine $i$ has a non-decreasing energy power function $P_{i}(\cdot)$. Typically, $P_{i}(z) = z^{k_{i}}$ for some constant $k_{i} \geq 1$. The execution's total energy is $\sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$.
@@ -331,9 +330,9 @@ $O(\frac{1}{1 - \eta})$-consistent and $O\bigl(k^{k} \log^{k} \frac{m}{\eta}\big
 for the energy minimization problem.
 \end{proposition}
 
+
 \subsubsection{Online Submodular Mimimization}	\label{sec:sub-min}
 
-\paragraph{Problem.}
 Submodular minimization is a widespread subject in optimization and machine learning (\cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}). Let us consider the problem of minimizing an online monotone submodular function subject to covering constraints.
 A set-function $f: 2^{\mathcal{E}} \rightarrow \mathbb{R}+$ is \emph{submodular} if
 $f(S \cup e) - f(S) \geq f(T \cup e) - f(T)$ for all $S \subset T \subseteq \mathcal{E}$.
