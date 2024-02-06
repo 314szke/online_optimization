@@ -1,0 +1,117 @@
+%!TEX root = ./main.tex
+
+\section{Primal-Dual Framework for Packing Constraints}		\label{sec:packing}
+
+\subsection{Formulation.}
+
+\begin{align*}
+\max  \sum_{t} &a^{t} x^{t} \\
+\sum_{t} b_{i}^{t} x^{t} &\geq 1 & &  \forall 1 \leq i \leq m \\
+x^{t} &\in \{0,1\} & & \forall t
+\end{align*}
+
+We formalize the problem differently. At the arrival of variable $x^{t}$ (that we need to set as 0 or 1), for a given parameter $M > 0$, we try to achieve 
+$\sum_{t} a^{t} x^{t} \geq M(t)$ while minimizing the violation in the packing constraints, i.e., minimize $\max_{1 \leq i \leq m} \sum_{t} b_{i}^{t} x^{t}$, especially when
+the latter is larger than 1. Subsequently, one can use binary search to find the largest $M$ so the violation is not far from 1. 
+That can be formalized as follows (up to a constant factor due to the connection between the $\ell_{\infty}$-norm and $\ell_{\log m}$-norm).  
+%
+\begin{align*}
+\min ~ \biggl \| \biggl( \sum_{t} b_{1}^{t} x^{t}, \ldots, &\sum_{t} b_{m}^{t} x^{t} \biggr) \biggr \|_{\log m}  \\
+\sum_{t} a^{t} x^{t} &\geq \frac{M(t)}{8\ln(n/\eta)}  \\
+x^{t} &\in \{0,1\} ~ \forall t
+\end{align*}
+%
+This is a convex covering problem that we can solve using the previous framework. 
+
+\begin{theorem}
+abc
+\end{theorem}
+%
+\begin{proof}
+Fix a parameter $M(t)$. The algorithm provides a solution $\vect{x}$ such that for any feasible solution $\vect{x}'$ 
+(i.e., $\sum_{t} a^{t} (x')^{t} \geq \frac{M(t)}{8\ln(n/\eta)}$), it holds that
+$8\ln(n/\eta) f(\vect{x}') \geq f(\vect{x})$. 
+Assume that there exists an arbitrary vector $\vect{y}$ 
+achieving a profit of $2M(t)$, i.e.,  $\sum_{t} a^{t} y^{t} \geq 2M(t))$.
+We have
+$$
+f(\vect{y}) =  8\ln(n/\eta) \cdot f\biggl(\frac{\vect{y}}{8\ln(n/\eta)}\biggr) \geq
+8\ln(n/\eta) \frac{f\bigl( \vect{x}\bigr)}{8\ln(n/\eta)} = f(x) > 1
+$$
+where the first equality holds since the multiplicative property of norms, the inequality is due to the aforementioned observation 
+(note that $\frac{\vect{y}}{8\ln(n/\eta)}$ satisfies the constraint $\sum_{t} a^{t} \frac{y^{t}}{8\ln(n/\eta)} \geq \frac{M(t))}{8\ln(n/\eta)}$).
+It implies that there exists $1 \leq i \leq m$ such that $\sum_{t} b_{i}^{t} x^{t} > 1$ and so $\vect{y}$ is infeasible to the packing problem.
+Therefore, all solutions satisfying the packing constraints have profit at most $M(t)$. The theorem follows. 
+\end{proof}
+
+
+%\begin{minipage}[t]{0.45\textwidth}
+%\begin{align*}
+%\min  \sum_{S \subseteq \mathcal{E}} &f(\vect{1}_{S})\ z_{S} \\
+%\sum_{e \notin A} b_{e}^{t}(A) \ x_{e} &\geq 1 & &  \forall t,\ \forall A \subseteq \mathcal{E} \\
+%\sum_{S: e \in S} z_{S}  &= x_{e}	& & \forall e \\
+%\sum_{S \subseteq \mathcal{E}} z_{S} &= 1 & & \\
+%x_{e}, z_{S} &\in \{0,1\} & & \forall e,\ \forall S \subseteq \mathcal{E}\\
+%\end{align*}
+%\end{minipage}
+%\quad
+%\begin{minipage}[t]{0.5\textwidth}
+%\begin{align*}
+%\max \sum_{t, A} \alpha^{t}_{A} &+ \gamma \\
+%\sum_{t} \sum_{A: e \notin A} b_{e}^{t}(A) \ \alpha_{A}^{t} &\leq \beta_{e}  & &  \forall e \\
+%\gamma + \sum_{e \in S} \beta_{e} &\leq f(\vect{1}_{S})  & & \forall S \subseteq \mathcal{E}\\
+%\alpha^{t}_{A} &\geq 0 & & \forall t,\ \forall A \subseteq \mathcal{E}\\
+%\beta_e &\geq 0 & & \forall e\\
+%\gamma &\geq 0 & &
+%\end{align*}
+%\end{minipage}
+
+
+\subsubsection*{Algorithm.}
+
+
+\begin{algorithm}[!ht]
+	\begin{algorithmic}[1]
+	\STATE Initially, set $A^* \gets \emptyset$ \ \ \texttt{(where $A^*$ is the solution set and $\forall e \in A^* : x_{e} = 1$)}
+	\STATE All primal and dual variables are initially set to 0
+	\STATE During every step, for each feasible solution $S$, $z_{S} = \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e})$ is maintained.
+	\STATE Let $\tau$ be the continuous timer during the execution of the algorithm.
+	\FOR{each time $t$, for the new primal constraint $\sum_{e} a_{e}^{t} x_{e} \geq 1$
+	and dual variable $\alpha^{t}_{A^*}$}
+		\WHILE[\texttt{Increase primal, dual variables}]{$\sum_{e \notin A^{*}} b^{t}_{e}(A^{*})\ x_{e} < 1$}
+			\STATE Increase $\tau$ with a rate of $1$.
+			\STATE Increase $\alpha^{t}_{A^{*}}$ at rate $1\ /\ (\lambda \ \ln(1+2d^{2}/\eta))$
+			%(Note that $c_{k,A^{*}} > 0$ by the condition of the while loop.)
+			\label{algo-covering:alpha}
+			\FOR{$e \notin A^{*}$ such that $b^{t}_{e}(A^{*}) > 0$}
+				\STATE \textbf{if} $\beta_{e} <  \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ \textbf{then}
+				$\beta_{e} \gets \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
+				\label{algo-covering:beta}
+				\STATE Increase $x_{e}$ at a rate according to the following
+				\begin{align*}
+					\frac{\partial x_{e}}{\partial \tau}	\gets
+					\frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda \beta_{e}} + \frac{\eta}{\lambda \beta_{e} d}
+					+ \frac{(1 - \eta) \cdot \one_{\{pred(x_{e}) = 1\}}}{\nabla_{e} F(\vect{x}) \cdot |\{e': pred(x_{e'}) = 1,\ b^{t}_{e'}(A^{*}) > 0\}| }
+				\end{align*}
+				\label{algo-covering:x}
+			\ENDFOR
+			\STATE \textbf{if} $x_{e} = 1$ \textbf{then} $A^{*} \gets A^{*} \cup \{e\}$
+			\FOR[\texttt{Decrease dual variables}]{$e : e \notin A^*$} \label{algo-decrease}
+				\WHILE{
+					$\sum_{t'=1}^{t} \sum_{A: e \notin A} b^{t'}_{e}(A) \ \alpha^{t'}_{A} > \beta_{e}$}
+						\FOR{$(t_{e}^{*}, A) \textnormal{ such that } b^{t_{e}^{*}}_{e}(A) =  \max \{b^{t'}_{e}(A)\ |\ \forall A: e \notin A \textnormal{ and }\forall t' \leq t \textnormal{ s.t. } \alpha^{t'}_{A} > 0\}$} \label{algo-covering:bmax}
+							\STATE Decrease $\alpha^{t_{e}^{*}}_{A}$ continuously with a rate of
+							$\frac{b^{t}_{e}(A^{*})}{b^{t_{e}^{*}}_{e}(A)} \cdot\frac{1}{\lambda \cdot \ln(1+2d^{2}/\eta)}$
+							\label{algo-covering:decrease}
+					\ENDFOR
+				\ENDWHILE
+			\ENDFOR
+		\ENDWHILE
+	\ENDFOR
+	\end{algorithmic}
+	\caption{Online Algorithm for Non-Linear Covering Problems.}
+	\label{algo:covering}
+\end{algorithm}
+
+
+
