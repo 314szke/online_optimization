@@ -2,7 +2,7 @@
 
 \section{Primal-Dual Framework for  Covering Constraints}		\label{sec:covering}
 
-\subsection{Formulation.}
+\subsection{Formulation}
 We formulate the online covering problem that we described in the Preliminaries as a problem of finding the minimum cost solution among all the possible solutions. This formulation has an exponential number of variables and constraints; however, it allows us to transform the non-linear objective function into a linear one, which is crucial for our algorithm and proofs.
 
 Let $S \subseteq \mathcal{E}$ be a \emph{solution} if $\vect{1}_{S}$ corresponds to a feasible solution. Let $x_{e}$ be a variable indicating whether resource $e$ is selected.
@@ -33,7 +33,7 @@ x_{e}, z_{S} &\in \{0,1\} & & \forall e,\ \forall S \subseteq \mathcal{E}\\
 In the primal program, the first constraints are knapsack-constraints (\cite{CarrFleischer:2000}) of the given polytope, and they are equivalent to $\sum_{e \notin A} a_{e}^{t}(A) \ x_{e} \geq c^{t}(A)$. It is sufficient to satisfy constraints where $c^{t}(A) > 0$. The second primal constrain ensures that if a resource $e$ is chosen, the selected solution must contain $e$.
 The third constraint guarantees that \emph{one} solution is selected.
 
-\subsection{Algorithm.}
+\subsection{Algorithm}
 In our proposed algorithm, $\vect{x} \in [0, 1]^{|\mathcal{E}|}$ corresponds to the current solution of the algorithm. During the execution, we rely on the objective function's multilinear extension $F$, parametrized by $\lambda$ and $\mu$. We assume, that $F(\vect{x})$ is $(\lambda, C \mu)$-locally-smooth, where $C$ is a constant that arises from the algorithm's analysis (see Lemma~\ref{lem:prim-dual-feasible}). Algorithm~\ref{algo:covering} follows the scheme of \cite{Thang20:Online-Primal-Dual}, which uses both the primal and dual variables to solve the problem.
 
 We have two notions of time in our algorithm. First, at each discrete time step $t$, a new primal constraint arrives. Second, we have a continuous time $\tau$ throughout the execution. The solution of the algorithm increases gradually with time $\tau$.  To simplify the notations, when the context only uses the current time of the execution, $\vect{x}$ refers to $\vect{x}(\tau)$, the current solution at time $\tau$.
@@ -90,7 +90,7 @@ Starting from line \ref{algo-decrease}, the algorithm decreases some of the dual
 \cite{AzarBuchbinder16:Online-Algorithms}. This decrease is necessary to maintain the feasibility of the dual solution.
 
 
-\subsection{Primal and dual variables.}
+\subsection{Primal and dual variables}
 Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau'))$, for some primal solution $\vect{x}(\tau')$, where $\tau' \le \tau$. Moreover, $\vect{x}(\tau) \geq \bigvee_{\tau' \le \tau} \vect{x}(\tau')$ (each coordinate $x_{e}(\tau) = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $\vect{x}(\tau)$. We highlight that the proof if this lemma does \emph{not} require the gradient of $F$ to be monotone.
 (When this assumption is present, the algorithm can simply set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
 
