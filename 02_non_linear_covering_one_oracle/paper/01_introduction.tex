@@ -61,10 +61,6 @@ $O\bigl( \frac{\lambda}{1 - \mu}  \cdot \ln \left(\frac{d}{\eta}\right) \bigr)$-
 \subsection{Applications}
 We show the applicability of our framework through the following problems.
 
-\subsubsection{Load Balancing}
-Load balancing is a classic problem in discrete optimization with wide-ranging applications (for example, resource management in data centres).
-This problem revolves around assigning jobs that arrive online to $m$ available unrelated machines while minimizing their maximum load. Our framework provides an $O(\frac{1}{1 - \eta})$-consistent and and $O\bigl((\log m) \log^{2} \frac{m}{\eta}\bigr)$-robust algorithm with fractional solution to this problem.
-
 \subsubsection{Energy Minimization in Scheduling}
 Reducing carbon emissions is a global effort in which energy-efficient algorithms play an essential role. For example, \cite{Albers10:Energy-efficient-algorithms} and \cite{GuCaiZengZhangJinDai:2019} studied energy-efficient algorithms for scheduling. Contrary to performance-oriented scheduling, our goal is to design an assignment policy of jobs to $m$ available machines, which can minimize the total energy consumption of the execution. Energy-related objective functions are typically polynomials of degree $k > 1$. Using our proposed framework, we can derive an $O(\frac{1}{1 - \eta})$-consistent and $O\bigl(k^{k} \log^{k} \frac{m}{\eta}\bigr)$-robust algorithm with fractional solutions for this energy minimization problem.
 
@@ -72,7 +68,7 @@ Reducing carbon emissions is a global effort in which energy-efficient algorithm
 Submodular minimization is a widespread subject in optimization and machine learning (\cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}). We present a
 $O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \frac{\log (d/\eta)}{1 - \kappa_{f}} \bigr)$-robust algorithm
 for minimizing a submodular function under covering constraints where $\kappa_{f}$ is the curvature
-(defined in Section~\ref{sec:sub-min}) of the submodular function.
+(defined in \cref{sec:sub-min}) of the submodular function.
 
 \subsection{Experiments}
 The experiments focus on a high-impact congestion management problem: network and transportation routing. The input is a directed graph $G(A,V)$ and a set of requests $R = \{(s_{i}, t_{i}) : s_{i}, t_{i} \in V\}$ that represents demands (connecting $s_{i}$ to $t_{i}$ through a path). Each arc $(u, v) \in A$ is associated with a cost function $f_{(u,v)}: \mathbb{R}^{+} \rightarrow \mathbb{R}^{+}$ that depends on the number of requests using the arc. The goal is to design a routing that minimizes the total cost while requests arrive online. We enable predictions by building an oracle using the observed data. The oracle provides traffic forecasts, vital information to improve the routing. The experiments show that in some cases our algorithm outperforms both the best theoretical algorithm and the prediction in practical settings.

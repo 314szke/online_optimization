@@ -1,5 +1,5 @@
 
-\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate,anonymous]{lipics-v2021}
+\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, anonymous]{lipics-v2021}
 %This is a template for producing LIPIcs articles.
 %See lipics-v2021-authors-guidelines.pdf for further information.
 %for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
@@ -23,9 +23,6 @@
 \usepackage{algorithmic}
 \renewcommand{\algorithmiccomment}[1]{\hfill  {\small  \tt \# #1}}
 
-\usepackage[utf8]{inputenc} % Required for inputting international characters
-\usepackage[T5]{fontenc} % Output font encoding for international characters
-
 \usepackage{amsmath}
 \usepackage{dsfont}
 
@@ -42,10 +39,10 @@
 %\titlerunning{Dummy short title} %TODO optional, please use if title is longer than one line
 \author{Kevi Enik\H{o}}{Université Grenoble Alpes, France}{eniko.kevi@univ-grenoble-alpes.fr}{}{}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional. Use additional curly braces to indicate the correct name splitting when the last name consists of multiple name parts.
 
-\author{Nguyễn Kim Thắng}{Université Grenoble Alpes, France}{kim-thang.nguyen@univ-grenoble-alpes.fr}{}{}
-\authorrunning{Kevi Enik\H{o} and Nguyễn Kim Thắng} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+\author{Nguyen Kim Thang}{Université Grenoble Alpes, France}{kim-thang.nguyen@univ-grenoble-alpes.fr}{}{}
+\authorrunning{Kevi Enik\H{o} and Nguyen Kim Thang} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
 
-\Copyright{Eniko Kevi and Kim Thang Nguyen} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+\Copyright{Kevi Enik\H{o} and Nguyen Kim Thang} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
 
 \ccsdesc[500]{\textcolor{red}{Theory of computation~Online learning algorithms}}
 %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm
@@ -90,15 +87,15 @@
 
 \input{01_introduction}
 \input{02_covering}
-\input{applications}
-\input{03_experiments}
-\input{04_conclusion}
+\input{03_applications}
+\input{05_experiments}
+\input{06_conclusion}
 
 
 \bibliography{references}
 
 \appendix
 
-\input{05_appendix}
+\input{07_appendix}
 
 \end{document}

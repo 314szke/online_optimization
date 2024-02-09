@@ -2,7 +2,7 @@
 
 \section*{Appendix}
 
-\section{Applications in Section~\ref{sec:covering}}
+\section{Missing proofs from application related propositions}
 To apply Theorem \ref{thm:covering-formal} on specific problems, we need to determine the local-smoothness parameters for the multilinear extension.
 \cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, in particular for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
 be degree-$k$ polynomials with non-negative coefficients and let $f:~\{0,1\}^{n}~\rightarrow~\mathbb{R}^{+}$ be the cost function
@@ -12,52 +12,6 @@ Then the multilinear extension $F$ of $f$ is $(O(k \ln(d/\eta))^{k-1}, \frac{k-1
 We will use these parameters to derive the guarantees for the following problems.
 
 
-
-%%% **************************
-%%% **************************
-%%% **************************
-
-\subsection{Load Balancing}
-
-Load balancing is a classic problem in discrete optimization with wide-ranging applications (for example, resource management in data centres).
-This problem revolves around assigning jobs that arrive online to $m$ available unrelated machines while minimizing their maximum load.
-Each arriving job $j$ reveals its machine dependent execution time $p_{ij}$ where $i \in \{1, m\}$ is the machine's index. The load $\ell_{i}$ of machine $i$ is the total processing time of the jobs assigned
-to it. This load balancing problem is a well understood standard online problem and it has a tight competitive ratio of $\Theta(\log m)$ (\cite{BorodinEl-Yaniv05:Online-computation,Caragiannis08:Better-bounds}).
-
-In our online setting with predictions, the jobs not only arrive with their machine dependent execution time $p_{ij}$, but their machine dependent prediction as well. Formally, $x_{ij} \in \{0,1\}$ indicates whether job $j$ is assigned to machine $i$, and the oracle provides $pred(x_{ij}) \in \{0,1\}$. We can formulate the online load balancing problem as a non-linear program. The objective is $\min \max_{i=1}^{m} \ell_{i} = \min \max_{i=1}^{m} \bigl(\sum_{j} p_{ij} x_{ij}\bigr)$, and the constraint is $\sum_{i=1}^{m} x_{ij} = 1$ which guarantees that each job $j$ is assigned to some machine $i$. Applying our framework for non-linear programs with covering constraints, Proposition~\ref{prop:load} follows.
-
-\setcounter{theorem}{4}
-\begin{proposition}
-Algorithm~\ref{algo:covering} gives a
-$O(\frac{1}{1 - \eta})$-consistent and $O\bigl((\log m) \log^{2} \frac{m}{\eta}\bigr)$-robust fractional solution
-for the load balancing problem.
-\end{proposition}
-%
-\begin{proof}
-It is known that $\infty$-norm of a $m$-dim vector can be approximated by the $(\log m)$-norm,
-in particular for $m \geq 2$,
-$$
-\|(\ell_{1}, \ell_{2}, \ldots, \ell_{m})\|_{\infty} \leq \|(\ell_{1}, \ell_{2}, \ldots, \ell_{m})\|_{\log m}
-\leq m^{1/m} \|(\ell_{1}, \ell_{2}, \ldots, \ell_{m})\|_{\infty}
-\leq 2 \|(\ell_{1}, \ell_{2}, \ldots, \ell_{m})\|_{\infty}.
-$$
-Hence, one can instead consider the objective of minimizing the  $(\log m)$-norm of the load vectors
-while losing a constant factor of 2. More precisely, we consider the $(\log m)$-th power of the $(\log m)$-norm as the objective.
-$$
-\min \sum_{i=1}^{m} \biggl(\sum_{j} p_{ij} x_{ij}\biggr)^{\log m}
-\qquad \text{s.t.} \qquad
-\sum_{i=1}^{m} x_{ij} = 1 ~ \forall j
-$$
-%
-The objective function is a polynomial of degree $\log m$. So its multilinear extension is \linebreak
-$(O(k \ln(d/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2d^{2}/\eta)})$-locally smooth
-with $k = \log m$ and $d = m$ (the maximal number of positive coefficients in a constraint).
-Therefore, applying Theorem~\ref{thm:covering-formal}, the robustness (w.r.t the objective as  the $(\log m)$-th power of the $(\log m)$-norm)
-is $O\bigl((\log m \log \frac{m}{\eta})^{\log m}\bigr)$.
-Getting back to the $(\log m)$-norm objective by taking the $(\log m)$-root,
-the robustness is  $O\bigl((\log m) \log^{2} \frac{m}{\eta}\bigr)$.
-Hence, Algorithm~\ref{algo:covering} is $O(\frac{1}{1 - \eta})$-consistent and $O\bigl((\log m) \log^{2} \frac{m}{\eta}\bigr)$-robust.
-\end{proof}
 
 %%% **************************
 %%% **************************
