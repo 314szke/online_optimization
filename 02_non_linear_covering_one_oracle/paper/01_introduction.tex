@@ -89,11 +89,11 @@ To design online algorithms with predictions in a unified way, \cite{BamasMaggio
 \subsection{Multilinear extension}
 
 We follow the primal-dual approach of \cite{Thang20:Online-Primal-Dual} to design competitive algorithms for online fractional non-linear covering problems. This method uses the objective function's \emph{multilinear extension} to characterize how far the objective function is from being linear. Given a function $f: \{0,1\}^{n} \rightarrow \mathbb{R}^{+}$, its multilinear extension $F: [0,1]^{n} \rightarrow \mathbb{R}^{+}$
-is defined as $F(\vect{x}) := \sum_{S} \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e}) \cdot f(\vect{1}_{S})$
-where $\vect{1}_{S}$ is the characteristic vector of $S$ (the $e^{\textnormal{th}}$-component of
-$\vect{1}_{S}$ equals $1$ if $e \in S$ and equals 0 otherwise).
-Alternatively, $F(\vect{x}) = \mathbb{E} \bigl[ f(\vect{1}_{T})\bigr]$ where $T$ is a random set
-such that a resource $e$ appears in $T$ independently with probability $x_{e}$. We highlight that $F(\vect{1}_{S}) = f(\vect{1}_{S})$ and define the following crucial property.
+is defined as $F(\vect{x}) := \sum_{S} \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e}) \cdot f(\one_{S})$
+where $\one_{S}$ is the characteristic vector of $S$ (the $e^{\textnormal{th}}$-component of
+$\one_{S}$ equals $1$ if $e \in S$ and equals 0 otherwise).
+Alternatively, $F(\vect{x}) = \mathbb{E} \bigl[ f(\one_{T})\bigr]$ where $T$ is a random set
+such that a resource $e$ appears in $T$ independently with probability $x_{e}$. We highlight that $F(\one_{S}) = f(\one_{S})$ and define the following crucial property.
 
 
 \begin{definition}[\cite{Thang20:Online-Primal-Dual}]	\label{def:min-local-smooth}
@@ -101,7 +101,7 @@ Let $\mathcal{E}$ be a set of $n$ resources.
 A differentiable function $F: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
 if for every set $S \subseteq \mathcal{E}$, and for every set of $|S|$ arbitrary vectors $\vect{x}^{e} \in [0,1]^{n}$ where $e \in S$, the following inequality holds:
 \begin{equation*}	\label{eq:min-local-smooth}
-\sum_{e \in S} \nabla_{e} F(\vect{x}^{e}) \leq \lambda F\bigl( \vect{1}_{S} \bigr) + \mu F\bigl( \vect{x} \bigr)
+\sum_{e \in S} \nabla_{e} F(\vect{x}^{e}) \leq \lambda F\bigl( \one_{S} \bigr) + \mu F\bigl( \vect{x} \bigr)
 \end{equation*}
 where $\vect{x}$ is a vector whose every coordinate $x_{e'} = \max_{e}\{x^{e}_{e'}\}$ (formally, $\vect{x} := \bigvee_{e \in S} \vect{x}^{e}$);
 and $\nabla_{e} F(\vect{x})$ denotes $\partial F(\vect{x})/\partial x_{e}$.
@@ -117,7 +117,7 @@ Definition \ref{def:min-local-smooth} addresses general functions with non-monot
     Let $\mathcal{E}$ be a set of $n$ resources.
     A differentiable function $F: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ with monotone gradient is $(\lambda,\mu)$-\emph{locally-smooth} if for every set $S \subseteq \mathcal{E}$, and for every arbitrary vector $\vect{x} \in [0,1]^{n}$, the following inequality holds:
     \begin{equation*} \label{eq:min-local-smooth-increasing}
-        \sum_{e \in S} \nabla_{e} F(\vect{x}) \leq \lambda F\bigl( \vect{1}_{S} \bigr) + \mu F\bigl( \vect{x} \bigr)
+        \sum_{e \in S} \nabla_{e} F(\vect{x}) \leq \lambda F\bigl( \one_{S} \bigr) + \mu F\bigl( \vect{x} \bigr)
     \end{equation*}
 \end{definition}
 

@@ -5,13 +5,13 @@
 \subsection{Formulation}
 We formulate the online covering problem that we described in the Preliminaries as a problem of finding the minimum cost solution among all the possible solutions. This formulation has an exponential number of variables and constraints; however, it allows us to transform the non-linear objective function into a linear one, which is crucial for our algorithm and proofs.
 
-Let $S \subseteq \mathcal{E}$ be a \emph{solution} if $\vect{1}_{S}$ corresponds to a feasible solution. Let $x_{e}$ be a variable indicating whether resource $e$ is selected.
+Let $S \subseteq \mathcal{E}$ be a \emph{solution} if $\one_{S}$ corresponds to a feasible solution. Let $x_{e}$ be a variable indicating whether resource $e$ is selected.
 Let $z_{S}$ be an indicator variable for solution $S$. If $z_{S} = 1$, then every variable
-$x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S} = 1$ if and only if $\vect{1}_{S}$ is the selected solution of the online covering problem. At each time step~$t$ during the execution, a new constraint is revealed. For every subset $A \subseteq \mathcal{E}$, we define the value $c^{t}(A) := \max\{0,\ 1 - \sum_{e \in A} a^{t}_{e}\}$, to be the amount we need until constraint satisfaction. Given this value, we normalize the constraint coefficients to be $a^{t}_{e}(A) := \min\{a_{e}^{t},\ c^{t}(A)\}$. Finally, we define $b^{t}_{e}(A) := a^{t}_{e}(A)\ /\ c^{t}(A)$ where $c^{t}(A) > 0$. The values $b^{t}_{e}(A)$ correspond to the coefficients in the knapsack inequality constraints (\cite{CarrFleischer:2000}). The primal and dual programs are:
+$x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S} = 1$ if and only if $\one_{S}$ is the selected solution of the online covering problem. At each time step~$t$ during the execution, a new constraint is revealed. For every subset $A \subseteq \mathcal{E}$, we define the value $c^{t}(A) := \max\{0,\ 1 - \sum_{e \in A} a^{t}_{e}\}$, to be the amount we need until constraint satisfaction. Given this value, we normalize the constraint coefficients to be $a^{t}_{e}(A) := \min\{a_{e}^{t},\ c^{t}(A)\}$. Finally, we define $b^{t}_{e}(A) := a^{t}_{e}(A)\ /\ c^{t}(A)$ where $c^{t}(A) > 0$. The values $b^{t}_{e}(A)$ correspond to the coefficients in the knapsack inequality constraints (\cite{CarrFleischer:2000}). The primal and dual programs are:
 
 \begin{minipage}[t]{0.45\textwidth}
 \begin{align*}
-\min  \sum_{S \subseteq \mathcal{E}} &f(\vect{1}_{S})\ z_{S} \\
+\min  \sum_{S \subseteq \mathcal{E}} &f(\one_{S})\ z_{S} \\
 \sum_{e \notin A} b_{e}^{t}(A) \ x_{e} &\geq 1 & &  \forall t,\ \forall A \subseteq \mathcal{E} \\
 \sum_{S: e \in S} z_{S}  &= x_{e}	& & \forall e \\
 \sum_{S \subseteq \mathcal{E}} z_{S} &= 1 & & \\
@@ -23,7 +23,7 @@ x_{e}, z_{S} &\in \{0,1\} & & \forall e,\ \forall S \subseteq \mathcal{E}\\
 \begin{align*}
 \max \sum_{t, A} \alpha^{t}_{A} &+ \gamma \\
 \sum_{t} \sum_{A: e \notin A} b_{e}^{t}(A) \ \alpha_{A}^{t} &\leq \beta_{e}  & &  \forall e \\
-\gamma + \sum_{e \in S} \beta_{e} &\leq f(\vect{1}_{S})  & & \forall S \subseteq \mathcal{E}\\
+\gamma + \sum_{e \in S} \beta_{e} &\leq f(\one_{S})  & & \forall S \subseteq \mathcal{E}\\
 \alpha^{t}_{A} &\geq 0 & & \forall t,\ \forall A \subseteq \mathcal{E}\\
 \beta_e &\geq 0 & & \forall e\\
 \gamma &\geq 0 & &
@@ -183,12 +183,12 @@ Let us consider the second dual constraint. Let $\vect{x}(\tau)$ be the final so
 Let $\vect{y} := \bigvee_{\tau' \le \tau} \vect{x}(\tau') \leq \vect{x}(\tau)$, so for each coordinate $e$ of $\vect{y}$, we have $y_{e} = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$.
 By definition of the dual variables, the second dual constraint (after rearranging the terms) reads
 \begin{align*}
-	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}(\tau_e)) \leq F(\vect{1}_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau)) \quad \quad \forall\ S \subseteq \mathcal{E}
+	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}(\tau_e)) \leq F(\one_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau)) \quad \quad \forall\ S \subseteq \mathcal{E}
 \end{align*}
 since we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$, and $\vect{x}(\tau_e)$ corresponds to the solution during the execution where $\beta_e$ was set to $\frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau_e))$.
 Since $F$ is monotone, $F(\vect{x}(\tau)) \geq F(\vect{y})$. To prove that the above inequality holds, it is sufficient to show that
 \begin{align*}
-	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}(\tau_e)) \leq F(\vect{1}_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{y})
+	\frac{1}{\lambda} \sum_{e \in S} \nabla_{e} F(\vect{x}(\tau_e)) \leq F(\one_{S}) + \frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{y})
 \end{align*}
 which means that $F$ needs to be  $\bigl(\lambda, \frac{\mu}{4\ln(1+2d^{2}/\eta)}\bigr)$-locally-smooth. Our initial assumption was that $F$ is $(\lambda, C \mu)$-locally-smooth. By setting $C := \frac{1}{4\ln(1+2d^{2}/\eta)}$, the lemma holds.
 \end{proof}

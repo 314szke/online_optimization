@@ -6,7 +6,7 @@
 To apply Theorem \ref{thm:covering-formal} on specific problems, we need to determine the local-smoothness parameters for the multilinear extension.
 \cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, in particular for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
 be degree-$k$ polynomials with non-negative coefficients and let $f:~\{0,1\}^{n}~\rightarrow~\mathbb{R}^{+}$ be the cost function
-defined as $f(\vect{1}_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{e} \bigr)$ where $a_{e} \geq 0$ for every
+defined as $f(\one_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{e} \bigr)$ where $a_{e} \geq 0$ for every
 $e$ and $b_{\ell} \geq 0$ for every $1 \leq \ell \leq L$.
 Then the multilinear extension $F$ of $f$ is $(O(k \ln(d/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2d^{2}/\eta)})$-locally smooth.
 We will use these parameters to derive the guarantees for the following problems.
@@ -70,7 +70,7 @@ To apply Algorithm~\ref{algo:covering}, we need to determine the local-smoothnes
 An important concept in studying submodular functions is the \emph{curvature}. Given a submodular
 function $f$, the \emph{total curvature} $\kappa_{f}$ (\cite{ConfortiCornuejols84:Submodular-set-functions}) of $f$ is defined as
 $
-\kappa_{f} = 1 - \min_{e} \frac{f(\vect{1}_{\mathcal{E}}) - f(\vect{1}_{\mathcal{E} \setminus \{e\}})}{f(\vect{1}_{\{e\}})}.
+\kappa_{f} = 1 - \min_{e} \frac{f(\one_{\mathcal{E}}) - f(\one_{\mathcal{E} \setminus \{e\}})}{f(\one_{\{e\}})}.
 $
 Intuitively, the total curvature measures how far away $f$ is from being \emph{modular}. This concept of
 curvature is used to determine both upper and lower bounds on the approximation ratios
@@ -81,7 +81,7 @@ The following lemma shows a useful property of the total curvature.
 \begin{lemma}		\label{lem:curvature}
 For any set $S$, it always holds that
 $$
-f(\vect{1}_{S}) \geq (1-\kappa_{f}) \sum_{e \in S} f(\vect{1}_{\{e\}}).
+f(\one_{S}) \geq (1-\kappa_{f}) \sum_{e \in S} f(\one_{\{e\}}).
 $$
 \end{lemma}
 \begin{proof}
@@ -89,11 +89,11 @@ Let $S = \{e_{1}, \ldots, e_{m}\}$ be an
 arbitrary subset of $\mathcal{E}$. Let $S_{i} = \{e_{1}, \ldots, e_{i}\}$ for $1 \leq i \leq m$ and $S_{0} = \emptyset$.
 We have
 \begin{align*}
-f(\vect{1}_{S})
-&\geq  f(\vect{1}_{\mathcal{E}}) -  f(\vect{1}_{\mathcal{E} \setminus S})
-= \sum_{i=0}^{m-1}  f(\vect{1}_{\mathcal{E} \setminus S_{i}}) - f(\vect{1}_{\mathcal{E} \setminus S_{i+1}})
-\geq \sum_{i=1}^{m}  f(\vect{1}_{\mathcal{E}}) - f(\vect{1}_{\mathcal{E} \setminus \{e_{i}\}}) \\
-&\geq (1 - \kappa_{f}) \sum_{i=1}^{m} f(\vect{1}_{e_{i}})
+f(\one_{S})
+&\geq  f(\one_{\mathcal{E}}) -  f(\one_{\mathcal{E} \setminus S})
+= \sum_{i=0}^{m-1}  f(\one_{\mathcal{E} \setminus S_{i}}) - f(\one_{\mathcal{E} \setminus S_{i+1}})
+\geq \sum_{i=1}^{m}  f(\one_{\mathcal{E}}) - f(\one_{\mathcal{E} \setminus \{e_{i}\}}) \\
+&\geq (1 - \kappa_{f}) \sum_{i=1}^{m} f(\one_{e_{i}})
 \end{align*}
 where the first two inequalities are due to the submodularity of $f$, and the last inequality follows the definition of curvature.
 \end{proof}
@@ -108,21 +108,21 @@ for the submodular minimization under covering constraints.
 Let $F$ be the multilinear extension of $f$.
 It is sufficient to verify that $F$ is $\bigl(\frac{1}{1-\kappa_{f}},0\bigr)$-locally smooth.
 Recall that, by definition of the multilinear extension,
-$F(\vect{x}) = \mathbb{E} \bigl[ f(\vect{1}_{T})\bigr]$ where $T$ is a random set
+$F(\vect{x}) = \mathbb{E} \bigl[ f(\one_{T})\bigr]$ where $T$ is a random set
 such that a resource $e$ appears in $T$ with probability $x_{e}$. Moreover, as $F$ is linear in $x_{e}$, we have
 %
 \begin{align*}
 \nabla_{e} F(\vect{x}) %= \frac{\partial F(\vect{x}) }{\partial x_{e}}
 &= F(x_{1}, \ldots, x_{e-1}, 1, x_{e+1}, \ldots, x_{n}) - F(x_{1}, \ldots, x_{e-1}, 0, x_{e+1}, \ldots, x_{n}) \\
-&= \mathbb{E} \biggl[ f\bigl(\vect{1}_{R \cup \{e\}}\bigr) - f\bigl(\vect{1}_{R}\bigr) \biggr]
+&= \mathbb{E} \biggl[ f\bigl(\one_{R \cup \{e\}}\bigr) - f\bigl(\one_{R}\bigr) \biggr]
 \end{align*}
 where $R$ is a random subset of resources $N \setminus \{e\}$ such that $e'$ is included with probability $x_{e'}$.
 Therefore, to prove that $F$ is $(\lambda,\mu)$-locally-smooth, it is equivalent to show that,
 for any set $S \subset \mathcal{E}$ and for any vectors $\vect{x}^{e} \in [0,1]^{n}$ for $e \in \mathcal{E}$,
 %
 \begin{equation*}	\label{eq:min-local-smooth-equiv}
-\sum_{e \in S} \mathbb{E} \biggl[ f\bigl(\vect{1}_{R^{e} \cup \{e\}}\bigr) - f\bigl(\vect{1}_{R^{e}}\bigr) \biggr]
-\leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu \mathbb{E} \biggl[ f\bigl(\vect{1}_{R}\bigr) \biggr]
+\sum_{e \in S} \mathbb{E} \biggl[ f\bigl(\one_{R^{e} \cup \{e\}}\bigr) - f\bigl(\one_{R^{e}}\bigr) \biggr]
+\leq \lambda f\bigl( \one_{S} \bigr) + \mu \mathbb{E} \biggl[ f\bigl(\one_{R}\bigr) \biggr]
 \end{equation*}
 %
 where $R^{e}$ is a random subset of resources $N \setminus \{e\}$ such that $e'$ is included with probability $x^{e}_{e'}$
@@ -132,9 +132,9 @@ Indeed, the
 $\bigl(\frac{1}{1-\kappa_{f}},0\bigr)$-local smoothness of $F$ holds due to the submodularity and Lemma~\ref{lem:curvature}:
 for any subsets $R^{e}$, we have
 \begin{align*}
-	\sum_{e \in S} \left[ f\bigl(\vect{1}_{R^{e} \cup \{e\}}\bigr) - f\bigl(\vect{1}_{R^{e}}\bigr) \right]
-		\leq \sum_{e \in S} \left[ f\bigl(\vect{1}_{\{e\}}\bigr) \right]
-		\leq \frac{1}{1 -\kappa_{f}} \cdot f(\vect{1}_{S})
+	\sum_{e \in S} \left[ f\bigl(\one_{R^{e} \cup \{e\}}\bigr) - f\bigl(\one_{R^{e}}\bigr) \right]
+		\leq \sum_{e \in S} \left[ f\bigl(\one_{\{e\}}\bigr) \right]
+		\leq \frac{1}{1 -\kappa_{f}} \cdot f(\one_{S})
 \end{align*}
 Therefore, applying Theorem~\ref{thm:covering-formal}, the proposition follows.
 %Algorithm~\ref{algo:covering} gives a fractional

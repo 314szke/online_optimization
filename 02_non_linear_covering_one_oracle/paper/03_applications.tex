@@ -43,7 +43,7 @@ job $j$, the prediction provides a solution $pred(x_{ij})$ and a speed $pred(s_{
 To apply Theorem \ref{thm:covering-formal} on specific problems, we must determine the multilinear extension's local smoothness parameters.
 \cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, particularly for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
 be degree-$k$ polynomials with non-negative coefficients and let $f:~\{0,1\}^{n}~\rightarrow~\mathbb{R}^{+}$ be the cost function
-defined as $f(\vect{1}_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{e} \bigr)$ where $a_{e} \geq 0$ for every
+defined as $f(\one_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{e} \bigr)$ where $a_{e} \geq 0$ for every
 $e$ and $b_{\ell} \geq 0$ for every $1 \leq \ell \leq L$.
 Then the multilinear extension $F$ of $f$ is $(O(k \ln(d/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2d^{2}/\eta)})$-locally smooth.
 %We will use these parameters to derive the guarantees for the following problems.
@@ -72,7 +72,7 @@ To apply Algorithm~\ref{algo:covering}, we need to determine the local-smoothnes
 An important concept in studying submodular functions is the \emph{curvature}. Given a submodular
 function $f$, the \emph{total curvature} $\kappa_{f}$ (\cite{ConfortiCornuejols84:Submodular-set-functions}) of $f$ is defined as
 $
-\kappa_{f} = 1 - \min_{e} \frac{f(\vect{1}_{\mathcal{E}}) - f(\vect{1}_{\mathcal{E} \setminus \{e\}})}{f(\vect{1}_{\{e\}})}.
+\kappa_{f} = 1 - \min_{e} \frac{f(\one_{\mathcal{E}}) - f(\one_{\mathcal{E} \setminus \{e\}})}{f(\one_{\{e\}})}.
 $
 Intuitively, the total curvature measures how far away $f$ is from being \emph{modular}. This concept of
 curvature is used to determine both upper and lower bounds on the approximation ratios
@@ -83,6 +83,3 @@ Algorithm~\ref{algo:covering} gives a
 $O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \frac{\log (d/\eta)}{1 - \kappa_{f}} \bigr)$-robust fractional  solution
 for the submodular minimization under covering constraints.
 \end{proposition}
-
-
-

@@ -12,7 +12,7 @@ For $C \in \mathbb{R}^{m \times n}$, function $f(\vect{x}) := \|C \vect{x}\|_{k}
 To prove the lemma, we show that for every subset $S \subseteq \{1, \ldots, n\}$ and for every $\vect{x} \in [0,1]^{n}$, the following holds.
 %
 \begin{align}	\label{ineq:lp-smooth}
-\sum_{e \in S} \nabla_{e} f(\vect{x}) \leq  k \cdot \|C \vect{x}\|_{k}
+\sum_{e \in S} \nabla_{e} f(\vect{x}) \leq  k \cdot \|C \one_{S}\|_{k}
 \end{align}
 %
 The partial derivative is
@@ -20,64 +20,57 @@ The partial derivative is
 \begin{align*}
 \frac{\partial f(x)}{\partial x_{e}}
 = k \cdot \sum_{i = 1}^{m} \frac{c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m}
-		\bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}}
+		\bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}},
 \end{align*}
 so when we sum over $S$, we get
 \begin{align*}
 \sum_{e \in S} \frac{\partial f(x)}{\partial x_{e}}
-= k \cdot \frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}}
+= k \cdot \frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}}.
 \end{align*}
 %
 Therefore, inequality (\ref{ineq:lp-smooth}) is equivalent to
 \begin{align*}
 \frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}}
-	\leq   \biggl \| \biggl( \sum_{e: e \in S} c_{1,e},\ \ldots\ , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
+	\leq   \biggl \|  \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr \|_{k}.
 \end{align*}
 %
-By multiplying both sides with the denominator of the left-hand side, it is equivalent to:
+By multiplying both sides with the denominator of the left-hand side, we get
 %
 \begin{align*}
-\sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1}
-&\leq
-        \left ( \sum_{i'=1}^{m} \biggl [ \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \biggr)^{k-1} \biggr ]^{k/(k-1)} \right )^{(k-1)/k} \\
-        			& \qquad \cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ \ldots\ , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{p} \\
-    %
-%& \Updownarrow \\
-    %
- \Leftrightarrow \quad  \sum_{i=1}^{m} \biggl( \sum_{e: e \in S} c_{i,e} \biggr) \cdot \biggl( \sum_{e'=1}^{n} c_{i,e'} x_{i,e'} \biggr)^{k-1}
- &\leq
-        \left \| \left( \biggl( \sum_{e'=1}^{n} c_{1,e'} x_{1,e'} \biggr)^{k-1}, \ldots, \biggl( \sum_{e'=1}^{n} c_{m,e'} x_{m,e'} \biggr)^{k-1} \right)   \right \|_{\frac{k}{k-1}} \\
-        		& \qquad \cdot \biggl \| \left( \biggl(\sum_{e: e \in S} c_{1,e} \biggr) ,.., \biggl( \sum_{e: e \in S} c_{m,e}\biggr)  \right) \biggr \|_{k}
+    \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot & \left( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \right)^{k-1} \leq \\
+    & \left[ \sum_{i'=1}^{m} \biggl( \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \biggr)^{k-1} \biggr)^{k/(k-1)} \right]^{(k-1)/k} \cdot \biggl \| \sum_{e: e \in S} c_{1,e}, \ldots, \sum_{e: e \in S} c_{m,e} \biggr \|_{k}
 \end{align*}
-The above inequality holds by H\"older inequality ($\| a \cdot b\|_{1} \leq \| a \|_{p} \cdot \| b \|_{q}$ where $1/p + 1/q = 1$).
-Therefore, the lemma holds.
+which is equivalent to
+\begin{align*}
+    \sum_{i=1}^{m} \biggl( & \sum_{e: e \in S} c_{i,e} \biggr) \cdot \biggl( \sum_{e'=1}^{n} c_{i,e'} x_{i,e'} \biggr)^{k-1} \leq \\
+    & \left \| \biggl( \sum_{e'=1}^{n} c_{1,e'} x_{1,e'} \biggr)^{k-1}, \ldots, \biggl( \sum_{e'=1}^{n} c_{m,e'} x_{m,e'} \biggr)^{k-1} \right \|_{\frac{k}{k-1}} \cdot \biggl \| \sum_{e: e \in S} c_{1,e} ,\ldots,  \sum_{e: e \in S} c_{m,e} \biggr \|_{k}
+\end{align*}
+The last inequality above is true by the H\"older inequality ($\| a \cdot b\|_{1} \leq \| a \|_{p} \cdot \| b \|_{q}$ where $1/p + 1/q = 1$), so the lemma holds.
 \end{proof}
 
-The following theorem follows immediately from our framework.
-
 \begin{proposition}	\label{prop:norm}
-Algorithm~\ref{algo:covering} gives a
+Algorithm~\ref{algo:covering} gives an
 $O(\frac{1}{1 - \eta})$-consistent and $O\bigl( k \cdot \log (d/\eta)\bigr)$-robust fractional solution
 for the problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints.
 \end{proposition}
 
-This result implies that in the classic online setting (without predictions, i.e., $\eta = 1$), Algorithm~\ref{algo:covering}
+\cref{prop:norm} follows immediately from our framework.
+This result implies that in the standard online setting (which does not have predictions, so $\eta = 1$), Algorithm~\ref{algo:covering}
 achieves the asymptotically \emph{optimal} competitive ratio of  $O\bigl( k \cdot \log (d)\bigr)$
-for the problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints (due to the lower bound
-of $\Omega\bigl( k \cdot \log (d)\bigr)$ in \cite{AzarCohen14:Online-Covering}).
+for the problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints. (See the lower bound
+of $\Omega\bigl( k \cdot \log (d)\bigr)$ in \cite{AzarCohen14:Online-Covering}.)
 
 \subsection{Online mixed packing and covering constraints.}
-In this section, we consider the online mixed packing and covering problem (OMPC) studied in \cite{AzarBhaskar13:Online-mixed}.
-Given a set of packing constraints $C \vect{x} \leq \vect{1}$ (where $C \in \mathbb{R}^{m \times n}$),
-and a set of covering constraints $B \vect{x} \geq \vect{1}$, with positive coefficients,
-such that the packing constraints are known in advance, and the covering constraints arrive one at a time.
-The goal is that after the arrival of each
-covering constraint, increase $\vect{x} \geq \vect{0}$ so that the new covering constraint is satisfied and the factor $\xi$
-by which $C \vect{x} \leq \xi \cdot \vect{1}$ is as small as possible.
+In an online mixed packing and covering problem (studied in \cite{AzarBhaskar13:Online-mixed}),
+we are given a set of packing constraints $C \vect{x} \leq \one$ (where $C \in \mathbb{R}^{m \times n}$),
+and a set of covering constraints $B \vect{x} \geq \one$. The coefficients of all the constraints are positive,
+and the packing constraints are known in advance, but the covering constraints arrive one at a time.
+The goal is to increase $\vect{x} \geq \mathbb{0}$ after the arrival of each covering constraint
+such that the new constraint is satisfied and the factor~$\xi$ by which $C \vect{x} \leq \xi \cdot \one$ is as small as possible. In other words, we want to satisfy the covering constraints that arrive online with the smallest possible packing constraint violation.
 
-This problem can formalized as: $\min \| C \vect{x}\|_{\infty}$ subject to online constraints $B \vect{x} \geq \vect{1}$.
-As $\ell_{\log m}$-norm is a constant approximation for $\ell_{\infty}$-norm, one can replace the objective as $\min \| C \vect{x}\|_{\log m}$.
+This problem can be formalized as: $\min \| C \vect{x}\|_{\infty}$ subject to online constraints $B \vect{x} \geq \one$.
+As the $\ell_{\log m}$-norm is a constant approximation for the $\ell_{\infty}$-norm, we can replace the objective with $\min \| C \vect{x}\|_{\log m}$.
 As a corollary of Proposition~\ref{prop:norm}, we get a fractional solution that is
-$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \log k \cdot \log (d/\eta)\bigr)$-robust for OMPC.
-Moreover, in the claissic online setting, the algorithm is $O\bigl( \log m \cdot \log d \bigr)$-competitive, i.e, \emph{optimal} up to a constant factor
-by a lower bound of $O\bigl( \log m \cdot \log d \bigr)$ in \cite{AzarBhaskar13:Online-mixed}.
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \log k \cdot \log (d/\eta)\bigr)$-robust.
+Moreover, in the standard online setting, our algorithm is $O\bigl( \log m \cdot \log d \bigr)$-competitive. This is \emph{optimal} up to a constant factor
+due to the lower bound of $O\bigl( \log m \cdot \log d \bigr)$ in \cite{AzarBhaskar13:Online-mixed}.
