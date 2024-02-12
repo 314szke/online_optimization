@@ -12,7 +12,7 @@ For $C \in \mathbb{R}^{m \times n}$, function $f(\vect{x}) := \|C \vect{x}\|_{k}
 To prove the lemma, we show that for every subset $S \subseteq \{1, \ldots, n\}$ and for every $\vect{x} \in [0,1]^{n}$, the following holds.
 %
 \begin{align}	\label{ineq:lp-smooth}
-\sum_{e \in S} \nabla_{e} f(\vect{x}) \leq  k \cdot \|C \one_{S}\|_{k}
+\sum_{e \in S} \nabla_{e} f(\vect{x}) \leq  k \cdot \|C \cdot \one_{S}\|_{k}
 \end{align}
 %
 The partial derivative is
@@ -60,7 +60,7 @@ achieves the asymptotically \emph{optimal} competitive ratio of  $O\bigl( k \cdo
 for the problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints. (See the lower bound
 of $\Omega\bigl( k \cdot \log (d)\bigr)$ in \cite{AzarCohen14:Online-Covering}.)
 
-\subsection{Online mixed packing and covering constraints.}
+\subsection{Online mixed packing and covering}
 In an online mixed packing and covering problem (studied in \cite{AzarBhaskar13:Online-mixed}),
 we are given a set of packing constraints $C \vect{x} \leq \one$ (where $C \in \mathbb{R}^{m \times n}$),
 and a set of covering constraints $B \vect{x} \geq \one$. The coefficients of all the constraints are positive,
