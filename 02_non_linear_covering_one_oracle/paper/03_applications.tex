@@ -39,17 +39,20 @@ Therefore, inequality (\ref{ineq:lp-smooth}) is equivalent to
 	\leq   \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}.
 \end{align*}
 %
+
+\clearpage
+
 By multiplying both sides with the denominator of the left-hand side, we get
 %
 \begin{align*}
     \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot & \left( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \right)^{k-1} \leq \\
-    & \left[ \sum_{i'=1}^{m} \biggl( \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \biggr)^{k-1} \biggr)^{k/(k-1)} \right]^{(k-1)/k} 
+    & \left[ \sum_{i'=1}^{m} \biggl( \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \biggr)^{k-1} \biggr)^{k/(k-1)} \right]^{(k-1)/k}
     	\cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
 \end{align*}
 which is equivalent to
 \begin{align*}
     \sum_{i=1}^{m} & \biggl( \sum_{e: e \in S} c_{i,e} \biggr) \cdot \biggl( \sum_{e'=1}^{n} c_{i,e'} x_{i,e'} \biggr)^{k-1} \leq \\
-    & \left \| \left ( \biggl( \sum_{e'=1}^{n} c_{1,e'} x_{1,e'} \biggr)^{k-1}, \ldots, \biggl( \sum_{e'=1}^{n} c_{m,e'} x_{m,e'} \biggr)^{k-1} \right) \right \|_{\frac{k}{k-1}} 
+    & \left \| \left( \biggl( \sum_{e'=1}^{n} c_{1,e'} x_{1,e'} \biggr)^{k-1}, \ldots, \biggl( \sum_{e'=1}^{n} c_{m,e'} x_{m,e'} \biggr)^{k-1} \right) \right \|_{\frac{k}{k-1}}
     		\cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
 \end{align*}
 The last inequality above is true by the H\"older inequality ($\| a \cdot b\|_{1} \leq \| a \|_{p} \cdot \| b \|_{q}$ where $1/p + 1/q = 1$), so the lemma holds.

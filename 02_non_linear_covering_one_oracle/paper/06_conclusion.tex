@@ -2,10 +2,12 @@
 
 \section{Conclusion}
 
-We presented a primal-dual
-framework to design algorithms with predictions for non-linear problems with covering constraints. The potential of our approach is visible through the example applications. This paper provides useful ideas to incorporate predictions into algorithms.
-The framework is of interest for many high impact applications, such as load balancing, energy minimization, submodular minimization
-and congestion minimization.
-An interesting research direction is to design algorithms for non-linear packing problems
-and also to develop competitive algorithms in the setting of multiple predictions.
+We presented a primal-dual framework to design algorithms with predictions for non-linear problems with covering constraints.
+The potential of our approach is visible through the example applications, therefore this paper provides useful ideas to incorporate predictions into algorithms.
+Our framework is of interest for many high impact applications, such as norm minimization, mixed packing and covering problems, energy minimization, and submodular minimization.
 
+In our paper we answer two open questions.
+First, our work implies an \emph{optimal} competitive ratio of $O\bigl( k \cdot \log (d)\bigr)$ for the standard (without predictions) online problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints, answering an open question in \cite{NagarajanShen17:Online-Covering}.
+Second, we answer the question of \cite{BamasMaggiori20:The-Primal-Dual-method} to create a primal-dual framework for general problems with \emph{non-linear} objective functions and covering constraints.
+
+An interesting research direction is to design algorithms for non-linear packing problems and also to develop competitive algorithms in the setting of multiple predictions.

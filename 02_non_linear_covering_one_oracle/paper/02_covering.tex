@@ -89,7 +89,7 @@ is inversely proportional to $\beta_{e}$) and the updating approach of \cite{Bam
 Starting from line \ref{algo-decrease}, the algorithm decreases some of the dual variables using a similar idea as in
 \cite{AzarBuchbinder16:Online-Algorithms}. This decrease is necessary to maintain the feasibility of the dual solution.
 
-
+\clearpage
 \subsection{Primal and dual variables}
 Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau'))$, for some primal solution $\vect{x}(\tau')$, where $\tau' \le \tau$. Moreover, $\vect{x}(\tau) \geq \bigvee_{\tau' \le \tau} \vect{x}(\tau')$ (each coordinate $x_{e}(\tau) = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $\vect{x}(\tau)$. We highlight that the proof if this lemma does \emph{not} require the gradient of $F$ to be monotone.
 (When this assumption is present, the algorithm can simply set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
