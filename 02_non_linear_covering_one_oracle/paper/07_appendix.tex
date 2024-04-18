@@ -2,6 +2,13 @@
 
 \section*{Appendix}
 
+\section{Missing example from the introduction} \label{apix:example-introduction}
+
+The following example demonstrates why an approach where we alternate between the solutions of the prediction oracle and the primal-dual method does not work for non-linear objective functions.
+
+Let us consider the objective of $x_{11}^p + ... + x_{1k}^p + x_{21}^p + ... + x_{2k}^p$ where $k$ and $p$ are some integers; and two algorithms: Algorithm $1$ and Algorithm $2$. At time $t$, the constraint is $x_{1t} + x_{2t} \geq 1$ and Algorithm $1$ always sets $x_{1t} = 1$ and Algorithm $2$ always sets $x_{2t} = 1$. Any alternating strategy has a cost of $1$ at any time $t$. The optimal cost is $1/2^p$ at any time $t$ by setting $x_{1t} = x_{2t} = 1/2$. The competitive ratio is $2^p$. We can generalize this example for $n$ algorithms ($n$ types of variables $x_{1t}, x_{2t}, ..., x_{nt}$). The same computation gives the competitive ratio of $n^p$. This ratio is not captured by any function intrinsically depending only on $\lambda$ and $\mu$ (as there is a parameter $n$ in the competitive ratio).
+
+
 \section{Missing proofs from application related propositions} \label{sec:appix-proofs}
 To apply Theorem \ref{thm:covering-formal} on specific problems, we need to determine the local-smoothness parameters for the multilinear extension.
 \cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, in particular for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
@@ -23,8 +30,8 @@ Reducing carbon emissions is a global effort in which energy-efficient algorithm
 
 Given $m$ unrelated machines, we need to assign jobs that arrive online. Each job $j$ has a release date $r_{j}$, a deadline $d_{j}$, and a vector of machine dependent processing times $p_{ij}$. Contrary to performance-oriented scheduling, our goal is to design an assignment policy which can minimize the total energy consumption of the execution. To achieve this, we can adjust the machines' speed $s_{ij}(t)$ during the time interval $[t,t+1)$ for the execution of job $j$. Every machine $i$ has a non-decreasing energy power function $P_{i}(\cdot)$. Typically, $P_{i}(z) = z^{k_{i}}$ for some constant $k_{i} \geq 1$. The execution's total energy is $\sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$.
 
-In the classic online setting, this problem is well understood: there exists an $O(k^{k})$-competitive algorithm (\cite{Thang20:Online-Primal-Dual}) where $k = \max_{i} \{k_{i}\}$
-and this bound is tight up to a constant factor (\cite{Caragiannis08:Better-bounds}). In our extended study with predictions we represent this problem with the following non-linear program. The objective is $\min \sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$ and the constraints are:
+In the classic online setting, this problem is well understood: there exists an $O(k^{k})$-competitive algorithm \cite{Thang20:Online-Primal-Dual} where $k = \max_{i} \{k_{i}\}$
+and this bound is tight up to a constant factor \cite{Caragiannis08:Better-bounds}. In our extended study with predictions we represent this problem with the following non-linear program. The objective is $\min \sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$ and the constraints are:
 $$
 \sum_{i=1}^{m} x_{ij} = 1,  \qquad \qquad \sum_{t = r_{j}}^{d_{j}-1} s_{ij}(t) \geq p_{ij} x_{ij}, \qquad  \qquad s_{ij}(t) \geq 0  \qquad \forall\ i,\ t
 $$
@@ -59,7 +66,7 @@ fractional solution.
 
 \subsection{Online Submodular Mimimization}	\label{apix:sub-min}
 
-Submodular minimization is a widespread subject in optimization and machine learning (\cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}). Let us consider the problem of minimizing an online monotone submodular function subject to covering constraints.
+Submodular minimization is a widespread subject in optimization and machine learning \cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}. Let us consider the problem of minimizing an online monotone submodular function subject to covering constraints.
 A set-function $f: 2^{\mathcal{E}} \rightarrow \mathbb{R}+$ is \emph{submodular} if
 $f(S \cup e) - f(S) \geq f(T \cup e) - f(T)$ for all $S \subset T \subseteq \mathcal{E}$.
 Let $F$ be the multilinear extension of a monotone submodular function $f$. Function $F$

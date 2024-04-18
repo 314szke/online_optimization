@@ -7,7 +7,7 @@ We formulate the online covering problem that we described in the Preliminaries 
 
 Let $S \subseteq \mathcal{E}$ be a \emph{solution} if $\one_{S}$ corresponds to a feasible solution. Let $x_{e}$ be a variable indicating whether resource $e$ is selected.
 Let $z_{S}$ be an indicator variable for solution $S$. If $z_{S} = 1$, then every variable
-$x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S} = 1$ if and only if $\one_{S}$ is the selected solution of the online covering problem. At each time step~$t$ during the execution, a new constraint is revealed. For every subset $A \subseteq \mathcal{E}$, we define the value $c^{t}(A) := \max\{0,\ 1 - \sum_{e \in A} a^{t}_{e}\}$, to be the amount we need until constraint satisfaction. Given this value, we normalize the constraint coefficients to be $a^{t}_{e}(A) := \min\{a_{e}^{t},\ c^{t}(A)\}$. Finally, we define $b^{t}_{e}(A) := a^{t}_{e}(A)\ /\ c^{t}(A)$ where $c^{t}(A) > 0$. The values $b^{t}_{e}(A)$ correspond to the coefficients in the knapsack inequality constraints (\cite{CarrFleischer:2000}). The primal and dual programs are:
+$x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S} = 1$ if and only if $\one_{S}$ is the selected solution of the online covering problem. At each time step~$t$ during the execution, a new constraint is revealed. For every subset $A \subseteq \mathcal{E}$, we define the value $c^{t}(A) := \max\{0,\ 1 - \sum_{e \in A} a^{t}_{e}\}$, to be the amount we need until constraint satisfaction. Given this value, we normalize the constraint coefficients to be $a^{t}_{e}(A) := \min\{a_{e}^{t},\ c^{t}(A)\}$. Finally, we define $b^{t}_{e}(A) := a^{t}_{e}(A)\ /\ c^{t}(A)$ where $c^{t}(A) > 0$. The values $b^{t}_{e}(A)$ correspond to the coefficients in the knapsack inequality constraints \cite{CarrFleischer:2000}. The primal and dual programs are:
 
 \begin{minipage}[t]{0.45\textwidth}
 \begin{align*}
@@ -30,7 +30,7 @@ x_{e}, z_{S} &\in \{0,1\} & & \forall e,\ \forall S \subseteq \mathcal{E}\\
 \end{align*}
 \end{minipage}
 
-In the primal program, the first constraints are knapsack-constraints (\cite{CarrFleischer:2000}) of the given polytope, and they are equivalent to $\sum_{e \notin A} a_{e}^{t}(A) \ x_{e} \geq c^{t}(A)$. It is sufficient to satisfy constraints where $c^{t}(A) > 0$. The second primal constrain ensures that if a resource $e$ is chosen, the selected solution must contain $e$.
+In the primal program, the first constraints are knapsack-constraints \cite{CarrFleischer:2000} of the given polytope, and they are equivalent to $\sum_{e \notin A} a_{e}^{t}(A) \ x_{e} \geq c^{t}(A)$. It is sufficient to satisfy constraints where $c^{t}(A) > 0$. The second primal constrain ensures that if a resource $e$ is chosen, the selected solution must contain $e$.
 The third constraint guarantees that \emph{one} solution is selected.
 
 \subsection{Algorithm}
@@ -85,14 +85,13 @@ When a new primal constraint arrives, the current dual variable $\alpha^{t}_{A^*
 $\beta_e = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$, but if $\beta_e > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ then we do not change the value of $\beta_e$. This update preserves the following invariants during the execution of the algorithm: $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x})$ and $\beta_{e}$ is non-decreasing. (Remark: if $\nabla_{e} F(\vect{x})$ is monotone on every coordinate $e$, then it is sufficient to always set $\beta_{e} \gets \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.)
 
 The update on line \ref{algo-covering:x} is inspired by the multiplicative weight update method (where the increasing rate of $x_{e}$
-is inversely proportional to $\beta_{e}$) and the updating approach of \cite{BamasMaggiori20:The-Primal-Dual-method}.
+is inversely proportional to $\beta_{e}$) and the updating approach of \cite{BamasMaggiori20:The-Primal-Dual-method}. The oracle's prediction skews the weights to assign more value to the predicted coordinates $x$.
 Starting from line \ref{algo-decrease}, the algorithm decreases some of the dual variables using a similar idea as in
 \cite{AzarBuchbinder16:Online-Algorithms}. This decrease is necessary to maintain the feasibility of the dual solution.
 
-\clearpage
 \subsection{Primal and dual variables}
 Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau'))$, for some primal solution $\vect{x}(\tau')$, where $\tau' \le \tau$. Moreover, $\vect{x}(\tau) \geq \bigvee_{\tau' \le \tau} \vect{x}(\tau')$ (each coordinate $x_{e}(\tau) = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $\vect{x}(\tau)$. We highlight that the proof if this lemma does \emph{not} require the gradient of $F$ to be monotone.
-(When this assumption is present, the algorithm can simply set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
+(With this assumption, the algorithm can set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
 
 
 \begin{restatable}{lemma}{BoundX}
@@ -112,9 +111,9 @@ where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-cover
 	Let us assume that the lemma holds until the release of the $t^{\text{th}}$ constraint $\sum_{e} a^{t}_{e} x_{e} \geq 1$.
 	Consider a moment $\tau$ during the algorithm's execution
 	and let $A^{*}$ be the current set of resources $e'$ such that $x_{e'} = 1$.
-	If at time~$\tau$, $x_{e} = 1$ then by the algorithm's design, the set $A^{*}$ has been updated such that
-	$e \in A^{*}$. Consequently, the increasing rates of both sides in the lemma inequality are 0.
-	In the remaining part of the proof, let us assume that  $x_{e} < 1$.
+	If at time~$\tau$, $x_{e} = 1$, then by the algorithm's design, the set $A^{*}$ has been updated such that
+	$e \in A^{*}$. As such, the increasing rates of both sides in the lemma inequality are 0.
+	In the remaining of the proof, we assume that  $x_{e} < 1$.
 	We recall that by the algorithm's design, $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
 	We consider two cases $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
 	and $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
