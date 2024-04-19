@@ -24,31 +24,31 @@ The partial derivative is
 %
 \begin{align*}
 \frac{\partial f(\vect{x})}{\partial x_{e}}
-= k \cdot \sum_{i = 1}^{m} \frac{c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m}
-		\bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}},
+= k \cdot \sum_{i = 1}^{m} \frac{c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m}
+		\bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \bigr)^{k} \right]^{(k-1)/k}},
 \end{align*}
 so when we sum over $S$, we get
 \begin{align*}
 \sum_{e \in S} \frac{\partial f(\vect{x})}{\partial x_{e}}
-= k \cdot \frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}}.
+= k \cdot \frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \bigr)^{k} \right]^{(k-1)/k}}.
 \end{align*}
 %
 Therefore, inequality (\ref{ineq:lp-smooth}) is equivalent to
 \begin{align*}
-\frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \bigr)^{k} \right]^{(k-1)/k}}
+\frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \bigr)^{k} \right]^{(k-1)/k}}
 	\leq   \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}.
 \end{align*}
 %
 By multiplying both sides with the denominator of the left-hand side, we get
 %
 \begin{align*}
-    \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot & \left( \sum_{e' = 1}^{n} c_{i,e'} x_{i,e'} \right)^{k-1} \leq \\
-    & \left[ \sum_{i'=1}^{m} \biggl( \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{i',e'} \biggr)^{k-1} \biggr)^{k/(k-1)} \right]^{(k-1)/k}
+    \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot & \left( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \right)^{k-1} \leq \\
+    & \left[ \sum_{i'=1}^{m} \biggl( \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \biggr)^{k-1} \biggr)^{k/(k-1)} \right]^{(k-1)/k}
     	\cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
 \end{align*}
 which is equivalent to
 \begin{align*}
-    \sum_{i=1}^{m} & \biggl( \sum_{e: e \in S} c_{i,e} \biggr) \cdot \biggl( \sum_{e'=1}^{n} c_{i,e'} x_{i,e'} \biggr)^{k-1} \leq \\
+    \sum_{i=1}^{m} & \biggl( \sum_{e: e \in S} c_{i,e} \biggr) \cdot \biggl( \sum_{e'=1}^{n} c_{i,e'} x_{e'} \biggr)^{k-1} \leq \\
     & \left \| \left( \biggl( \sum_{e'=1}^{n} c_{1,e'} x_{1,e'} \biggr)^{k-1}, \ldots, \biggl( \sum_{e'=1}^{n} c_{m,e'} x_{m,e'} \biggr)^{k-1} \right) \right \|_{\frac{k}{k-1}}
     		\cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
 \end{align*}
@@ -127,9 +127,6 @@ defined as $f(\one_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{
 $e$ and $b_{\ell} \geq 0$ for every $1 \leq \ell \leq L$.
 Then the multilinear extension $F$ of $f$ is $(O(k \ln(d/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2d^{2}/\eta)})$-locally smooth.
 %We will use these parameters to derive the guarantees for the following problems.
-
-
-
 Using our framework, we can deduce the following result.
 
 \begin{proposition}
