@@ -1,0 +1,275 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={170mm,257mm},
+ left=15mm,
+ right=15mm,
+ bottom=5mm,
+ top=5mm]{geometry}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{mathtools}
+\usepackage[hidelinks]{hyperref}
+\usepackage[style=ieee]{biblatex}
+\addbibresource{ref.bib}
+\renewcommand*{\bibfont}{\normalfont\small}
+
+\begin{document}
+
+\textit{\color{red} Under "best expert in hindsight" I would understand a solution that follows a fixed expert at each time step -- not just at the last time step. (In the case that an experts solutions can be inconsistent over time, this would mean a solution that dominates all predictions by some fixed expert across all time steps.) So if all experts predict 
+ for even just one time step as in your example, the best expert in hindsight has infinite cost and every algorithm is 1-competitive against it.}
+
+In the rebuttal, we provided that example showing that if an expert is allowed to decrease the solution and so subsequently is allowed to change the past decision (Appendix A in our paper), then no algorithm can be competitive compared to an expert. In particular, an expert with previous solution $(\infty, \ldots, \infty)$ changes its decisions, including the ones in the past, to an optimal solution. So now, the expert becomes the optimal offline solution, and no algorithm can provide a better than the worst-case guarantee.   
+
+
+\textit{\color{red}While it is true that every solution in 
+ dominates the solution that expert 
+ provides at the last time step 
+, it does not dominate the solutions of expert 
+ for earlier time steps (and the paper Anand et al. does allow experts to give completely different suggestions at different time steps; they do not need to satisfy any relation to their past suggestions). Thus, their dynamic benchmark (with the order of quantifiers I mentioned) does not coincide with the best expert in hindsight, provided we use a sensible definition of "best expert in hindsight" as I mention in my response to 2.}
+
+
+The definition of the ``best expert in hindsight'' (for example in Online Convex Optimization book of Hazan), it is the fixed expert at all time steps. However, if the instance changes or even only the number of time steps changes, the best expert can be changed. There is already a flavor of dynamic inside that definition. 
+
+You can define the new notion of ``best expert in hindsight''. No problem. However, we disagree that the new definition of DYNAMIC captures dynamic things more generally than ours. In contrast, with the new order of quantifiers, the DYNAMIC benchmark is \textbf{weaker} than ours. Informally, our benchmark looks inside the polytope of experts (linear combinations of experts), whereas the new benchmark considers vertices of the polytope of experts. Formally, the proof is the following.
+
+To make things clear, recall that, with the proposed quantifier order, the definition of DYNAMIC is:
+$$
+\hat{X} = \{\hat{\textbf{x}} : \forall\ j \in [m], \ \exists\ s \in [K], \ \forall\ i \in [n] \textnormal{ where the solution } x_i(j,s) \le \hat{x}_i \}
+$$
+
+For $j = 1$, let $s_{1}$ be the expert that $\forall i: x_i(1,s_{1}) \le \hat{x}_i$ . 
+For $j = 2$, let $s_{2}$ be the expert that $\forall i: x_i(2,s_{2}) \le \hat{x}_i$.
+And so on.
+For $j = m$, let $s_{m}$ be the expert that $\forall i : x_i(m,s_{m}) \le \hat{x}_i$.
+
+So $s_{j}$ is the best expert at time $j$ for $1 \leq j \leq m$. The DYNAMIC benchmark can do no better at time $j$ than the solution $s_{j}$. 
+Now, in our benchmark, one can simply put weights at time $j$ as $w_{j} = 1$ and $w_{j'} = 0$ for $j' \neq j$. So, our benchmark encompasses the new DYNAMIC benchmark. 
+
+We are not sure if the new order of quantifiers is what the Anand et al. paper aims for.  
+
+On our side, after finding the issues, we tried to contact the authors (5 months ago) without receiving any reply. The modified version of the paper on Arxiv has still not been modified. We have noted several unclear arguments in that paper, and we are not sure how to fix them even with the new order of quantifiers. 
+Again, note that the point of our paper is not to show the counter-examples or provide a list of unclear arguments, but the main goal is to give a new benchmark and algorithms.
+
+\noindent \textbf{Reviewer $\#1$:} 
+\textit{\color{red} Thinks that (i) our benchmark is the same as the static best expert in hindsight, (ii) tight suggestions are a good general assumption for the experts, (iii) the wrong paper is good but has a typo}
+
+Thank you for taking the time to review our paper! 
+
+Regarding our benchmark for a linear objective, you are right, and we agree that ours is equivalent to the static best expert in hindsight. However, for a non-linear objective, ours is stronger. Here is a simple example, even in the offline (single covering constraint). The problem is
+$$
+\min x_{1}^{p} + x_{2}^{p}	
+\qquad
+\text{s.t.}
+\qquad
+x_{1} + x_{2} \geq 1, 
+\quad x_{1}, x_{2} \geq 0 
+$$ 
+where $p$ is a large integer. 
+There are two experts. The solutions $(x_{1}, x_{2})$ given by the first and the second experts are $(1,0)$ and $(0,1)$, respectively. 
+Then, the objective value of both experts is 1.  However, $(1/2, 1/2)$ is a feasible solution in our benchmark that has the objective value of $1/2^{p-1}$, 
+much smaller than the best expert.  
+
+
+\textit{\color{red} 
+The submission emphasizes several times that Anand et al. relied on the assumption that all suggestions satisfy the constraints tightly, but this is not really true. In the definition of the setup in Anand et al, they allow expert solutions to be non-tight. The proof in Anand et al argues that without loss of generality they can assume that they are actually tight because they allow expert suggestions to both increase and decrease over time (in contrast to your more restrictive assumption in the submitted paper that expert solutions can only increase over time), so any non-tight expert suggestion can be turned into a tight one for analysis. Hence the results of Anand et al also hold for both tight and non-tight constraints.}
+
+Recall that we clearly explain in Appendix A that the assumption is not without loss of generality. To maintain this assumption, an expert has to not only decrease the variables but also modify its solution in the past. 
+
+Besides, if experts can decrease (and increase) variables freely, \textbf{no algorithm} is $O(\log K)$ competitive in a benchmark that includes the best expert in hindsight. 
+Consider an arbitrary online optimization subject to some covering constraints over $\textbf{x} \in [0,1]^{n}$. Let's say we have a constant number of experts. At all times except the last time-step, all experts predict 
+$\textbf{x} = (M, \ldots, M)$ where $M$ is a very big number so that the predictions are always feasible. So, all predictions are not helpful (so far, all experts provide bad solutions). The last time step consists of a dummy constraint, i.e., $x_{n} \geq \epsilon$ for very small $\epsilon$. At that moment, one expert provides the optimal solution by modifying (decreasing) its solution. The online solution cannot decrease its variables, even observing that a prediction is the optimal solution. The benchmark now contains the optimal solution. The online algorithm does not have any meaningful information; so the best it can do is the best algorithm in the worst-case analysis. We know that the best competitive ratio in the worst-case setting for linear covering problems is $\Omega(\log n)$. So one cannot get $O(\log K)$-competitive for $K \ll n$ (for example $K$ is a constant).    
+
+Note that we do not claim that one cannot get rid of non-tight constraints. In our algorithm, we provide a way to do that.
+
+
+\textit{\color{red} 
+The submitted paper states that the result of Anand et al is false and they provide a counter-example in the appendix. This seems to result from a typo in the Anand et al paper where they got an order of quantifiers crucially wrong in the definition of their dynamic benchmark (on page 5 of the arxiv version of Anand et al, the order of quantifiers is $\forall i \forall j \exists s$, but the proof and other discussion in Anand et al. reveals that they actually seem to mean $\forall j \exists s \forall i$; the authors confirmed to me that this was a typo). The competitive ratio of $O(log K)$ proved in Anand et al. therefore implies much of the results of this paper.
+}
+
+We have thought that there was a typo in the Anand et al.'s paper. However, we have rearranged the order of the quantifiers and none is convincing to capture the dynamic nature. In particular, the order you mentionned, $\forall j \exists s \forall i$, is exactly the best expert in hindsight. It can be seen as the following.
+
+Recall that, with the proposed quantifier order, the definition of DYNAMIC is:
+$$
+\hat{X} = \{\hat{\textbf{x}} : \forall\ j \in [m], \ \exists\ s \in [K], \ \forall\ i \in [n] \textnormal{ where the solution } x_i(j,s) \le \hat{x}_i \}
+$$
+
+For $j = 1$, let $s_{1}$ be the expert that $\forall i: x_i(1,s_{1}) \le \hat{x}_i$ . 
+For $j = 2$, let $s_{2}$ be the expert that $\forall i: x_i(2,s_{2}) \le \hat{x}_i$.
+And so on.
+For $j = m$, let $s_{m}$ be the expert that $\forall i : x_i(m,s_{m}) \le \hat{x}_i$.
+In other words, every $\hat{\textbf{x}} \in \hat{X}$ dominates the expert $s_{m}$, i.e., $\forall i :  \hat{x}_i \geq x_i(m,s_{m})$. 
+Hence, the objective of the solution of $s_{m}$ is smaller than that of any other $\hat{\textbf{x}} \in \hat{X}$. Moreover, solution of $s_{m}$ is in $\hat{X}$. 
+So, the solution of $s_{m}$ is an optimal solution in the benchmark. Therefore, with the new order, DYNAMIC is the same as the best expert in hindsight (for both linear and non-linear objectives). We are not sure that this is what Anand et al.'s paper aims for since they target a dynamic benchmark in their paper.
+
+
+
+
+\vspace{1cm}
+\noindent \textbf{Reviewer $\#2$:} 
+\textit{\color{red} Thinks that convex regularization with shifted entropy has been used before, so our work is not too new.}
+
+Thank you for taking the time to review our paper! It is indeed true, that convex regularization with a shifted entropy function is a standard technique in the literature, however, according to our knowledge, it has not been studied in the context of algorithms with predictions or in the multiple expert setting. The novelty of our paper comes from a careful integration of several standard methods. Furthermore, according to the Corollary $2.4$ on page $7$, our result provides an algorithm for $0$-$1$ optimization problems that is at most a constant factor worse than the best classical online algorithm and at most $O(log K)$ far from the best linear combination of experts. This has not been achieved before and we believe that it is of great interest both for the research community and for practical applications.
+
+
+
+\vspace{1cm}
+\noindent \textbf{Reviewer $\#3$:} 
+\textit{\color{red} 
+In your objective of the linear program, it is stated in a way that you want to bound the cost of $\sum_i c_i x_i^T$, i.e., the cost of the last step $T$ only. However, in your analysis, it appears that your approach can bound all $t \in [T]$ – after all, $T$ is never used in the algorithm, and you can bound the step-wise regret. Is this statement true?
+}
+
+Thank you for taking the time to review our paper! The particularity of online linear (or non-linear) programming problems is that we want to minimize the final cost, but we do not have a feedback on the algorithm's decisions during the intermediate steps. One can only evaluate the performance of the experts at time $T$, that's why the benchmark is formulated in this way. The proofs bound the difference between the primal and dual objective value increase, which is a different notion from the step-wise regret of settings which include a loss function.
+
+\textit{\color{red} 
+My criticisms of the paper: To motivate the investigation, the paper states that its goal is to study and improve the robustness vs. efficiency in learning-augmented algorithms (and especially in online learning algorithms). However, I doubt if the expert problem is the right notion on this front. In particular, since the benchmark is still a function of the best/good expert, it still doesn’t help in the case where all experts are bad.
+Regarding my criticism of the situation when all experts are bad, do you have any more comments? In particular, can your algorithm detect the case when all experts are very off? I think maybe you can since the signal will be pretty obvious when you compute.}
+
+In Corollary $2.4$ on page $7$, we propose a two-layered approach of our algorithm for $0$-$1$ optimization problems. The first layer summarizes the experts with our algorithm and the second layer integrates the best classical algorithm for the studied problem, which does not include predictions. Giving this classical algorithm and the previous layer as two new experts for our algorithm guarantees that the solution is at most a constant factor worse than the best classical online algorithm and at most $O(log K)$ far from the best linear combination of experts. Therefore, even if all the experts are bad, this approach can revert to the best classical algorithm. This relationship between the classical algorithm and the predictions is much better than in other learning-augmented settings. 
+
+
+\textit{\color{red} 
+If you run multiplicative weights on the 0-1 version of your problem, can you get any meaningful theoretical regret bound also?}
+
+No?
+
+\textit{\color{red} 
+Do you have a comment on the time complexity of the algorithm (both in theory and in practice)?}
+
+In theory, convex programs can be solved optimally in polynomial time. In practice, there are several methods to obtain fast approximations, for example the Frank-Wolfe algorithm that we used in our implementation. We believe that with an adequate implementation our algorithm can be implemented efficiently, however in terms of running time, it cannot be as efficient as the multiplicative weight update algorithm.
+
+\textit{\color{red}
+(Minor) Line 269, right column: ‘’This auxiliary solution is useful for our algorithm and its analysis, but it does not directly participate in forming the actual solution.’’ This is a bit misleading – it gives me the feeling that it’s purely for analysis purpose, while you actually need to compute the variable for the convex program.}
+
+Regarding the auxiliary solution, it is used in the algorithm's convex program, but only to make tight constraint satisfactions possible (which is needed for the proof of the theorem). However, when we assign the value of the variables ($x_i^t$), we use the original solutions of the experts.
+
+
+
+\vspace{1cm}
+\noindent \textbf{Reviewer $\#4$:} 
+\textit{\color{red}
+As a main weakness, the paper is far from self-contained. As indicated above, the section about online linear optimization is well-detailed. However, the section about nonlinear optimization takes only one short paragraph, without any informative results. So, we have to read the supplementary material (Appendix D) in order to have a clue about the solution proposed for this more general setting. Similarly, the section about simulations provides too little information about the problem studied in practice, the experimental setup, and the empirical results.}
+
+Thank you for taking the time to review our paper! We apologize for the inconvenience, we agree that the organization of our paper is not ideal and the final version will be more self contained. 
+
+\textit{\color{red}
+The algorithm proposed for the online linear covering problem (as shown in Figure 5) solves a constrained convex optimization problem in each round $t$. The optimization problem is not a simple task, as it involves an entropic objective with $O(Kt)$ constraints. Therefore, it would be helpful to have information about the per-round runtime complexity of Algorithm 1. Notably, it is important to explain which optimization methods can be used to solve the convex program optimally or approximately, as it does not have a closed-form solution.}
+
+In theory, convex programs can be solved optimally in polynomial time. In practice, there are several methods to obtain fast approximations, for example the Frank-Wolfe algorithm that we used in our implementation. We believe that with an adequate implementation our algorithm can be implemented efficiently.
+
+\textit{\color{red}
+According to the proof of Theorem 2.3, the bound of $O(\ln K\rho)$ only holds when the solution to the convex program is optimal. If an approximate method such as Frank-Wolfe (as suggested in Appendix E) is used instead, the bound in Theorem 2.3 needs to be revised, by taking into account the impact of approximations. The authors suggest using Frank-Wolfe to provide a computationally efficient, yet approximate, solution to the convex optimization program in Figure 5. What is the impact of such approximations on the performance of the main algorithm? As a related question, what is the convergence rate of Frank-Wolfe for the convex optimization program in Figure 5?
+}
+
+The convex program of the algorithm can be solved in polynomial time in theory, therefore our theorem holds. It is true, that in the implementation we use an approximation algorithm to find the solution of the convex program, but based on the experimental results, it does not hinder the performance of the algorithm.  
+
+\textit{\color{red}
+In light of Theorem $2.3$, Algorithm $1$ has a competitive factor of $O(\ln K\rho)$ compared to the offline solution. However, to better understand the tightness of this factor, it is necessary to establish a lower bound for the online linear covering problem addressed in this paper.
+Is the bound $O(\ln K\rho)$ tight? Specifically, does the LIN-COMB benchmark imply that a factor of $\Omega(\ln K\rho)$ holds for any online algorithm?}
+
+Yes, for $0-1$ optimization (so $\rho = 1$), the bound $O(\ln K)$ is tight. The tight example is similar to the classic one that was used to prove that every online algorithm is $\Omega(\log n)$-competitive. We briefly explain the example here. (The example is similar to the one in Appendix B.2 but simpler.) 
+Consider the optimization problem that minimizes $x_{1} + \ldots + x_{K}$. Fix an online algorithm. The constraint for the first time step is $x_{1} + \ldots + x_{K} \geq 1$ and Expert $1 \leq i \leq K$ suggests $x_{i} = 1$ (and other $x$-variables equals 0). All experts now are symmetric. W.l.o.g., assume that the online algorithm puts weight at least $1/K$ on an expert, say Expert 1. Therefore, $x_{1} \geq 1/K$. Then, in the next step, the released constraint is $x_{2} + \ldots + x_{K} \geq 1$ and Expert $2 \leq i \leq K$ suggests $x_{i} = 1$ (and other $x$-variables equals 0). Now, one can imagine that Expert 1 suggests non-meaningful solutions (e.g., its $x$-solutions are $\infty$) and that Expert 1 is no longer important to us. All Experts $2 \leq i \leq K$ are symmetric and w.l.o.g, assume that the online algorithm puts weight at least $1/(K-1)$ on an expert, say Expert 2. Therefore, $x_{2} \geq 1/(K-1)$. The pattern repeats, and each time, one expert becomes useless. Finally, the online algorithm ends up with a solution in which $x_{1} \geq 1/K, x_{2} \geq 1/(K-1), \ldots, x_{K} \geq 1$. Its objective value is $\Omega(\log K)$. The optimal solution is the last survival expert with an objective value of 1. That results in the competitive ratio of $\Omega(\log K)$.   
+
+
+\textit{\color{red}
+The authors did not address the limitations of their work. More specifically, some benefits of the methods are mentioned in the conclusion, but the limitations of these methods are missing. I agree with the authors about the societal aspects of their work.
+}
+
+The limitation is implicit in (the title of) the paper, i.e., we provided algorithms for covering constraints but our methods do not work for packing constraints (or more general constraints). We will make it explicitly.  
+
+%\noindent \textbf{References:}
+%\printbibliography[heading=none]
+%\bibliographystyle{plain}
+%\bibliography{ref.bib}
+\end{document}
+
+
+
+\textbf{Official comment}
+We are writing to express our concern about this review, which we found unobjective. Most of the arguments are incorrect and the score is not based on any factual arguments (that we describe below). 
+
+Among all three main points in the reviews, as answered in our rebuttal, we agree with the first remark on the restricted case of linear objectives. However, the linear objective is only one part of our contribution that serves as an interesting setting to illustrate our main ideas, techniques, and results. The other part, which covers a much larger class of non-linear objectives, shows the strength of our new benchmark. We provide a concrete example in the rebuttal. 
+
+The most severe thing for us is that the two remaining points in the review were wrong. We have provided a clear answer in the rebuttal. Beyond the incorrectness of such arguments, our concerns are the following.
+
+a. In comparing our work with related ones, we provide a counter-example showing that the benchmark and an assumption of a previous paper were incorrect. (Note that this is not the main point of our paper; our main goal is to provide a new benchmark and algorithms.) However, the reviewer tried to protect the other paper by contacting its authors and saying there was no problem with the related paper (the issues persist, explained in the rebuttal). We know that saying something wrong is subtle and we have made it carefully and clearly. On our side, after finding the issues, we tried to contact the authors (5 months ago) without receiving any reply. The modified version of the paper on Arxiv has still not been modified. We have noted several unclear arguments in that paper, and we are not sure how to fix them even with the new order of quantifiers mentioned by the reviewer (in contrast to the simple typo confirmed by the reviewer).     
+
+b. We cite the review score: ``Strong Reject: For instance, a paper with major technical flaws, and/or poor evaluation, limited impact, poor reproducibility, and mostly unaddressed ethical considerations.''. None of that applies to our paper, and no factual argument in the review supplies that.
+
+Networking is great but should not harm the advancement and the truth of science. We kindly ask for objective reviews on our paper, at least based on simply answering the question ``Is the community better off with this paper or without it?'' (cited from Yann LeCun)
+
+
+\paragraph{Reviewer $\#2$:} 
+\textit{\color{red} Thinks that convex regularization with shifted entropy has been used before, so our work is not too new.}
+
+\textbf{Answer:} Thank you for taking the time to review our paper! It is indeed true, that convex regularization with a shifted entropy function is a standard technique in the literature, however, according to our knowledge, it has not been studied in the context of algorithms with predictions or the multiple expert setting. The novelty of our paper comes from a careful integration of several standard methods. Furthermore, according to our Corollary 2.4 on page $7$,  
+
+\noindent \textbf{Reviewer $\#3$:} 
+\textit{\color{red} }
+
+\textbf{Answer:} 
+
+
+
+\noindent \textbf{Reviewer $\#4$:} 
+\textit{\color{red}}
+
+\textbf{Answer:} Thank you for taking the time to review our paper!
+
+
+
+
+%\noindent \textbf{References:}
+%\printbibliography[heading=none]
+%\bibliographystyle{plain}
+%\bibliography{ref.bib}
+\end{document}
+
+
+========
+Reviewer 1:
+
+1.
+Regarding our benchmark for a linear objective, you are right, and we agree that ours is equivalent to the static best expert in hindsight. However, for a non-linear objective, ours is stronger. Here is a simple example, even in the offline (single covering constraint). 
+$$
+\min x_{1}^{p} + x_{2}^{p}	
+\qquad
+\text{s.t.}
+\qquad
+x_{1} + x_{2} \geq 1, 
+\quad x_{1}, x_{2} \geq 0 
+$$ 
+where $p$ is a large integer. 
+There are two experts. The solutions $(x_{1}, x_{2})$ given by the first and the second experts are $(1,0)$ and $(0,1)$, respectively. 
+Then, the objective value of both experts is 1.  However, $(1/2, 1/2)$ is a feasible solution in our benchmark with an objective value of $1/2^{p-1}$, much smaller than the best expert.  
+
+2. Recall that we clearly explain in Appendix A that the assumption is not without loss of generality. To maintain this assumption, an expert has to not only decrease the variables but also modify its solution in the past. 
+
+Note that, if experts can decrease (and increase) variables freely, no algorithm is $O(\log K)$ competitive in a benchmark that includes the best expert in hindsight. 
+Consider an arbitrary online optimization problem and at all times except the last time-step, all experts predict 
+$(\infty, \ldots, \infty)$  so that the predictions are always feasible. So, all predictions are not helpful  The last time step consists of a dummy constraint. At that moment, one expert provides the optimal solution by modifying (decreasing) its solution. The online solution cannot decrease its variables, even observing that a prediction is the optimal solution. 
+
+3. We thought there was a typo. However, we have rearranged the order of the quantifiers and none captures the dynamic nature. In particular, the order you mentioned, $\forall j \exists s \forall i$, is the best expert in hindsight. It can be seen as the following.
+
+Recall that, with the proposed quantifier order, the definition of DYNAMIC is:
+$$
+\hat{X} = \{\hat{\textbf{x}} : \forall\ j \in [m], \ \exists\ s \in [K], \ \forall\ i \in [n] \textnormal{ s.t } x_i(j,s) \le \hat{x}_i \}
+$$
+
+For $j = m$, let $s_{m}$ be the expert that $\forall i : x_i(m,s_{m}) \le \hat{x}_i$.
+
+In other words, every solution in $\hat{X}$ dominates the expert $s_{m}$. 
+Hence, the objective of the solution of $s_{m}$ is smaller than that of any other $\hat{\textbf{x}} \in \hat{X}$. Moreover, solution of $s_{m}$ is in $\hat{X}$. So, the solution of $s_{m}$ is optimal in the benchmark. Therefore, with the new order, DYNAMIC is the same as the best expert in hindsight (for both linear and non-linear objectives). 
+
+=============
+Reviewer 4: 
+
+Due to the space limit, we decide to provide a complete, self-contained part (about linear optimization). Consequently, we have to put the non-linear optimization part in the supplementary file. 
+
+Q1: 
+In our paper, there are two aspects: theory and implementation. In theory, convex programs can be solved in polynomial time so our algorithm is theoretically efficient. In practice, one uses theoretical results to guide the implementation. For efficient implementation, we use Frank-Wolfe algorithm to solve convex programs with constraints. Note that, in general one cannot efficiently compute an optimal solution perfectly (e.g., one can only approximate an irrational number numerically). But it does not harm the performance of algorithms, e.g., Gradient Descent to approximate optimal solution of convex functions. As observed in our experiments, the use of Frank-Wolfe provides reasonably performant solutions. 
+
+Q2: 
+Yes, for $0-1$ optimization (so $\rho = 1$), the bound $O(\ln K)$ is tight. The tight example is similar to the classic one showing that every online algorithm is $\Omega(\log n)$-competitive. We briefly explain the example here. (The example is similar to the one in Appendix B.2 but simpler.) 
+Consider the problem that minimizes $x_{1} + \ldots + x_{K}$. Fix an online algorithm. The constraint for the first time step is $x_{1} + \ldots + x_{K} \geq 1$ and Expert $1 \leq i \leq K$ suggests $x_{i} = 1$ (and other $x$-variables equals 0). All experts now are symmetric. W.l.o.g., assume that the online algorithm puts weight at least $1/K$ on an expert, say Expert 1. Therefore, $x_{1} \geq 1/K$. Then, in the next step, the released constraint is $x_{2} + \ldots + x_{K} \geq 1$ and Expert $2 \leq i \leq K$ suggests $x_{i} = 1$ (and other $x$-variables equals 0). Now, one can imagine that Expert 1 suggests non-meaningful solutions (e.g., its $x$-solutions are $\infty$) and that Expert 1 is no longer important to us. All Experts $2 \leq i \leq K$ are symmetric and w.l.o.g, assume that the online algorithm puts weight at least $1/(K-1)$ on an expert, say Expert 2. Therefore, $x_{2} \geq 1/(K-1)$. The pattern repeats, and each time, one expert becomes useless. Finally, the online algorithm ends up with a solution in which $x_{1} \geq 1/K, x_{2} \geq 1/(K-1), \ldots, x_{K} \geq 1$. Its objective value is $\Omega(\log K)$. The optimal solution is the last survival expert with an objective value of 1. That results in the competitive ratio of $\Omega(\log K)$.

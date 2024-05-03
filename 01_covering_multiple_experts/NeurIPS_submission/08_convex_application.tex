@@ -1,0 +1,98 @@
+%!TEX root = ./main.tex
+
+\section{Applications} \label{appix-applications}
+
+In this section we bring the example of makespan minimization to show the applicability of our non-linear setting.
+
+\subsection{Makespan minimization}
+
+\paragraph{Problem.}
+We have a set of $m$ machines and a set of $n$ jobs. Each job $j$ has a machine specific execution time, that we denote with $a_{ij}$, in other words, the time job $j$ needs on machine $i$ to finish. Our goal is to assign every job to one of the machines in a way, such that the maximum time any machine needs to execute all of its assigned jobs is minimized. To formalize the problem, let $x_{ij}$ indicate wether job $j$ is assigned to machine $i$. The corresponding linear program:
+%
+\begin{align*}
+    \min \sum_{i = 1}^{m}\ \ & l_i \\
+    %
+    \sum_{j = 1}^{n} a_{ij} x_{ij} &\le l_i & \forall\ i \\
+    %
+    \sum_{i=1}^{m} x_{ij} & = 1 & \forall\ j \\
+    %
+    x_{ij} & \in \{0,1\} & \forall i,j
+\end{align*}
+%
+where $l_i$ corresponds to the load of machine $i$ and the second constraint guarantees that each job is assigned to a machine.
+
+\paragraph{Reformulation with a non-linear objective.}
+Makespan minimization is equivalent (up to a constant factor) to minimizing the $\ell_{\log m}$-norm function.
+We determine the smoothness parameters of $\ell_{p}^{2}$-norm over machine loads.
+
+\begin{lemma} \label{lem-makespan}
+$\ell_{p}^{2}$-norm is $(2\ln(K\rho),\frac{1}{2\ln(K\rho)})$-locally-smooth
+\end{lemma}
+%
+\begin{proof}
+We prove that, for every sub-assignment of jobs to machines $S \subseteq \{(i,j): 1 \leq i \leq m, 1 \leq j \leq n\}$,
+%
+\begin{align}	\label{ineq:lp-smooth}
+\sum_{(i,j) \in S} \nabla_{(i,j)} f(x) \leq 2 \ln(K\rho) f(\one_{S}) + \frac{1}{2\ln(K\rho)} f(x)
+\end{align}
+where $f(x) = \| \bigl( \sum_{j} a_{1j} x_{1j}, \ldots, \sum_{j} a_{mj} x_{mj} \bigr)\|_{p}^{2}$
+($a_{ij}$ is the processing time of job $j$ on machine $i$).
+
+
+We have
+%
+\begin{align*}
+\frac{\partial f(x)}{\partial x_{ij}}
+= \frac{2a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-2)/p}}
+%= \frac{a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left \| \bigl( \sum_{j} a_{1j} x_{1j}, \ldots, \sum_{j} a_{mj} x_{mj} \bigr) \right\|_{p}^{(p-1)/p}}
+\end{align*}
+Hence,
+\begin{align*}
+\sum_{(i,j) \in S} \frac{\partial f(x)}{\partial x_{ij}}
+= \frac{ 2 \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-2)/p}}
+\end{align*}
+
+Inequality (\ref{ineq:lp-smooth}) is equivalent to
+\begin{align*}
+\frac{ 2\sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-2)/p}}  \leq  2 \ln(K\rho) \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j},\ \ldots\ , \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr \|_{p}^{2}
+		+ \frac{1}{2 \ln(K\rho)} \biggl \| \biggl( \sum_{j} a_{1j} x_{1j},\ \ldots \ , \sum_{j} a_{mj} x_{mj} \biggr) \biggr \|_{p}^{2}
+\end{align*}
+%
+By Cauchy-Schwarz, the right hand side is larger than
+$$
+2\biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j},\ \ldots \ , \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr \|_{p}
+	\cdot \biggl \| \biggl( \sum_{j} a_{1j} x_{1j},\ \ldots\ , \sum_{j} a_{mj} x_{mj} \biggr) \biggr \|_{p}
+$$
+Hence, to prove Inequality (\ref{ineq:lp-smooth}), it is enough to prove that
+%
+\begin{align*}
+\frac{\sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} }{ \left[ \sum_{i'} \bigl( \sum_{j'} a_{i'j'} x_{i'j'} \bigr)^{p} \right]^{(p-2)/p}}
+&\leq \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j},\ \ldots\ , \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr \|_{p}
+	\cdot \biggl \| \biggl( \sum_{j} a_{1j} x_{1j},\ \ldots\ , \sum_{j} a_{mj} x_{mj} \biggr) \biggr \|_{p}
+\end{align*}
+%
+By multiplying with the denominator of the left-hand side, it is equivalent to
+%
+\begin{align*}
+    \sum_{(i,j) \in S} a_{ij} \cdot \bigl( \sum_{j'} a_{ij'} x_{ij'} \bigr)^{p-1} &\leq
+        \left ( \sum_{i'} \biggl [ \biggl( \sum_{j'} a_{i'j'} x_{i'j'} \biggr)^{p-1} \biggr ]^{p/(p-1)} \right )^{(p-1)/p} \cdot \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j}, \ \ldots\ , \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr \|_{p} \\
+    %
+& \Updownarrow \\
+    %
+    \sum_{i} \biggl( \sum_{j: (i,j) \in S} a_{ij} \biggr) \cdot \biggl( \sum_{j'} a_{ij'} x_{ij'} \biggr)^{p-1} &\leq
+        \left \| \left( \biggl( \sum_{j'} a_{1j'} x_{1j'} \biggr)^{p-1},.., \biggl( \sum_{j'} a_{mj'} x_{mj'} \biggr)^{p-1} \right)   \right \|_{\frac{p}{p-1}} \cdot \biggl \| \biggl( \sum_{j: (1,j) \in S} a_{1j},.., \sum_{j: (m,j) \in S} a_{mj}  \biggr) \biggr \|_{p}
+\end{align*}
+The above inequality holds by H\"older inequality ($\| a \cdot b\|_{1} \leq \| a \|_{p} \cdot \| b \|_{q}$ where $1/p + 1/q = 1$).
+Therefore, the lemma follows.
+\end{proof}
+
+
+\begin{theorem}
+There exists an algorithm that can solve the makespan minimization problem and this algorithm is \break $O(\ln^2 K \cdot \frac{\log m}{ \log \log m})$-competitive with the \texttt{LIN-COMB} benchmark.
+\end{theorem}
+%
+\begin{proof}
+    Makespan minimization is equivalent, up to a constant factor, to minimizing the $\ell_{\log m}$-norm function. \cref{lem-makespan} showed that the $\ell_{p}^{2}$ function is $(2\ln(K\rho),\frac{1}{2\ln(K\rho)})$-locally-smooth, and by Lemma 3.1 of \cite{CombettesPokutta21:RevisitingTheApproximateCaratheodoryProblem}, it is $(p-1)$-gradient Lipschitz.
+    By \cref{convex-covering-theorem}, Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark. Assuming that the input of the experts is integer (or randomized), and setting the objective function to $\ell_{\log m}^{2}$, Algorithm 2 can produce a fractional solution to the makespan minimization problem that is $O(\ln K^2 \ln K^2)$-competitive with the \texttt{LIN-COMB} benchmark.
+    Afterwards we can use an existing rounding scheme to get an integer assignment with a multiplicative factor of $\frac{\log m}{ \log \log m}$ \cite{ShiJiayi21:OnlineUnrelatedMachineLoadBalancing}. Therefore, the theorem holds.
+\end{proof}

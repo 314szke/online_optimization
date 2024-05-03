@@ -1,0 +1,103 @@
+%!TEX root = ./main.tex
+
+\section{Counter example for the performance of the algorithm of \cite{AnandGe22:Online-Algorithms}}
+\label{sec:counter-example}
+
+
+Anand, Ge, Kumar and Panigrahi \cite{AnandGe22:Online-Algorithms} recently proposed online algorithms for online covering problems with multiple expert solutions.
+We show here a counter example that contradicts Theorem~$2.1$ presented in Section~$3$ of their paper.
+In the proof of Theorem~$2.1$ the authors state that \textit{the total cost of the algorithm is at most $3$ times the potential $\phi$ at the beginning, i.e., at most $O(\log~K)$ times the \texttt{DYNAMIC} benchmark}. However, in our counter example the total cost of their algorithm is $O(L \log(K))$ times the \texttt{DYNAMIC} benchmark, where $L$ is an arbitrary large number.
+
+\subsection{Setting}
+
+Algorithm $1$ (from \cite{AnandGe22:Online-Algorithms}) receives solutions from $K$ experts. The authors denote with $x_i(j,s)$ the solution from expert $s$ for variable $i$ on constraint $j$. They assume that the expert solutions are tight, formally:
+%
+\[ \sum_{i=1}^{n} a_{ij}\ x_{i}(j, s) = 1 \ \ \ \ \forall\ s \in [K]\]
+%
+The algorithm's performance is compared to the \texttt{DYNAMIC} benchmark, which is the minimum cost solution that is supported by at least one expert at each step, formally:
+%
+\[\texttt{DYNAMIC} = \min_{\hat{\textbf{x}} \in \hat{X}} \sum_{i=1}^{n} c_i \hat{x}_i \textnormal{, where}\]
+%
+\[\hat{X} = \{\hat{\textbf{x}} : \forall\ i \in [n],\ \forall\ j \in [m],\ \exists\ s \in [K] \textnormal{ where the solution } x_i(j,s) \le \hat{x}_i \}\]
+%
+While a constraint is not satisfied, their algorithm updates each variable with an increasing rate of
+%
+\[\frac{dx_i}{dt} = \frac{a_{ij}}{c_i}(x_i + \delta_{ij})\]
+%
+where $\delta_{ij} = \frac{1}{K} \sum_{s=1}^{K} x_i(j,s)$ is the average of the experts' solutions for $x_i$ at the arrival of constraint $j$.
+Algorithm 1 of \cite{AnandGe22:Online-Algorithms} scales down the problem with $0.5$, so it does not increase any variable above $0.5$ and satisfies each constraint with value $0.5$. The exact solution is obtained by doubling the variables at the end of the execution. (This descaling is an important aspect in the authors' proof.)
+
+\subsection{Counter example}
+
+In the following example we reveal in an online manner a linear program parametrized by $L$ with $K$ experts and observe the behavior of Algorithm $1$ (from \cite{AnandGe22:Online-Algorithms}). This example is an extension of the pathological input for the multiplicative weight update algorithm.
+
+\medskip
+
+\noindent \textbf{Objective}. The example has $(L \cdot K + 1)$ variables with uniform cost:
+\[ \min\ x_1 + x_2 + \dots + x_{K} + \dots + x_{2K} + \dots + x_{LK} + x_{LK+1}\]
+
+\noindent \textbf{Constraints}. There are $L$ batches of $(K - 1)$ constraints. The first constraint of each batch has $(K+1)$ variables. The last variable ($x_{LK+1}$) is present in every constraint in every batch, but none of the experts suggests to use this variable. Within a batch, each consecutive constraint has one less variable. The experts set each variable that appears in later batches to $0$. The first batch:
+%
+\begin{align*}
+     & \ \ \ \ x_{1} + x_{2} + \dots + x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
+\textnormal{Expert}_{1}: & \hspace{0.5cm} 1 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{2}: & \hspace{0.5cm} 0 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+     \vdots  & \\
+\textnormal{Expert}_{K-1}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{K}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 1 \hspace{0.8cm} 0 \\
+     & \hspace{1.15cm} x_{2} + \dots + x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
+\textnormal{Expert}_{1}: & \hspace{0.5cm} 1 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{2}: & \hspace{0.5cm} 0 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+     \vdots  & \\
+\textnormal{Expert}_{K-1}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{K}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 1 \hspace{0.8cm} 0 \\
+     \vdots  & \\
+     & \hspace{2.7cm} x_{(K-1)} + x_{K} + x_{LK+1} \ge 1\\
+\textnormal{Expert}_{1}: & \hspace{0.5cm} 1 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{2}: & \hspace{0.5cm} 0 \hspace{0.6cm} 1 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+     \vdots  & \\
+\textnormal{Expert}_{K-1}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 1  \hspace{1.23cm} 0 \hspace{0.8cm} 0 \\
+\textnormal{Expert}_{K}: & \hspace{0.5cm} 0 \hspace{0.6cm} 0 \hspace{0.42cm} \dots \hspace{0.53cm} 0  \hspace{1.23cm} 1 \hspace{0.8cm} 0 \\
+\end{align*}
+
+During the first constraint of every batch, the experts' solutions form an identity matrix. With each disappearing variable in the consecutive constraints, experts who suggested to use variables which are no longer available, choose to set the variable with the smallest index. Consequently, $(K-1)$ experts suggest to use variable $x_{(K-1)}$ and one expert suggests to use $x_K$ during the last constraint in the first batch. The pattern of the experts' solutions are identical for each batch. The constraints of the $l^{th}$ batch ($ 1 \le l \le L)$ are:
+%
+\begin{align*}
+     x_{(l-1) K + 1} + x_{(l-1) K + 2} + \dots + x_{(l-1) K + (K-1)} + x_{lK} + x_{LK+1} \ge & \ 1\\
+     x_{(l-1) K + 2} + \dots + x_{(l-1) K + (K-1)} + x_{lK} + x_{LK+1} \ge & \ 1\\
+     \vdots &\\
+     x_{(l-1) K + (K-1)} + x_{lK} + x_{LK+1} \ge & \ 1\\
+\end{align*}
+%
+
+\begin{claim}
+The objective value of Algorithm $1$ (from \cite{AnandGe22:Online-Algorithms}) on our example is $O(L \log(K))$ times the \texttt{DYNAMIC} benchmark.
+\end{claim}
+%
+\begin{proof}
+The optimal solution $\vect{x}^{*}$ of the \texttt{DYNAMIC} benchmark is the solution in which $x^{*}_{LK+1} = 1$ and $x^{*}_{i} = 0$ for $i \neq LK + 1$.
+We verify that $\vect{x}^{*} \in \hat{X}$. For each $i \neq l K$ where $1 \leq l \leq L$, and for each constraint $m$, $x^{*}_{i} \geq 0 = x_{i}(m,K)$.
+For $i = l K$, and for each constraint $m$, $x^{*}_{i} \geq 0 = x_{i}(m,1) = x_{i}(m,2) = \ldots = x_{i}(m,K-1)$.
+Moreover, $\vect{x}^{*}$ satisfies all constraints (since variable $x_{LK+1}$ appears in all constraints).
+Hence, $\vect{x}^{*} \in \hat{X}$. Subsequently, the objective value of the \texttt{DYNAMIC} benchmark is $1$.
+
+     By the design of Algorithm $1$, the increasing rate of $x_{LK+1}$ is zero throughout the execution, and the variables which are not part of the current constraint are not increased. During the first constraint of each batch, the increasing rate of the first $K$ variables in the batch is $1/K$, since the increasing rate of variable $x_i$ is $(x_i + \frac{1}{K} \sum_{s=1}^{K} x_i(1,s))$ and initially every variable is set to zero. At the second constraint, the increasing rate of the second variable in the batch is higher than the other variables' increasing rate, because the first expert also uses this variable in its solution. Therefore, the increasing rate of the second variable is $(x_{(l-1) K + 2} + 2/K)$, while the other remaining expert variables in the constraint have an increasing rate of $(x_i + 1/K)$. Following the same reasoning (apart from the first constraint in the batch), the variable with the smallest index in the constraint has a higher increasing rate, than the other variables. During the last constraint of each batch, the increasing rate of the last two remaining expert variables are
+     $(x_{(l-1) K + (K-1)} + (K-1)/K)$ and $(x_{lK} + 1/K)$. Keeping the increasing rates and the constraint satisfaction in mind, we can lower bound the value of each variable:
+     %
+     \begin{align*}
+          \frac{1}{K} \ \le& \ x_{(l-1) K + 1} \\
+          \frac{1}{K-1} \ \le& \ x_{(l-1) K + 2} \\
+          \frac{1}{K-2} \ \le& \ x_{(l-1) K + 3} \\
+          & \ \vdots \\
+          \frac{1}{3} \ \le& \ x_{(l-1) K + (K-2)} \\
+          \frac{1}{2} \ \le& \ x_{(l-1) K + (K-1)} \\
+          \frac{1}{K} \ \le& \ x_{lK} \\
+     \end{align*}
+
+     Summing the terms together, we get that the objective value increases at least with $O(\log K)$ during each batch. There are $L$ batches, so the total cost of Algorithm $1$ is at least $O(L \log(K))$,
+     while the total cost of the \texttt{DYNAMIC} benchmark is $1$, which concludes the proof.
+\end{proof}
+
+\subsection{Comparison}
+
+In this specific counter-example, the \texttt{LIN-COMB} benchmark is equivalent to the static best-expert benchmark, i.e., the solution of Expert$_K$. The objective value of \texttt{LIN-COMB} is $L$ (since the optimal solution sets $x_{lK}$ variables for $1 \leq l \leq L$  to 1 and other variables to 0). In this counter-example, the objective value of our algorithm is $O(L\log K)$. Consequently, our proposed algorithm is $O(\log K)$ competitive in the \texttt{LIN-COMB} benchmark.

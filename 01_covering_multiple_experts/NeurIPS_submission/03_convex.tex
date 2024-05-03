@@ -1,0 +1,156 @@
+%!TEX root = ./main.tex
+
+\section{Online \emph{non-linear} covering with experts} \label{sec:convex}
+
+While linear programs are suitable to represent many optimization problems, they are not expressive enough to capture some practically relevant problems (for example, makespan minimization and congestion management). This section takes a step further toward a general framework and proposes an algorithm with multiple experts for $0$-$1$ covering optimization problems with non-linear objectives.
+
+%The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
+%The \texttt{LIN-COMB} benchmark's non-linear objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the non-linear objective function into a linear one.
+
+
+\begin{minipage}[t]{0.5\textwidth}
+	\vspace{-0.6cm}
+        \begin{align*}
+            && \min \sum_{t = 1}^{T} \sum_{S} & c_S y_S^t \\
+            %
+            (\alpha^{t}) \qquad && \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
+            %
+            (\beta_{i}^{t}) \qquad && \sum_{S: i \in S} z_{S}^{t} &\ge \sum_{k=1}^{K} s_{i,k}^{t} w_{k}^{t}   &\forall\ i,t\\
+            %
+            (\gamma^{t}) \qquad && \sum_{S} z_{S}^{t} &= 1   &\forall\ t\\
+            %
+            (\xi_{S}^{t}) \qquad && y_{S}^{t} &= z_{S}^{t} - z_{S}^{t-1}   &\forall\ S,t\\
+            %
+            && w_{k}^{t}, y_{S}^{t}, z_{S}^{t} & \ge 0 & \forall\ k,S,t
+         \end{align*}
+\end{minipage}
+%
+\begin{minipage}[t]{0.5\textwidth}
+	\vspace{-0.6cm}
+        \begin{align*}
+            \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
+        %
+            \alpha^{t} - \sum_{i=1}^{n} s_{i,k}^{t} \beta_{i}^{t} &\leq 0  &\forall\ k,t\\
+        %
+             \xi_{S}^{t}   &\leq c_{S}  &\forall\ S,t \\
+        %
+            \sum_{i \in S}\beta_{i}^{t} + \gamma^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq 0  &\forall\ S,t \\
+        %
+            \alpha^{t}, \beta_{i}^{t} & \ge 0 & \forall\ S,i,t
+        \end{align*}
+\end{minipage}
+
+\paragraph{Benchmark reformulation.} Let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be the indicator variable for solution $S$: $z_{S} = 1$ iff every variable $x_{i} = 1$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$; and $z_S = 0$ otherwise. In other words, $z_{S}$ indicates if the final solution is $S$. The formulation and its dual are given above. In the formulation, 
+the first constraint guarantees that we have a linear combination of expert solutions. 
+The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$ must be used as well. The third constraint ensures that at each time step, one solution should be selected. In the last constraint, 
+$y_S^{t}$ intuitively represents the fractional increase of the usage of solution $S$ at time $t$. 
+
+%The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
+
+
+%\begin{figure}[ht]
+%    \begin{mdframed}
+%        \vspace{-8pt}
+%        \begin{align*}
+%            && \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
+%        %
+%            (w_{k}^{t}) \qquad && \alpha^{t} - \sum_{i=1}^{n} s_{i,k}^{t} \beta_{i}^{t} &\leq 0  &\forall\ k,t\\
+%        %
+%            (y_{S}^{t}) \qquad && \xi_{S}^{t}   &\leq c_{S}  &\forall\ S,t \\
+%        %
+%            (z_{S}^{t}) \qquad && \sum_{i \in S}\beta_{i}^{t} + \gamma^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq 0  &\forall\ S,t \\
+%        %
+%            && \alpha^{t}, \beta_{i}^{t} & \ge 0 & \forall\ S,i,t
+%        \end{align*}
+%    \end{mdframed}
+%    \caption{Dual formulation of the reformulation of the \texttt{LIN-COMB} benchmark}
+%    \label{fig:ref-dual}
+%\end{figure}
+
+\subsection{Non-linear objective function properties} \label{sec:f-properties}
+
+For vectors $x, y \in \mathcal{R}^{n}$, we say that $x \geq y$ iff $x_{i} \geq y_{i}$ for all $1 \leq i \leq n$.
+We consider objective function $f$ that satisfies the following properties:
+\begin{itemize}
+	\item $f$ is non-decreasing, i.e., $f(x) \geq f(y)$ for all $x \geq y$,
+	\item the gradient of $f$ is non-decreasing on all coordinates, i.e., $\nabla_{i} f(x) = \partial f(x)/\partial x_{i} \geq \nabla_{i} f(y) := \partial f(y)/\partial y_{i}$ for all $x \geq y$.
+\end{itemize}
+%
+Moreover, the objective function also satisfies the gradient-Lipschitz and $(\lambda,\mu)$-locally-smooth properties below.
+\begin{itemize}
+	\item A function $f$ is $L$-\emph{gradient-Lipschitz}, if its derivatives are Lipschitz-continuous with the constant $L$. 
+		Formally, for all $x$ and $y$: $\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|$.
+	\item A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
+   		 if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
+    \begin{equation*}	\label{eq:min-local-smooth}
+    \sum_{i \in S} \nabla_{i} f(x) \leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu f\bigl( x \bigr)
+    \end{equation*}
+    where $\nabla_{i} F(x)$ denotes $\partial F(x)/\partial x_{i}$ and $\vect{1}_{S}$ is the vector where the entry of the $i^{\text{th}}$ coordinate equals 1 if $i \in S$
+    and equals 0 otherwise.
+\end{itemize}
+
+%\begin{definition}[$L$-gradient-Lipschitz]
+%    A function $f$ is $L$-gradient-Lipschitz, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
+%    \[\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|\]
+%\end{definition}
+%
+%\begin{definition}[$(\lambda,\mu)$-local-smoothness \cite{Thang20:Online-Primal-Dual}]
+%    %Let $\mathcal{E}$ be a set of $n$ resources.
+%    A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
+%    if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
+%    \begin{equation*}	\label{eq:min-local-smooth}
+%    \sum_{i \in S} \nabla_{i} f(x) \leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu f\bigl( x \bigr)
+%    \end{equation*}
+%    where $\nabla_{i} F(x)$ denotes $\partial F(x)/\partial x_{i}$ and $\vect{1}_{S}$ is the vector where the entry of the $i^{\text{th}}$ coordinate equals 1 if $i \in S$
+%    and equals 0 otherwise.
+%\end{definition}
+
+Note that the notation of gradient-Lipschitz is also called smoothness in literature. The notation of $(\lambda,\mu)$-locally-smoothness, introduced in \cite{Thang20:Online-Primal-Dual}, is rooted in the work of \cite{Roughgarden15:Intrinsic-Robustness}
+in the domain of algorithmic game theory in which it is termed the smoothness argument.
+To avoid confusion, we use the terms gradient-Lipschitzness and $(\lambda,\mu)$-locally-smoothness with the abovementioned definitions.
+
+\subsection{Algorithm description}
+
+\paragraph{Preprocessing.} We apply the preprocessing techniques of the previous algorithm to this algorithm as well, including the dummy expert to avoid division by zero. For details see \cref{sec:algo}.
+
+
+\paragraph{Algorithm 2.} \label{algo-convex}
+At the arrival of the $t^{\text{th}}$ constraint,
+
+1. solve the following non-linear program and set $w^t$ to be the obtained locally optimal solution
+
+\begin{align*}
+&\min_{w} \biggl\{\sum_{i=1}^{n}
+\nabla_{i} f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
+\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}\right)
+- \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k} \biggr] \\
+%
+&+ \frac{L}{2}\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t}  - 2\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - 2\delta_{i}^{t-1} \biggr) \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t} \biggr)
+\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} }{\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}\right) \\
+%
+&- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t}  - 2\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - 2\delta_{i}^{t-1} \biggr)^{2}
+\biggr\}
+\end{align*}
+%
+%
+\begin{align*}
+\text{subject to:}   \qquad \qquad
+    (\theta^{t})  && \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k} \biggr) &\geq 1 && \forall\ t\\
+    %
+    (\chi_{i}) && \sum_{k=1}^{K}  w_{i,k} &\geq 1 && \forall\ i\\
+    %
+    (\nu_{i}^{t}) && \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} &\geq 0 && \forall\ i,t
+\end{align*}
+%
+where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the gradient-Lipschitz constant of $f$.
+Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the internal non-linear program.
+(We can set $w_{i,k} = 0$ for all $k$ beforehand.)
+%
+
+2. For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
+otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
+
+
+\begin{theorem} \label{convex-covering-theorem}
+Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.
+\end{theorem}
