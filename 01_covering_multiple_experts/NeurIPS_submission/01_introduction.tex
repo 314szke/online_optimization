@@ -18,7 +18,7 @@ A natural research question is whether it is possible to design competitive algo
 Taking a broader view, we can study whether combining predictions of several experts is similar to combining multiple online algorithms and whether we can expect to achieve better solutions with the combination. Assuming that we do not know in advance which of the given algorithms would perform best on the upcoming requests, can we combine the algorithms in some generic way to obtain a competitive online strategy? This has been a long-standing question in the community of online algorithms \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}. To find an answer, it is a crucial to understand to what extent an online strategy can benefit from the input of multiple algorithms and which benchmark suits to evaluate its performance.
 
 While in a completely general setting, such an online strategy and a corresponding benchmark may not exist, in this paper we propose
-two algorithms for online linear and non-linear problems with covering constraints that are competitive with the new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
+two algorithms for online linear and non-linear problems with covering constraints that are competitive with the new benchmark (the \emph{best linear combination} of the experts). Thus, our paper partially addresses the question we raised in the previous paragraph.
 
 \subsection{Model and Problem}
 
@@ -113,13 +113,13 @@ where the second inequality holds due to the feasibility of the experts' solutio
 We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
 where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
 
-Moreover, \texttt{LIN-COMB} is strictly stronger than the best-expert benchmark for a general setting. We provide here an example.
-Consider the makespan minimization problem in which one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.
+\texttt{LIN-COMB} is strictly stronger than the best-expert benchmark for a general setting. We provide here an example.
+In the makespan minimization problem, one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.
 There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$ which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.
 
 \subsection{Our approach and contribution}
 
-\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark.
+\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark.
 %The formulations of the relaxation and its dual are detailed in \cref{sec:covering} for linear problems and in \cref{sec:convex} for non-linear problems. \textbf{\color{red} to change here }
 
 Both of our proposed algorithms set the decision variables at every time step based on the solution of an internal program. Our approach is inspired by the
