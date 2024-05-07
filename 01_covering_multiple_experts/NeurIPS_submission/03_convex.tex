@@ -7,9 +7,10 @@ While linear programs are suitable to represent many optimization problems, they
 %The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
 %The \texttt{LIN-COMB} benchmark's non-linear objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the non-linear objective function into a linear one.
 
-
+\begin{figure}[ht]
+\begin{mdframed}
 \begin{minipage}[t]{0.5\textwidth}
-	\vspace{-0.6cm}
+	\vspace{-0.3cm}
         \begin{align*}
             && \min \sum_{t = 1}^{T} \sum_{S} & c_S y_S^t \\
             %
@@ -26,7 +27,7 @@ While linear programs are suitable to represent many optimization problems, they
 \end{minipage}
 %
 \begin{minipage}[t]{0.5\textwidth}
-	\vspace{-0.6cm}
+	\vspace{-0.3cm}
         \begin{align*}
             \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
         %
@@ -39,6 +40,10 @@ While linear programs are suitable to represent many optimization problems, they
             \alpha^{t}, \beta_{i}^{t} & \ge 0 & \forall\ S,i,t
         \end{align*}
 \end{minipage}
+\end{mdframed}
+\caption{Reformulation and relaxation of the \texttt{LIN-COMB} benchmark}
+\label{fig:reformulation}
+\end{figure}
 
 \paragraph{Benchmark reformulation.} Let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be the indicator variable for solution $S$: $z_{S} = 1$ iff every variable $x_{i} = 1$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$; and $z_S = 0$ otherwise. In other words, $z_{S}$ indicates if the final solution is $S$. The formulation and its dual are given above. In the formulation,
 the first constraint guarantees that we have a linear combination of expert solutions.
@@ -114,11 +119,7 @@ To avoid confusion, we use the terms gradient-Lipschitzness and $(\lambda,\mu)$-
 \paragraph{Preprocessing.} We apply the preprocessing techniques of the previous algorithm to this algorithm as well, including the dummy expert to avoid division by zero. For details see \cref{sec:algo}.
 
 
-\paragraph{Algorithm 2.} \label{algo-convex}
-At the arrival of the $t^{\text{th}}$ constraint,
-
-1. solve the following non-linear program and set $w^t$ to be the obtained locally optimal solution
-
+\paragraph{Algorithm 2.} \label{algo-convex} follows the principle of Algorithm~1 (see \cref{fig:algo1}), however the objective function of the internal program becomes the following:
 \begin{align*}
 &\min_{w} \biggl\{\sum_{i=1}^{n}
 \nabla_{i} f\bigl(x^{t-1} \bigr) \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr)
@@ -131,25 +132,7 @@ At the arrival of the $t^{\text{th}}$ constraint,
 &- \frac{L}{4} \biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} + \delta_{i}^{t}  - 2\sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - 2\delta_{i}^{t-1} \biggr)^{2}
 \biggr\}
 \end{align*}
-%
-%
-\begin{align*}
-\text{subject to:}   \qquad \qquad
-    (\theta^{t})  && \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k} \biggr) &\geq 1 && \forall\ t\\
-    %
-    (\chi_{i}) && \sum_{k=1}^{K}  w_{i,k} &\geq 1 && \forall\ i\\
-    %
-    (\nu_{i}^{t}) && \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k} &\geq 0 && \forall\ i,t
-\end{align*}
-%
 where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the gradient-Lipschitz constant of $f$.
-Note that in this program, we use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function of the internal non-linear program.
-(We can set $w_{i,k} = 0$ for all $k$ beforehand.)
-%
-
-2. For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
-otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
-
 
 \begin{theorem} \label{convex-covering-theorem}
 Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.

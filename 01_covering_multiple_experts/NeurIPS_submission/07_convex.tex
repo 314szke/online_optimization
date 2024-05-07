@@ -34,8 +34,6 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
 
 The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
 
-\clearpage
-
 \begin{figure}[ht]
     \begin{mdframed}
         \vspace{-8pt}
@@ -146,7 +144,7 @@ As $w^{t}$ is the locally optimal solution of the non-linear program and ($\thet
 
 Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} = 0$, then
 \begin{align}	\label{eq:KKT2}
- s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \ln & \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \notag \\ 
+ s_{i,k}^{t} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \ln & \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \notag \\
         &- a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} - \chi_{i}^{t} = 0
 \end{align}
 
@@ -215,7 +213,7 @@ since the terms in the first two lines are positive and we restrict the sum to a
 %
 We have to show that the following is true to satisfy the third constraint:
 \begin{align*}
-    \sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  
+    \sum_{i \in S}\beta_{i}^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}
     %
     & = \sum_{i \in S} \frac{1}{\lambda} \biggl[  \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) \\
         & \quad - \frac{1}{\lambda} \sum_{i \in S} \nabla_{i} f(x^{t-1}) \ln \left( \frac{(1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right) + \frac{\mu}{\lambda} \ln(K\rho)  f(x^{t-1}) \\
@@ -257,8 +255,8 @@ Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive 
 &= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) s_{i,k}^{t} \bigl[ \nabla_{i} f(x^{t-1}) + L(x_{i}^{t} - x_{i}^{t-1}) \bigr]
             \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \notag \\
 %
-&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) s_{i,k}^{t} \biggl[ \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr]
-            \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \\
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) s_{i,k}^{t} \biggl[ \nabla_{i} f(x^{t-1}) + L\biggl( \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t} - \sum_{k=1}^{K} s_{i,k}^{t-1} w_{i,k}^{t-1} - \delta_{i}^{t-1} \biggr) \biggr] \cdot \notag \\
+    &\hspace{5cm} \ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \\
 %
 &=  \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \theta^{t} + \chi_{i}^{t} \biggr)  \\
 %
@@ -281,7 +279,7 @@ The above corresponding transformations hold since:
     \item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$;
     \item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
     %\setcounter{enumi}{5}
-    \item since again, $x_{i}^{t} > x_{i}^{t-1} \geq 0$, we have $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$ and 
+    \item since again, $x_{i}^{t} > x_{i}^{t-1} \geq 0$, we have $x_{i}^{t} = \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t}$ and
     	it always holds that $x_{i}^{t-1} \geq \sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
     \item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$ (so $\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT2}) applies;
     \item is true due to the complementary slackness conditions

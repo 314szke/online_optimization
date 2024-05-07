@@ -1,0 +1,117 @@
+%!TEX root = ./main.tex
+
+\section{Online \emph{linear} covering with experts}
+
+\subsection{Performance Analysis}
+As $w^{t}$ is the optimal solution of the convex program and ($\gamma^t,\ \lambda_{i},\ \mu_{i}^{t}$) is the optimal solution of its dual, the following Karush-Kuhn-Tucker (KKT) and complementary slackness conditions hold.
+
+\begin{align*}
+   \biggl[ \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K}  \hat{s}_{i,k}^{t} w_{i,k}^{t} \biggr) - 1 \biggr] \gamma^{t} &= 0 \qquad \forall\ t \\
+   \biggl[ \sum_{k=1}^{K}  w_{i,k}^{t}  - 1 \biggr] \lambda_{i} &= 0 \qquad \forall\ i, t \\
+   \biggl[ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} \biggr] \mu_{i}^{t} &= 0 \qquad \forall\ i, t \\
+%
+ c_{i} s_{i,k}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
+    	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i} - s_{i,k}^{t} \mu_{i}^{t} &= 0	\qquad \forall\ i,k,t \\
+	%
+	\gamma^{t}, \lambda_{i}, \mu_{i}^{t} &\geq 0 \qquad \forall\ i, t
+\end{align*}
+
+Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\mu_{i}^{t} = 0$, then
+\begin{align}	\label{eq:KKT1}
+   c_{i} s_{i,k}^{t} \ln \left( \frac{\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1}  + \delta_{i}^{t-1}} \right)
+    	- a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} - \lambda_{i} = 0
+\end{align}
+
+\paragraph{Dual variables and feasibility.} We set the dual variables of the linear program relaxation of our \texttt{LIN-COMB} benchmark based on the dual variables of the convex program used inside the algorithm. The dual formulation is visible on \cref{fig:relaxation}.
+%
+\begin{align*}
+    \alpha^{t} &= \frac{1}{\ln(K\rho)}  \biggl( \gamma^{t} + \sum_{i=1}^{n} \lambda_{i} \biggr), \\
+    \beta_{i}^{t} &= \frac{1}{\ln(K\rho)} c_i \ln \left(\frac{ (1 + 1/K) \cdot \max_{t'} \sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}\right)
+\end{align*}
+%
+where recall that $\rho = \max_{i, t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
+
+\begin{lemma} \label{lem:covering-feasibility}
+The $x_{i}^{t}$ solutions set by the algorithm for the original covering problem and the dual variables $(\alpha^{t}, \beta_{i}^{t})$ of the \texttt{LIN-COMB} benchmark's linear program relaxation are feasible.
+\end{lemma}
+%
+\begin{proof}
+We first prove that the $x_{i}^{t}$ variables satisfy the covering constraints by induction. At time 0, no constraint has been released yet, and every variable is set to 0. This all-zero solution is feasible. Let us assume that the algorithm provides feasible solutions up to time $t-1$. At time $t$, the algorithm maintains the inequality $x_{i}^{t} \geq x_{i}^{t-1}$, so all constraints $t'$ where $t' < t$ are satisfied. Besides, $x_{i}^{t}$ is always at least
+$\sum_{k} w_{i,k}^{t} s_{i,k}^{t}$, which is larger than $\sum_{k} w_{i,k}^{t} \hat{s}_{i,k}^{t}$ since $s_{i,k}^{t} \geq \hat{s}_{i,k}^{t}$
+for all $i,k$ due to the preprocessing step. Hence, the constraint $t$ is also satisfied. Formally,
+$$
+\sum_{i=1}^{n} a_{i}^{t} x_{i}^{t}  \geq \sum_{i=1}^{n} a_{i}^{t} \biggl( \sum_{k=1}^{K} w_{i,k}^{t}  \hat{s}_{i,k}^{t} \biggr) \geq 1.
+$$
+
+In the remaining part of the proof, we show the feasibility of $\alpha^{t}$ and every $\beta_{i}^{t}$.
+Since $ \gamma^{t} \geq 0$ and $\lambda_{i} \geq 0$ for all $i$ and $t$, we get that $\alpha^{t} \geq 0$.
+When we set $\beta_{i}^{t}$, the nominator of the logarithm term is always larger than the denominator, and it is smaller than $(K\rho)$-times the denominator. Consequently, $0 \leq \beta_{i}^{t} \leq c_{i}$. Furthermore,
+%
+\begin{align*}
+    \beta_{i}^{t+1} - \beta_{i}^{t}
+    	&= - \frac{1}{\ln(K\rho)} c_i \ln \left( \frac{\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1} + \delta_{i}^{t-1}} \right).
+\end{align*}
+%
+Since $\sum_{i} a_{i}^{t} \hat{s}_{i,k}^{t} = 1$, using the KKT conditions, we get:
+\begin{align*}
+\alpha^{t} + \sum_{i=1}^{n} s_{ik}^{t} \left(\beta_{i}^{t+1} - \beta_{i}^{t}\right)
+&= \frac{1}{\ln(K\rho)} \biggl( \gamma^{t} + \sum_{i=1}^{n} \lambda_{i} \biggr)
+	- \frac{1}{\ln(K\rho)}  \sum_{i=1}^{n} s_{i,k}^{t} c_i \ln \left( \frac{\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1}w_{i,k}^{t-1} + \delta_{i}^{t-1}} \right) \\
+%
+&= \frac{1}{\ln(K\rho)} \biggl[ \gamma^{t} + \sum_{i=1}^{n} \lambda_{i} - \sum_{i=1}^{n} \left( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^{t} + \lambda_{i} + s_{i,k}^{t} \mu_{i}^{t} \right) \biggr] \\
+%
+&\leq 0
+\end{align*}
+\end{proof}
+
+\begin{theorem} \label{covering-theorem}
+The algorithm is $O(\ln(K \rho))$-competitive with the \texttt{LIN-COMB} benchmark.
+\end{theorem}
+%
+\begin{proof} \cref{lem:covering-feasibility} proved that our algorithm creates feasible solutions for the dual problem of the \texttt{LIN-COMB} benchmark's relaxation and for the original covering problem. We show that the algorithm's solution increases the primal objective value of the original covering problem by at most $O(\ln(K \rho))$ times the value of the relaxation's dual solution, which serves as the lower bound on the \texttt{LIN-COMB} benchmark (the best linear combination of the experts' solutions).
+\begin{align}
+	 \sum_{i=1}^{n} &c_{i} (x_{i}^{t} - x_{i}^{t-1})
+		= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i}(x_{i}^{t} - x_{i}^{t-1}) &&  \notag \\
+		%
+		&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i}(x_{i}^{t} + \delta_{i}^{t}) \ln \left(\frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t}}\right) \\
+		%
+		&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i} (x_{i}^{t} + \delta_{i}^{t}) \ln \left(\frac{x_{i}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}}\right) \\
+		%
+		&= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i} \left[ \left(\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \frac{1}{K} \sum_{k=1}^{K} s_{i,k}^{t} \right)
+			\ln \left(\frac{ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{x_{i}^{t-1} + \delta_{i}^{t-1}}  \right) \right] \\
+%
+&\leq \sum_{i: x_{i}^{t} > x_{i}^{t-1}} c_{i} \left[ \left(\sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \frac{1}{K} \sum_{k=1}^{K} s_{i,k}^{t} \right)
+			\ln \left(\frac{ \sum_{k=1}^{K}  s_{i,k}^{t} w_{i,k}^{t} + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1} + \delta_{i}^{t-1}}  \right) \right]\\
+%
+	&= \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) c_{i} s_{i,k}^{t}
+				\ln \left(\frac{ \sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}^{t}  + \delta_{i}^{t}}{\sum_{k=1}^{K}  s_{i,k}^{t-1} w_{i,k}^{t-1}  + \delta_{i}^{t-1}}  \right) \notag \\
+%
+%\end{align}
+%%
+%\begin{align}
+%
+&=  \sum_{i: x_{i}^{t} > x_{i}^{t-1}} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^t + \lambda_{i} \biggr) \\
+%
+%
+&\leq \sum_{i=1}^{n} \sum_{k=1}^{K} (w_{i,k}^{t} + 1/K) \biggl( a_{i}^{t} \hat{s}_{i,k}^{t} \gamma^t + \lambda_{i} \biggr) \notag \\
+%
+&= \sum_{i=1}^{n} a_{i}^{t} \biggl(\sum_{k=1}^{K} w_{i,k}^{t} \hat{s}_{i,k}^{t} \biggr) \gamma^t + \sum_{i=1}^{n} \biggl( \sum_{k=1}^{K} w_{i,k}^{t} \biggr) \lambda_{i}
++ \frac{1}{K}  \sum_{k=1}^{K} \biggl( \sum_{i=1}^{n} a_{i}^{t}  \hat{s}_{i,k}^{t}  \biggr) \gamma^t + \frac{1}{K} \sum_{k=1}^{K} \sum_{i=1}^{n} \lambda_{i} 		\notag \\
+%
+&= 2 \gamma^{t} + 2\sum_{i=1}^{n} \lambda_{i} = 2\ln(K \rho) \alpha^{t}
+\end{align}
+%
+The above corresponding transformations hold since:
+\begin{compactenum}[(1)]
+	\setcounter{enumi}{1}
+	\item follows from the inequality $a - b \leq a \ln(a/b)$ for all $0 < b \leq a$;
+	\item holds since $\delta_{i}^{t} \geq \delta_{i}^{t-1}$ (because $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i,k,t$);
+	\item is valid because $x_{i}^{t} > x_{i}^{t-1}$, so $x_{i}^{t} = \sum_{k}  s_{i,k}^{t} w_{i,k}^{t}$;
+	\item is by the design of the algorithm: $x_{i}^{t-1} \geq \sum_{k}  s_{i,k}^{t-1} w_{i,k}^{t-1}$;
+	\setcounter{enumi}{5}
+	\item since given that $x_{i}^{t} > x_{i}^{t-1} \geq 0$
+	(so $\sum_{k}  s_{i,k}^{t} w_{i,k}^{t} = x_{i}^{t} > 0$), the KKT condition (\ref{eq:KKT1}) applies;
+	\item is true due to the complementary slackness conditions
+		and that $\sum_{i} a_{i}^{t}  \hat{s}_{i,k}^{t} = 1$.
+\end{compactenum}
+\end{proof}
