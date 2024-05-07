@@ -15,7 +15,7 @@ Predictions can come from multiple sources (for example: heuristics, oracles, an
 
 A natural research question is whether it is possible to design competitive algorithms with mathematical performance guarantees with a stronger benchmark than the best expert. Comparing an algorithm with a stronger benchmark could provide deeper insights into the learning process and give better ways of exploiting the experts' predictions.
 
-Taking a broader view, we can study whether combining predictions of several experts is similar to combining multiple online algorithms and whether we can expect to achieve better solutions with the combination. Assuming that we do not know in advance which of the given algorithms would perform best on the upcoming requests, can we combine the algorithms in some generic way to obtain a competitive online strategy? This has been a long-standing question in the community of online algorithms \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}. To find an answer, it is a crucial to understand to what extent such an online strategy can benefit from the input of multiple algorithms and what is a suitable benchmark to evaluate its performance.
+Taking a broader view, we can study whether combining predictions of several experts is similar to combining multiple online algorithms and whether we can expect to achieve better solutions with the combination. Assuming that we do not know in advance which of the given algorithms would perform best on the upcoming requests, can we combine the algorithms in some generic way to obtain a competitive online strategy? This has been a long-standing question in the community of online algorithms \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}. To find an answer, it is a crucial to understand to what extent an online strategy can benefit from the input of multiple algorithms and which benchmark suits to evaluate its performance.
 
 While in a completely general setting, such an online strategy and a corresponding benchmark may not exist, in this paper we propose
 two algorithms for online linear and non-linear problems with covering constraints that are competitive with the new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
@@ -33,7 +33,7 @@ to satisfy the new constraint while maintaining the satisfaction of the previous
 Our goal is to design an algorithm that minimizes $\sum_{i=1}^{n} c_{i} x_{i}^{T}$ subject to
 all online covering constraints $t$, where $1 \leq t \leq T$. The value $T$ is the last time a constraint is released, and it is not known by the algorithm.
 
-The \emph{non-linear} problem setting is analogous to the linear one, since we consider non-linear problems with linear constraints. The only difference compared to the previous paragraph is the total cost of the solution $(x_{i}^t)_{i=1}^{n}$, which becomes $f(x^t)$, where $f$ is a non-linear function. This setting captures different classes of problems, for example, online mixed packing and covering, submodular optimization, etc.  
+The \emph{non-linear} problem setting is analogous to the linear one, since we consider non-linear problems with linear constraints. The only difference compared to the previous paragraph is the total cost of the solution $(x_{i}^t)_{i=1}^{n}$, which becomes $f(x^t)$, where $f$ is a non-linear function. This setting captures different classes of problems: online mixed packing and covering, submodular optimization, etc.
 
 \noindent \textbf{Experts.} \label{subsec:experts} In our model, the experts' predictions are also \emph{online solutions}. In other words, the experts' solutions
 fulfill the following properties:
@@ -55,29 +55,31 @@ The linear combination can be \emph{dynamically} changed over time, and it can b
 However, the benchmark's decisions are also online, so it cannot decrease the value of the decision variables ($x_{i}$).
 We refer to our benchmark with the name \texttt{LIN-COMB} from now on.
 
-\begin{wrapfigure}{r}{0.5\textwidth}
-	\vspace{-0.8cm}
+%\begin{wrapfigure}{r}{0.7\textwidth}
+\begin{figure}
+	\vspace{-0.5cm}
 	\begin{mdframed}
-		\vspace{-0.4cm}
+	\vspace{-0.2cm}
 		\begin{align*}
-			&\text{Linear:} \min \sum_{i=1}^{n} c_{i} x_{i}^{T} = \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T} \bigl( x_{i}^{t} - x_{i}^{t-1}\bigr)\\
-			&\text{Non-linear:} \min f(x^{T})\\
-		&\text{s.t.} \qquad 
-			\sum_{k=1}^{K} w_{k}^{t} = 1 ~\forall t,  \quad
+			\text{Linear:}  \qquad \min \sum_{i=1}^{n} c_{i} x_{i}^{T} &= \sum_{i=1}^{n} c_{i} \sum_{t=1}^{T}\bigl( x_{i}^{t} - x_{i}^{t-1}\bigr) & \\
+			\text{Non-linear:} \qquad \min f(x^{T}) \hspace{0.37cm} & & \\
+			\text{s.t.} \hspace{1.63cm}
+			\sum_{k=1}^{K} w_{k}^{t} &= 1 \qquad &\forall t \\
 			%
-			 x_{i}^{t} \geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}  ~\forall i, t\\
+			\qquad x_{i}^{t} &\geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}  \qquad &\forall i, t\\
 			%
-		& \qquad	\quad x_{i}^{t} \geq x_{i}^{t-1} ~\forall i, t, \quad
-%			%
-			 w_{k}^{t} \geq 0   ~\forall t, k
+			\qquad x_{i}^{t} &\geq x_{i}^{t-1} \qquad &\forall i, t \\
+			%
+			\qquad w_{k}^{t} &\geq 0 \qquad &\forall t, k
 		\end{align*}
 		%where $1 \leq t \leq T$, $1 \leq i \leq n$, and $f$ is non-linear.
 	\end{mdframed}
-	\vspace{-0.3cm}
+	\vspace{-0.2cm}
 	\caption{\texttt{LIN-COMB} benchmark}
 	\label{fig:benchmark}
 	\vspace{-0.5cm}
-\end{wrapfigure}
+\end{figure}
+%\end{wrapfigure}
 
 The \texttt{LIN-COMB} benchmark's formal description is visible on \cref{fig:benchmark}.
 Let $w_{k}^{t} \geq 0$ be the weight assigned by the \texttt{LIN-COMB} benchmark to expert $k$ (where $1 \leq k \leq K$) at time
@@ -100,7 +102,7 @@ the constructed solution $x_{i}^{t} \geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}$ c
 	%
 	\sum_{i=1}^{n} a_{i}^{t'} \biggl( \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t} \biggr)
 	%
-	= \sum_{k=1}^{K} w_{k}^{t}  \biggl( \sum_{i=1}^{n} a_{i}^{t'} s_{i,k}^{t} \biggr) 
+	= \sum_{k=1}^{K} w_{k}^{t}  \biggl( \sum_{i=1}^{n} a_{i}^{t'} s_{i,k}^{t} \biggr)
 	%
 	 \geq \sum_{k=1}^{K} w_{k}^{t} \geq 1
 \end{align*}
@@ -110,13 +112,14 @@ where the second inequality holds due to the feasibility of the experts' solutio
 
 We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
 where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
-Moreover, \texttt{LIN-COMB} is stronger than the best-expert benchmark for a general setting. We provide here an example. 
-Consider the makespan minimization problem in which one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.   
-There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$, which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.  
+
+Moreover, \texttt{LIN-COMB} is strictly stronger than the best-expert benchmark for a general setting. We provide here an example.
+Consider the makespan minimization problem in which one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.
+There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$ which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.
 
 \subsection{Our approach and contribution}
 
-\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark. 
+\paragraph{Approach.} We use the primal-dual approach to design competitive algorithms with the new \texttt{LIN-COMB} benchmark. First, we relax the linear program formulation of \texttt{LIN-COMB}, which serves as a lower bound. Then, we take the dual of the relaxation, which is a lower bound on the relaxation. Therefore, following the chain of lower bounds, the dual problem is a lower bound on the \texttt{LIN-COMB} benchmark.
 %The formulations of the relaxation and its dual are detailed in \cref{sec:covering} for linear problems and in \cref{sec:convex} for non-linear problems. \textbf{\color{red} to change here }
 
 Both of our proposed algorithms set the decision variables at every time step based on the solution of an internal program. Our approach is inspired by the
@@ -131,11 +134,11 @@ Moreover, regarding the constraints of the internal program, instead of using th
 we define auxiliary solutions that guarantee tight constraint satisfaction.
 Intuitively, this step is useful to avoid misleading experts' suggestions.
 
-It is more challenging to find a regularization function for non-linear objective functions. 
+It is more challenging to find a regularization function for non-linear objective functions.
 In our approach, we propose a new regularizer by coupling the entropy-like function with the gradient-Lipschitz property of the original covering problem's objective function.
-This new regularization function allows us to analyze the non-linear objective setting with a similar analysis structure as the linear one.
+This new regularization function allows us to analyze the non-linear objective setting similarly to the linear case.
 
-\paragraph{Results.} Let $\rho$ be the maximum ratio between the experts' solutions on the resources. 
+\paragraph{Results.} Let $\rho$ be the maximum ratio between the experts' solutions on the resources.
 Informally, $\rho$ represents the discrepancy across the experts' predictions.
 Formally,
 %We define the following parameter to establish the competitive ratio of our algorithm.
@@ -144,11 +147,11 @@ Formally,
 \]
 
 Our main results are the following.
-First, we present an algorithm for the online linear covering problem that achieves an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark. 
+First, we present an algorithm for the online linear covering problem that achieves an objective cost at most $O(\ln(K\rho))$ times the cost of the \texttt{LIN-COMB} benchmark.
 For the online non-linear covering problem, we provide an algorithm that achieves an objective cost at most $O(\ln(K\rho)) \cdot \frac{\lambda}{(1-\mu\ln(K\rho))}$ times the cost of \texttt{LIN-COMB}, where ($\lambda$,$\mu$) are parameters of the non-linear objective function (precisely, ($\lambda$,$\mu$) are smoothness parameters of the objective function that we define later in the corresponding section).
 
 In particular, for $0$-$1$ optimization problems, where the experts provide integer (deterministic or randomized) solutions, our first algorithm is $O(\ln(K))$-competitive with \texttt{LIN-COMB}, and the second one is $O(\ln(K)) \cdot \frac{\lambda}{(1-\mu\ln(K))}$-competitive.
-An interesting feature of our algorithms is their resilience to the fluctuation of the quality of predictions (discussed in \cref{subsec:related-works} and illustrated with experiments in \cref{sec:exp}).
+Remarkably, our algorithms are resilient against the prediction quality fluctuations (discussed in \cref{subsec:related-works} and illustrated with experiments in \cref{sec:exp}).
 
 
 \subsection{Related work and discussions} \label{subsec:related-works}
@@ -161,7 +164,7 @@ However, most learning-augmented algorithms suffer when the error rates are neit
 Figure~\ref{fig:robustness-consistency} provides a general picture of the performance of an algorithm with predictions, which is representative for many problems (for example, \cite{BamasMaggoriSvensson20:primal-dual-method,KeviNguyen23:Primal-Dual-Algorithms}).
 
 \begin{wrapfigure}{r}{0.38\textwidth}
-	\vspace{-5pt}
+	\vspace{-0.4cm}
     \centering
     \includegraphics[width=0.4\textwidth]{./Img/consistency_robustness.png}
     \vspace{-0.8cm}
@@ -212,7 +215,7 @@ The authors defined a consistency metric, which compares the performance of thei
 They compared the performance of their algorithm to the best possible solution obtained on the union of the suggestions. Recently, \cite{DinitzIm:Algorithms-with} studied the use of multiple predictors for several problems such as matching, load balancing, and non-clairvoyant scheduling. They provided algorithms that were competitive with the best predictor for such problems.
 \cite{AnandGe22:Online-Algorithms} studies the design of algorithms with multiple experts for linear covering problems.
 They consider a \texttt{DYNAMIC} benchmark that is intuitively
-the minimum cost solution that is supported by at least one expert solution at each time step, 
+the minimum cost solution that is supported by at least one expert solution at each time step,
 and provide an $O(\ln(K))$-competitive algorithm in the \texttt{DYNAMIC} benchmark.
 
 %An important remark: all the above benchmarks are captured within \texttt{LIN-COMB}.
@@ -223,5 +226,5 @@ Combining online algorithms into a new algorithm to achieve better results than 
 Its intrinsic difficulty is similar to the issue we mentioned earlier: when the performance of the given input algorithms (or heuristics, randomized methods) is unclear (especially in the online setting), it is challenging to create a combination that can surpass the performance of the included algorithms.
 Following the current development of online algorithm design techniques with multiple predictions, this subject has been renewed with different machine learning approaches. Our paper contributes to this line of research.
 
-\paragraph{Paper overview.}
+\subsection{Paper overview}
 In this paper we show two algorithms to solve online \emph{linear} (\cref{sec:covering}) and online \emph{non-linear} (\cref{sec:convex}) covering problems with multiple experts.  \cref{sec:exp} shows empirical results, and we conclude in \cref{sec:conclusion}. The complete details can be found in the appendix.
