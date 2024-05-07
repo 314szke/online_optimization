@@ -17,19 +17,19 @@ A natural research question is whether it is possible to design competitive algo
 
 Taking a broader view, we can study whether combining predictions of several experts is similar to combining multiple online algorithms and whether we can expect to achieve better solutions with the combination. Assuming that we do not know in advance which of the given algorithms would perform best on the upcoming requests, can we combine the algorithms in some generic way to obtain a competitive online strategy? This has been a long-standing question in the community of online algorithms \cite{AzarBroder93:On-line-Choice,BlumBurch00:On-line-Learning}. To find an answer, it is a crucial to understand to what extent such an online strategy can benefit from the input of multiple algorithms and what is a suitable benchmark to evaluate its performance.
 
-While in a completely general setting such an online strategy and a corresponding benchmark may not exist, in this paper we propose
+While in a completely general setting, such an online strategy and a corresponding benchmark may not exist, in this paper we propose
 two algorithms for online linear and non-linear problems with covering constraints that are competitive with the new benchmark (informally the \emph{best linear combination} of the experts). Therefore, our paper partially addresses the question we raised in the previous paragraph.
 
 \subsection{Model and Problem}
 
 \paragraph{Covering problem with experts.}
-In the \emph{linear} problem setting, we have $n$ resources and each resource $i$ has a cost per unit $c_{i}$ that we know in advance ($1 \leq i \leq n$).
+In the \emph{linear} problem setting, we have $n$ resources, and each resource $i$ has a cost per unit $c_{i}$ that we know in advance ($1 \leq i \leq n$).
 Let $x_{i}$ be a non-negative variable representing the amount chosen from resource $i$.
 The total cost of a solution $(x_{i})_{i=1}^{n}$ is $\sum_{i=1}^{n} c_{i} x_{i}$.
-The problem includes $K$ experts and the problem's covering-type constraints are revealed online one-by-one.
+The problem includes $K$ experts, and the problem's covering-type constraints are revealed online one by one.
 At each time $t \geq 1$, we receive a covering constraint $\sum_{i=1}^{n} a_{i}^{t} x_{i} \geq 1$ (where $a_{i}^{t} \geq 0$) and each expert $k$ (where $1 \leq k \leq K$) provides
-a solution $(s_{i,k}^{t})_{i=1}^{n}$. Our algorithm can observe the experts' solutions and afterwards it must update its own solution (denoted as $(x_{i}^{t})_{i=1}^{n}$)
-to satisfy the new constraint, while maintaining the satisfaction of the previous ones. This algorithm must update its solution in the sense of online algorithms, so it cannot modify the previously made decisions. Formally, $x_{i}^{t} \geq x_{i}^{t-1} ~\forall\ i, t$.
+a solution $(s_{i,k}^{t})_{i=1}^{n}$. Our algorithm can observe the experts' solutions, and afterwards, it must update its own solution (denoted as $(x_{i}^{t})_{i=1}^{n}$)
+to satisfy the new constraint while maintaining the satisfaction of the previous ones. This algorithm must update its solution in the sense of online algorithms so it cannot modify the previously made decisions. Formally, $x_{i}^{t} \geq x_{i}^{t-1} ~\forall\ i, t$.
 Our goal is to design an algorithm that minimizes $\sum_{i=1}^{n} c_{i} x_{i}^{T}$ subject to
 all online covering constraints $t$, where $1 \leq t \leq T$. The value $T$ is the last time a constraint is released, and it is not known by the algorithm.
 
@@ -110,9 +110,9 @@ where the second inequality holds due to the feasibility of the experts' solutio
 
 We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
 where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
-Moreover, \texttt{LIN-COMB} is strictly stronger than the best-expert benchmark for a general setting. We provide here an example. 
+Moreover, \texttt{LIN-COMB} is stronger than the best-expert benchmark for a general setting. We provide here an example. 
 Consider the makespan minimization problem in which one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.   
-There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$ which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.  
+There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$, which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.  
 
 \subsection{Our approach and contribution}
 
