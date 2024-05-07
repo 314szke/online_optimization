@@ -40,10 +40,10 @@ While linear programs are suitable to represent many optimization problems, they
         \end{align*}
 \end{minipage}
 
-\paragraph{Benchmark reformulation.} Let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be the indicator variable for solution $S$: $z_{S} = 1$ iff every variable $x_{i} = 1$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$; and $z_S = 0$ otherwise. In other words, $z_{S}$ indicates if the final solution is $S$. The formulation and its dual are given above. In the formulation, 
-the first constraint guarantees that we have a linear combination of expert solutions. 
-The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$ must be used as well. The third constraint ensures that at each time step, one solution should be selected. In the last constraint, 
-$y_S^{t}$ intuitively represents the fractional increase of the usage of solution $S$ at time $t$. 
+\paragraph{Benchmark reformulation.} Let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be the indicator variable for solution $S$: $z_{S} = 1$ iff every variable $x_{i} = 1$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$; and $z_S = 0$ otherwise. In other words, $z_{S}$ indicates if the final solution is $S$. The formulation and its dual are given above. In the formulation,
+the first constraint guarantees that we have a linear combination of expert solutions.
+The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$ must be used as well. The third constraint ensures that at each time step, one solution should be selected. In the last constraint,
+$y_S^{t}$ intuitively represents the fractional increase of the usage of solution $S$ at time $t$.
 
 %The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
 
@@ -78,7 +78,7 @@ We consider objective function $f$ that satisfies the following properties:
 %
 Moreover, the objective function also satisfies the gradient-Lipschitz and $(\lambda,\mu)$-locally-smooth properties below.
 \begin{itemize}
-	\item A function $f$ is $L$-\emph{gradient-Lipschitz}, if its derivatives are Lipschitz-continuous with the constant $L$. 
+	\item A function $f$ is $L$-\emph{gradient-Lipschitz}, if its derivatives are Lipschitz-continuous with the constant $L$.
 		Formally, for all $x$ and $y$: $\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|$.
 	\item A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
    		 if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:

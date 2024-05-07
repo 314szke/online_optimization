@@ -9,71 +9,39 @@
 
 Since our \texttt{LIN-COMB} benchmark is a linear combination of the experts' solutions, the equality $ \sum_{k=1}^{K} w_{k}^{t} = 1$ must hold, where $w_{k}^{t} \geq 0$ is the weight assigned to expert $k$ at time~$t$. In the following, we formulate a relaxed version of \texttt{LIN-COMB}, where
 $\sum_{k=1}^{K} w_{k}^{t} \geq 1$. The relaxed formulation also enables us to avoid the (online) hard constraint requiring $w_{k}^{t} s_{i,k}^{t} \geq w_{k}^{t-1} s_{i,k}^{t-1}$ to hold. Instead, we introduce a new variable, $y_{i}^{t}$, to represent the increase of $x_{i}^{t}$ compared to $x_{i}^{t-1}$. When $w_{k}^{t} s_{i,k}^{t} < w_{k}^{t-1} s_{i,k}^{t-1}$ during the execution, we set the contribution of $i$ at time $t$ to be 0, and therefore, $y_{i}^{t} = 0$.
-The relaxed formulation of \texttt{LIN-COMB} and its dual are below.  
+The relaxed formulation of \texttt{LIN-COMB} is visible on Figure~\ref{fig:relaxation}.
 
-\begin{minipage}{0.45\textwidth}
-		\begin{align*}
-			&& \min \sum_{t = 1}^{T} \sum_{i=1}^{n} & c_i y_i^t \\
+\begin{figure}
+	\begin{mdframed}
+		\vspace{-0.2cm}
+		\hspace{-0.5cm}
+		\begin{minipage}[t]{6.5cm}
+			\begin{align*}
+					&& \min \sum_{t = 1}^{T} \sum_{i=1}^{n} & c_i y_i^t \\
+					%
+					&& \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
+					%
+					&& \sum_{k=1}^{K} \left(w_{k}^{t} s_{i,k}^{t} - w_{k}^{t-1} s_{i,k}^{t-1} \right) &\leq y_i^t  &\forall\ i,t\\
+					%
+					&& w_{k}^{t},\ y_{i}^{t} & \ge 0 & \forall\ i,t,k
+				\end{align*}
+		\end{minipage}
+		\hspace{0.8cm}
+		\begin{minipage}[t]{6cm}
+			\begin{align*}
+				&& \max \sum_{t=1}^{T} & \alpha^{t} \\
 			%
-			(\alpha^{t}) \quad && \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
-			%
-			(\beta_{i}^{t}) \quad && \sum_{k=1}^{K} \left(w_{k}^{t} s_{i,k}^{t} - w_{k}^{t-1} s_{i,k}^{t-1} \right) &\leq y_i^t  &\forall\ i,t\\
-		%
-			&& w_{k}^{t}, y_{i}^{t} & \ge 0 & \forall\ i,t,k
-		\end{align*}
-\end{minipage}
-%
-\quad
-%
-\begin{minipage}{0.45\textwidth}
-		\begin{align*}
-			\max \sum_{t=1}^{T} & \alpha^{t} \\
-		%
-			 \alpha^{t} + \sum_{i=1}^{n} s_{i,k}^{t} ( \beta_{i}^{t+1} - \beta_{i}^{t})   &\leq 0  &\forall\ k,t\\
-		%
-			 \beta_{i}^{t}   &\leq c_{i}  &\forall\ i,t \\
-		%
-			 \alpha_{i}^{t},\ \beta_{i}^{t} & \ge 0 & \forall\ i,t
-		\end{align*}
-\end{minipage}
-
-
-%\begin{figure}
-%	\begin{mdframed}
-%		\vspace{-10pt}
-%		\begin{align*}
-%			&& \min \sum_{t = 1}^{T} \sum_{i=1}^{n} & c_i y_i^t \\
-%			%
-%			(\alpha^{t}) \qquad && \sum_{k=1}^{K} w_{k}^{t} & \geq 1  & \forall\ t \\
-%			%
-%			(\beta_{i}^{t}) \qquad && \sum_{k=1}^{K} \left(w_{k}^{t} s_{i,k}^{t} - w_{k}^{t-1} s_{i,k}^{t-1} \right) &\leq y_i^t  &\forall\ i,t\\
-%		%
-%			&& w_{k}^{t},\ y_{i}^{t} & \ge 0 & \forall\ i,t,k
-%		\end{align*}
-%		%\vspace{5pt}
-%	\end{mdframed}
-%	\caption{The relaxation of the \texttt{LIN-COMB} benchmark}
-%	\label{fig:relaxation}
-%\end{figure}
-%
-%\begin{figure}
-%	\begin{mdframed}
-%	\vspace{-10pt}
-%		\begin{align*}
-%			&& \max \sum_{t=1}^{T} & \alpha^{t} \\
-%		%
-%			(w_{k}^{t}) \qquad && \alpha^{t} + \sum_{i=1}^{n} s_{i,k}^{t} ( \beta_{i}^{t+1} - \beta_{i}^{t})   &\leq 0  &\forall\ k,t\\
-%		%
-%			(y_{i}^{t}) \qquad && \beta_{i}^{t}   &\leq c_{i}  &\forall\ i,t \\
-%		%
-%			&& \alpha_{i}^{t},\ \beta_{i}^{t} & \ge 0 & \forall\ i,t
-%		\end{align*}
-%	\end{mdframed}
-%	\caption{The dual of the \texttt{LIN-COMB} benchmark's relaxation}
-%	\label{fig:dual}
-%	\vspace{-5pt}
-%\end{figure}
-
+				&& \alpha^{t} + \sum_{i=1}^{n} s_{i,k}^{t} ( \beta_{i}^{t+1} - \beta_{i}^{t})   &\leq 0  &\forall\ k,t\\
+				%
+				&& \beta_{i}^{t}   &\leq c_{i}  &\forall\ i,t \\
+				%
+				&& \alpha_{i}^{t},\ \beta_{i}^{t} & \ge 0 & \forall\ i,t
+			\end{align*}
+		\end{minipage}
+	\end{mdframed}
+	\caption{The relaxation of the \texttt{LIN-COMB} benchmark}
+	\label{fig:relaxation}
+\end{figure}
 
 According to the theorem of weak duality, any feasible solution of the dual program lower bounds any feasible solution of the primal program, and therefore, any feasible dual solution also lower bounds our \texttt{LIN-COMB} benchmark. Following the chain of lower bounds, our approach to design a competitive algorithm is as follows. At every time step $t$, we build solutions for all $x_{i}^{t}$ together with the solutions for the dual problem $(\alpha^{t}, \beta_{i}^{t})$. Then, we bound the cost of the algorithm to that of the dual. It is important to emphasize that the designed solution for every $x_{i}^{t}$ must be feasible to the covering constraints, but it may \emph{not necessarily} be a linear combination of the experts' solutions.
 
@@ -88,13 +56,7 @@ we show an example that tight solutions cannot be maintained in an online manner
 
 To circumvent the issue of malicious suggestions, we preprocess the experts' solutions at each iteration. During the preprocessing, every solution $s_k^t$ is scaled down to make it as tight as possible on the $t^{\text{th}}$ constraint, while always maintaining $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i$. Additionally, after the down-scaling, we create an auxiliary solution $\hat{s}_k^t$ that is tight for the $t^{\text{th}}$ constraint. An important highlight: this auxiliary solution is useful for our algorithm and its analysis, but it does \emph{not} directly participate in forming the actual solution. (Our algorithm only sets the weights of the experts and does not change the experts' solutions.) The auxiliary solution $\hat{s}_k^t$ is created with the following procedure.
 
-After down-scaling the experts' suggestions, do the following for each expert $k$. 
-\begin{compactenum}
-	\item If $(s_{i,k}^{t})_{i=1}^{n}$ is tight on the $t^{\text{th}}$ constraint, then for every~$i$ set $\hat{s}_{i,k}^{t}~\gets~s_{i,k}^{t}$.
-	\item Let $\hat{s}_{i,k}^{t-1}$ be the auxiliary solution of expert $k$ at time $t-1$, meaning that, $\sum_{i=1}^{n} a_{i}^{t-1} \hat{s}_{i,k}^{t-1} = 1$. Given $I := \{i: s_{i,k}^{t} > \hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}} \}$, if $i \notin I$
-	we set $\hat{s}_{i,k}^{t} \gets s_{i,k}^{t}$, and if $i \in I$, we set $\hat{s}_{i,k}^{t}$ to be some value in $[\hat{s}_{i,k}^{t-1} \cdot \frac{a_{i}^{t-1}}{a_{i}^{t}}, s_{i,k}^{t}]$ such that the solution $\hat{s}_{i,k}^{t}$
-	becomes tight on the $t^{\text{th}}$ constraint.
-\end{compactenum}
+After down-scaling the experts' suggestions, do the following for each expert $k$. $(1)$ If $(s_{i,k}^{t})_{i=1}^{n}$ is tight on the $t^{\text{th}}$ constraint, then for every~$i$ set $\hat{s}_{i,k}^{t}$ to $s_{i,k}^{t}$. $(2)$ Let $\hat{s}_{i,k}^{t-1}$ be the auxiliary solution of expert $k$ at time $t-1$, meaning that, $\sum_{i=1}^{n} a_{i}^{t-1} \hat{s}_{i,k}^{t-1} = 1$. Given $I := \{i: s_{i,k}^{t} > \hat{s}_{i,k}^{t-1} \cdot \sfrac{a_{i}^{t-1}}{a_{i}^{t}} \}$, if $i \notin I$ we set $\hat{s}_{i,k}^{t} \gets s_{i,k}^{t}$, and if $i \in I$, we set $\hat{s}_{i,k}^{t}$ to be some value in $[\hat{s}_{i,k}^{t-1} \cdot \sfrac{a_{i}^{t-1}}{a_{i}^{t}}, s_{i,k}^{t}]$ such that the solution $\hat{s}_{i,k}^{t}$ becomes tight on the $t^{\text{th}}$ constraint.
 
 %\begin{restatable}{lemma}{preprocessinglemma}
 %	\label{lem:preprocessing}
@@ -104,14 +66,14 @@ After down-scaling the experts' suggestions, do the following for each expert $k
 %For the proof of \cref{lem:preprocessing} see \cref{appix-proofs}.
 
 
-
 %\paragraph{Algorithm.} The algorithm is visible on \cref{fig:algo1}.
 %
-%\begin{figure*}
-%\begin{mdframed}
-\paragraph{Algorithm 1.} At the arrival of the $t^{\text{th}}$ constraint,
-\begin{compactenum}
-	\item solve the following convex program and set $w^t$ to be the obtained optimal solution
+\begin{figure}[ht]
+\begin{mdframed}
+\paragraph{\underline{Algorithm 1.}} At the arrival of the $t^{\text{th}}$ constraint
+
+\vspace{0.1cm}
+Step $(1)$: solve the following convex program and set $w^t$ to be the obtained optimal solution
 %
 \begin{align*}
 	&& \min_{w} \biggl\{\sum_{i=1}^{n} c_{i}  \biggl[  \biggl(\sum_{k=1}^{K} s_{i,k}^{t} w_{i,k}  + \delta_{i}^{t} \biggr) &
@@ -132,16 +94,16 @@ After down-scaling the experts' suggestions, do the following for each expert $k
 	where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$.
 	%and recall that we set $\rho = \max_{i} \max_{t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}$.
 	We use the auxiliary solution $\hat{s}_{i,k}^{t}$ in the first constraint. For every $i$ where $s_{i,k}^{t} = 0$ for all $k$, the term related to $i$ is not included in the objective function ($w_{i,k} = 0$ for all $k$ beforehand).
-	%
-	\item For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
-	otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
-\end{compactenum}
-%\end{mdframed}
-%	\caption{Algorithm 1 for online linear covering problems}
-%	\label{fig:algo1}
-%\end{figure*}
 
-\paragraph{Remark.} Our proposed algorithm solves an internal convex program to set the value of $(x_i^t)_{i=1}^n$ at each time step $t$. The internal program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving this program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$, so to simplify the notation, we display all other occurrences of the competitive ratio as $O(\log(K))$. 
+	\vspace{0.1cm}
+	Step $(2)$: For all $i$, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > x_{i}^{t-1}$ then set $x_{i}^{t} \gets \sum_{k} w_{i,k}^{t} s_{i,k}^{t}$;
+	otherwise set $x_{i}^{t} \gets x_{i}^{t-1}$.
+\end{mdframed}
+	\caption{Algorithm 1 for online linear covering problems}
+	\label{fig:algo1}
+\end{figure}
+
+\paragraph{Remark.} Our proposed algorithm solves an internal convex program to set the value of $(x_i^t)_{i=1}^n$ at each time step $t$. The internal program's objective uses a shifted entropy function as a convex regularizer. To avoid a possible division by $0$ while solving this program, we use a dummy expert. This expert sets initially each variable to some small value, then follows the greedy heuristic and resolves the problem at each arriving constraint. The presence of this dummy expert only changes the competitive ratio from $O(\log(K))$ to $O(\log(K + 1))$, so to simplify the notation, we display all other occurrences of the competitive ratio as $O(\log(K))$.
 %At time $0$ (when no constraints have arrived yet), every expert's suggestion is $0$ for every variable, but the average of the suggestions is $1$.
 
 
@@ -244,29 +206,32 @@ Algorithm 1 is $O(\ln(K \rho))$-competitive with the \texttt{LIN-COMB} benchmark
 \end{corollary}
 %
 \begin{proof}
-%
-	\begin{wrapfigure}{r}{0.5\textwidth}
-		\vspace{-1.1cm}
-		\centering
-		\includegraphics[width=0.4\textwidth]{./Img/algo_structure.pdf}
-		\vspace{-0.35cm}
-		%\caption{Overview of the algorithm's components.}
-		\label{fig:algo-layers}
-	\end{wrapfigure}
 
-	If the value of $s_{i,k}^{t}$ is in $\{0,1\}$ for every $i,k,t$, then
-	\[
-	\rho = \max_{i} \max_{t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}
-	\leq \frac{K}{1}
-	\]
-	Therefore, the competitive ratio of our algorithm with the \texttt{LIN-COMB} benchmark is $O(\log (K \rho)) = O(\log (K^2))$.
+	\begin{minipage}[t]{8cm}
+		If the value of $s_{i,k}^{t}$ is in $\{0,1\}$ for every $i,k,t$, then
+		\[
+			\rho = \max_{i} \max_{t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}
+			\leq \frac{K}{1}
+		\]
+		Therefore, the competitive ratio of our algorithm with the \texttt{LIN-COMB} benchmark is $O(\log (K \rho)) = O(\log (K^2))$.
+	\end{minipage}
+	\hspace{0.5cm}
+	\begin{minipage}[t]{5cm}
+			\vspace{-1.0cm}
+			\centering
+			\hspace{0.45cm}
+			\includegraphics[width=\textwidth]{./Img/algo_structure.pdf}
+			\vspace{-0.35cm}
+			%\caption{Overview of the algorithm's components.}
+			\label{fig:algo-layers}
+	\end{minipage}
 
- 	To obtain an algorithm that is competitive with both the \texttt{LIN-COMB} and the worst-case benchmarks, 
-	we proceed as follows.  (The figure %\cref{fig:algo-layers} 
-	serves as an illustration in which  $E_1,\ E_2, \dots\ E_K$ correspond to the experts of the online problem.)
+	To obtain an algorithm that is competitive with both the \texttt{LIN-COMB} and the worst-case benchmarks,
+	we proceed as follows. (The figure %\cref{fig:algo-layers}
+	serves as an illustration in which  $E_1,\ \dots,\ E_K$ correspond to the online problem's experts.)
 	We first apply the main algorithm on the $K$ experts' predictions to obtain an online algorithm, named $A$.
 	Algorithm $A$ is $O(\ln (K))$-competitive with the \texttt{LIN-COMB} benchmark. Let $B$ be the algorithm with the best worst-case guarantee.
-	We then apply the main algorithm one more time on two algorithms, $A$ and $B$. The final algorithm is $O(\ln (2))$-competitive with both $A$ and $B$.
+	We apply the main algorithm one more time on two algorithms, $A$ and $B$. The final algorithm is $O(\ln (2))$-competitive with both $A$ and $B$.
 	In other words, its performance is $O(\ln (K))$-competitive with the \texttt{LIN-COMB} benchmark and is up to a constant factor worse than the best guarantee in the worst-case benchmark.
 \end{proof}
 
