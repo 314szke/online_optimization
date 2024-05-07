@@ -5,7 +5,7 @@
 \section{Models}
 
 
-\subsection{Comparaison between \texttt{LIN-COMB} and the best-expert in hindsight models}
+\subsection{Comparaison between \texttt{LIN-COMB} and the best-expert in hindsight models}		\label{sec:comparaison}
 In this section, we argue that (1) in the linear covering setting, \texttt{LIN-COMB} and the best-expert in hindsight benchmark are equivalent;
 and (2) in the non-linear covering one,  \texttt{LIN-COMB} is stronger than the best-expert in hindsight benchmark. 
 
@@ -34,7 +34,7 @@ at time $T$. Then, the optimal value of \texttt{LIN-COMB} (at time $T$) is:
 Consequently, the two benchmarks are equivalent. 
 
 \paragraph{Non-Linear Covering Setting.} By the previous argument, \texttt{LIN-COMB} always captures the best expert benchmark by setting 
-$w_{k^{*}}^{t} = 1$ and $w_{k}^{t} = 0$ for all $k \neq k^{*}$ over all $1 \leq t \leq T$. We are providing an example showing that \texttt{LIN-COMB} is strictly stronger than 
+$w_{k^{*}}^{t} = 1$ and $w_{k}^{t} = 0$ for all $k \neq k^{*}$ over all $1 \leq t \leq T$. We provide an example showing that \texttt{LIN-COMB} is stronger than 
 the best-expert. Consider the makespan minimization problem in which one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load (makespan).   
 This problem can be formulated as a non-linear covering problem.
 $$
@@ -43,12 +43,12 @@ $$
 \sum_{i=1}^{n} x_{ij} \geq 1 ~\forall j, \quad x_{ij} \geq 0 ~\forall i,j
 $$
 
-There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. 
+There are $n$ experts, and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. 
 
 The best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$, which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.  
 
 
-\subsection{Assumptions of experts}
+\subsection{Assumptions of experts}		\label{sec:assumptions}
 We consider two natural assumptions on the suggestions/solutions of experts. 
 
 The first one is \emph{feasibility}, i.e., experts' solutions must satisfy all the constraints so far. One can easily check and detect if a solution is infeasible and ignore the corresponding expert if that is the case. 
@@ -60,13 +60,17 @@ There are two experts.
 At time $1$, experts 1 and 2 provide solution $(1,0)$ and $(\infty, \infty)$ respectively. 
 The best expert up to time 1 is expert 1 with an objective cost of $N$. 
 At time $2$, expert 1 always provides $(1,0)$ while expert 2 gives a solution $(0,1)$ by \emph{decreasing} its previous solution.  
-Now the best expert up to time 2 is expert 2 with an objective cost of $1$. 
+Now, the best expert up to time 2 is expert 2 with an objective cost of $1$. 
 One can generalize this toy example to create an unstable objective cost (very large then very small and so on) of the best expert benchmark.
 
 In the above example, no algorithm based on expert solutions can be competitive 
-since an adversary can create a dummy expert (providing a trivial solution with a large objective) all the time, but the last step 
-and in the last step, the dummy expert gives an optimal solution. An online algorithm cannot decrease its solution (as decisions made are irrevocable)
-and becomes uncompetitive. 
+since an adversary can create a dummy expert (providing a trivial large solution) all the time, but the last step 
+and in the last step, the dummy expert, by decreasing its solution, gives an optimal solution. 
+An online algorithm cannot decrease its solution (as decisions made are irrevocable)
+and becomes uncompetitive. Hence, all stable and well-defined benchmark that includes the best expert in hindsight as a candidate should have the monotone property. 
+
+Besides, one motivation for our work is to combine online algorithms into a new one with a better guarantee. 
+Such online algorithms, represented by experts, maintain monotone solutions. That motivates the monotone property.  
 
 \section{Counter example for tight online expert solutions} \label{appix-tight-solutions}
 

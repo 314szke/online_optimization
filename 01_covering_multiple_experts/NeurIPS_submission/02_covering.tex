@@ -49,10 +49,12 @@ According to the theorem of weak duality, any feasible solution of the dual prog
 
 \paragraph{Preprocessing.}
 We recall that by our assumptions, the experts' solutions are always feasible and non-decreasing. At the arrival of the $t^{\text{th}}$ constraint, expert $k$ provides a feasible solution $s_{k}^{t} = (s_{i,k}^{t})_{i=1}^{n}$, such that $s_{i,k}^{t} \ge s_{i,k}^{t'}$ for all $t' \le t$ and all $i$. These assumptions do not exclude the possibility for the experts to provide malicious solutions that instruct the algorithm to use an unnecessarily large amount of resources.
-To regardless maintain online solutions, we do \emph{not} expect the experts' solutions to be always tight (a difference compared to the assumptions in \cite{AnandGe22:Online-Algorithms}).
-%Either the solutions come from an offline method and guarantee tightness as in \cite{BamasMaggoriSvensson20:primal-dual-method}, or the solutions are constructed online by the experts and do not guarantee tightness.
-(In Appendix~\ref{appix-tight-solutions}
-we show an example that tight solutions cannot be maintained in an online manner.)
+Note that one difficulty of designing competitive algorithms comes from the lack of obvious ways to distinguish
+good expert solutions from (probably many) non-efficient/misleading ones.
+
+%To regardless maintain online solutions, we do \emph{not} expect the experts' solutions to be always tight (a difference compared to the assumptions in \cite{AnandGe22:Online-Algorithms}).
+%(In Appendix~\ref{appix-tight-solutions}
+%we show an example that tight solutions cannot be maintained in an online manner.)
 
 To circumvent the issue of malicious suggestions, we preprocess the experts' solutions at each iteration. During the preprocessing, every solution $s_k^t$ is scaled down to make it as tight as possible on the $t^{\text{th}}$ constraint, while always maintaining $s_{i,k}^{t} \geq s_{i,k}^{t-1}$ for all $i$. Additionally, after the down-scaling, we create an auxiliary solution $\hat{s}_k^t$ that is tight for the $t^{\text{th}}$ constraint. An important highlight: this auxiliary solution is useful for our algorithm and its analysis, but it does \emph{not} directly participate in forming the actual solution. (Our algorithm only sets the weights of the experts and does not change the experts' solutions.) The auxiliary solution $\hat{s}_k^t$ is created with the following procedure.
 

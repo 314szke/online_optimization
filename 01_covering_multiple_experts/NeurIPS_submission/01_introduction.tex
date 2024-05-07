@@ -42,11 +42,13 @@ fulfill the following properties:
 	\item for every expert $k$ and for every time $t$ and for every resource $i$, the previous expert solutions are irrevocable, therefore $s_{i,k}^{t} \geq s_{i,k}^{t'}$ for all $t' \leq t$.
 \end{compactenum}
 These properties can be verified online. If some experts do not satisfy them, we simply ignore those experts both in the decision-making and in the benchmark.
-A crucial remark: we do \emph{not} assume that the experts' solutions are tight at each constraint $t$, requiring $\sum_{i=1}^{n} a_{i}^{t} s_{i,k}^{t} = 1 ~ \forall t, k$ to hold.
-This assumption is unrealistic and cannot be maintained in an online manner (see the discussion in Appendix~\ref{appix-tight-solutions}).
-Besides, assuming tight constraint satisfaction would simplify the problem, while intuitively,
-the difficulty of designing competitive algorithms comes from the lack of obvious ways to distinguish
-good expert solutions from (probably many) non-efficient/misleading ones.
+We provide motivations and justification for the assumptions in \cref{sec:assumptions}.
+
+%A crucial remark: we do \emph{not} assume that the experts' solutions are tight at each constraint $t$, requiring $\sum_{i=1}^{n} a_{i}^{t} s_{i,k}^{t} = 1 ~ \forall t, k$ to hold.
+%This assumption is unrealistic and cannot be maintained in an online manner (see the discussion in Appendix~\ref{appix-tight-solutions}).
+%Besides, assuming tight constraint satisfaction would simplify the problem, while intuitively,
+%the difficulty of designing competitive algorithms comes from the lack of obvious ways to distinguish
+%good expert solutions from (probably many) non-efficient/misleading ones.
 
 \noindent \textbf{Benchmark.}
 We consider a dynamic benchmark that captures the \emph{best linear combination} of all experts' solutions \emph{over time}.
@@ -110,12 +112,13 @@ the constructed solution $x_{i}^{t} \geq \sum_{k=1}^{K} w_{k}^{t} s_{i,k}^{t}$ c
 where the second inequality holds due to the feasibility of the experts' solutions.
 %
 
-We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
+We highlight that the best-expert benchmark is included in \texttt{LIN-COMB}. 
+We get the solution of this benchmark by setting $w^{t}_{k^{*}} = 1$ for all $t$, where $1 \leq t \leq T$, and $w^{t}_{k} = 0$ for all $k \neq k^{*}$,
 where $k^{*}$ is the best expert (so $x_{i}^{t} = s_{i,k^{*}}^{t}$ for all $i$ and $t$).
-
-\texttt{LIN-COMB} is strictly stronger than the best-expert benchmark for a general setting. We provide here an example.
-In the makespan minimization problem, one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.
-There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$ which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.
+Indeed, compared to the best expert in hindsight, \texttt{LIN-COMB} is equivalent in the linear setting and 
+is stronger in a more general non-linear setting. Detailed discussion is in \cref{sec:comparaison}; we briefly provide an example of the non-linear objectives.  
+Consider the makespan minimization problem in which one assigns $n$ unit jobs to $n$ identical machines to minimize the maximum machine load.   
+There are $n$ experts and each expert $i$ assigns all jobs to machine $i$ for $1 \leq i \leq n$. Hence, the best expert has the maximum machine load of $n$ (the same for every expert). However, the optimal solution in \texttt{LIN-COMB} can choose $w_{i} = 1/n$, which results in the makespan of $1$. The solution corresponds to the assignment of one job to one machine.  
 
 \subsection{Our approach and contribution}
 
