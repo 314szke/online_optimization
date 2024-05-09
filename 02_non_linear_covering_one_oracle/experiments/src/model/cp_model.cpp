@@ -11,9 +11,8 @@ CP_Model::CP_Model(Model& model) :
     max_dimension(0.0),
     _model(model)
 {
-    uint32_t constr_idx = 0.0;
-
     // Constraint connecting y with x
+    uint32_t constr_idx = 0.0;
     for (uint32_t e = 0; e < _model.graph.nb_edges; e++) {
         bounds[constr_idx] = 0.0;
         coefficients[constr_idx][e] = 1.0; // y_e

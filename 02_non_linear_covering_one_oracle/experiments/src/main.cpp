@@ -6,6 +6,7 @@
 #include "input/grid_generator.h"
 #include "input/random_generator.h"
 #include "online/execution_manager.h"
+#include "output/convert_to_cp.h"
 
 
 int main(int argc, char** argv)
@@ -27,7 +28,11 @@ int main(int argc, char** argv)
             GridGenerator grid_generator(arg_parser);
             grid_generator.generate();
         }
-        return 0;
+    }
+
+    if (arg_parser.modeIsConversion()) {
+        ConvertToCP converter(arg_parser.data_file);
+        converter.convert(arg_parser.output_file);
     }
 
     ExecutionManager manager(arg_parser);

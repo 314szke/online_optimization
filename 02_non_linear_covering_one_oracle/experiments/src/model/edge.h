@@ -15,7 +15,6 @@ public:
 
     int64_t id;
 
-private:
     double coefficient;
     double exponent;
     double constant_term;

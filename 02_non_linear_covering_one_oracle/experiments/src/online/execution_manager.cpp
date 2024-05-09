@@ -1,6 +1,7 @@
 #include "execution_manager.h"
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <pthread.h>
@@ -15,7 +16,9 @@ ExecutionManager::ExecutionManager(const ArgumentParser& arg_parser) :
     model(arg_parser.data_file),
     cp_model(model),
     greedy_objective(0.0),
-    offline_objective(0.0)
+    offline_objective(0.0),
+    save_to_file(arg_parser.modeIsConversion()),
+    expert_file(arg_parser.expert_file)
 {
     config.dimension = cp_model.max_dimension;
 }
@@ -57,6 +60,8 @@ void ExecutionManager::run()
     }
 
     solveForAllEta(oracles, data);
+
+    saveResultsToFile(greedy_solution, offline_solution, oracles, data);
 }
 
 double ExecutionManager::evaluateSolution(std::string name, const DoubleVec_t& solution)
@@ -88,8 +93,8 @@ void ExecutionManager::solveForAllEta(Prediction& oracles, struct ExecutionData_
     pthread_t threads[oracles.getNbOracles()];
     void* status;
 
-    double best_eta = -1.0;
-    int best_oracle_idx = -1;
+    best_eta = -1.0;
+    best_oracle_idx = -1;
     double best_objective = std::numeric_limits<double>::infinity();
 
     std::ofstream out("result.txt");
@@ -165,4 +170,51 @@ void ExecutionManager::solveWithOracle(struct ExecutionData_t *data)
     for (uint32_t idx = 0; idx < solution.size(); idx++) {
         data->solution[idx] = solution[idx];
     }
+}
+
+void ExecutionManager::saveResultsToFile(const DoubleVec_t& greedy_solution, const DoubleVec_t& offline_solution, Prediction& oracles, struct ExecutionData_t* data) const
+{
+    if (!save_to_file) {
+        return;
+    }
+
+    // Saves the routes per request. A line does not include all variables.
+    std::ofstream f_out(expert_file);
+    f_out << std::fixed << std::setprecision(2);
+
+    f_out << 3 + oracles.getNbOracles() << std::endl; // greedy + offline + algo + oracles
+
+    uint32_t segment_pointer = model.graph.nb_edges;
+    for (uint32_t r = 0; r < model.nb_requests; r++) {
+        // Greedy
+        for (uint32_t idx = segment_pointer; idx < (segment_pointer + model.graph.nb_edges); idx++) {
+            f_out << greedy_solution[idx] << " ";
+        }
+        f_out << std::endl;
+
+        // Offline
+        for (uint32_t idx = segment_pointer; idx < (segment_pointer + model.graph.nb_edges); idx++) {
+            f_out << offline_solution[idx] << " ";
+        }
+        f_out << std::endl;
+
+        // Algo
+        for (uint32_t idx = segment_pointer; idx < (segment_pointer + model.graph.nb_edges); idx++) {
+            f_out << data[best_oracle_idx].solution[idx] << " ";
+        }
+        f_out << std::endl;
+
+        // Oracles
+        for (uint32_t oracle_idx = 0; oracle_idx < oracles.getNbOracles(); oracle_idx++) {
+            Oracle* oracle = oracles.getOracle(oracle_idx);
+            for (uint32_t idx = 0; idx < model.graph.nb_edges; idx++) {
+                f_out << oracle->predictions[r][idx] << " ";
+            }
+            f_out << std::endl;
+        }
+
+        segment_pointer += model.graph.nb_edges;
+    }
+
+    f_out.close();
 }

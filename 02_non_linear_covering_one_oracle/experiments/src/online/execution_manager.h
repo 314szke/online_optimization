@@ -32,6 +32,7 @@ private:
     void solveForAllEta(Prediction& oracles, struct ExecutionData_t* data);
     static void* threadSolve(void *thread_args);
     static void solveWithOracle(struct ExecutionData_t *data);
+    void saveResultsToFile(const DoubleVec_t& greedy_solution, const DoubleVec_t& offline_solution, Prediction& oracles, struct ExecutionData_t* data) const;
 
     Config config;
     Model model;
@@ -39,4 +40,10 @@ private:
 
     double greedy_objective;
     double offline_objective;
+
+    double best_eta;
+    int best_oracle_idx;
+
+    bool save_to_file;
+    const std::string& expert_file;
 };
