@@ -12,6 +12,8 @@ void ConvertToCP::convert(const std::string& output_file)
     std::ofstream f_out(output_file);
 
     f_out << model.graph.nb_edges << std::endl;
+    // Number of constraints = connect y with x + flow preservation for each vertex
+    f_out << (model.graph.nb_edges + (model.graph.nb_vertices * model.nb_requests)) << std::endl;
     f_out << model.nb_requests << std::endl;
 
     // Objective
