@@ -7,7 +7,7 @@
 class OnlineModel : public BaseModel {
 public:
     OnlineModel(const OfflineModel& model);
-    void revealNextConstraint();
+    void revealNextConstraints();
 private:
     const OfflineModel& _offline_model;
     uint32_t time;

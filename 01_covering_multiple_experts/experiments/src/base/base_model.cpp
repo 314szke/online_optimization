@@ -5,9 +5,11 @@
 
 BaseModel::BaseModel() :
     is_minimization(true),
+    is_convex(false),
     use_box_constraints(false),
     nb_variables(0),
     nb_constraints(0),
+    batch_size(1),
     online_step(1)
 {}
 
@@ -28,7 +30,7 @@ uint32_t BaseModel::getNbVariables() const
 
 uint32_t BaseModel::getNbConstraints() const
 {
-    return nb_constraints;
+    return (nb_constraints / batch_size);
 }
 
 uint32_t BaseModel::getNbNewConstraints(const uint32_t time) const
@@ -47,6 +49,11 @@ uint32_t BaseModel::getNbOnlineSteps() const
 const DoubleVec_t& BaseModel::getCost() const
 {
     return c;
+}
+
+const UIntVec_t& BaseModel::getCostExponent() const
+{
+    return e;
 }
 
 const DoubleVec_t& BaseModel::getBound(const uint32_t time) const

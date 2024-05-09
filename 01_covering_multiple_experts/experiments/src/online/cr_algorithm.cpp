@@ -9,7 +9,7 @@
 CR_Algorithm::CR_Algorithm(const OfflineModel& model, const Config& config, const Experts& experts) :
     _model(model),
     _experts(experts),
-    convex_model(model, experts),
+    convex_model(config, model, experts),
     lp_solver(convex_model, config.gurobi_verbosity),
     frank_wolfe(config, convex_model, lp_solver),
     online_objective(0.0),
@@ -27,7 +27,7 @@ const DoubleVec_t& CR_Algorithm::solve()
     double temp_x = 0.0;
 
     for (uint32_t t = 1; t < (_model.getNbConstraints() + 1); t++) {
-        convex_model.revealNextConstraint();
+        convex_model.revealNextConstraints();
         lp_solver.addNewConstraints(t);
 
         DoubleVec_t w = frank_wolfe.solve();

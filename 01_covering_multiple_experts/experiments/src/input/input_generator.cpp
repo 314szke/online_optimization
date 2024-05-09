@@ -155,7 +155,7 @@ void InputGenerator::generateExperts()
     f_out << std::fixed << std::setprecision(15);
     f_out << (nb_experts + 1) << std::endl; // +1 for the dummy expert
 
-    OfflineModel off_model(_arg_parser.data_file);
+    OfflineModel off_model(_arg_parser.data_file, false);
     LP_Solver off_solver(off_model, 0);
     DoubleVec_t optimal_solution = off_solver.solve();
     Solution::RoundSolutionIfNeeded(off_model, optimal_solution, off_model.getNbConstraints());
@@ -186,7 +186,7 @@ void InputGenerator::generateExperts()
     double constr_value;
 
     for (uint32_t j = 1; j < (nb_constraints + 1); j++) {
-        on_model.revealNextConstraint();
+        on_model.revealNextConstraints();
         on_solver.addNewConstraints(j);
         DoubleVec_t solution = on_solver.solve();
         Solution::RoundSolutionIfNeeded(off_model, solution, j);

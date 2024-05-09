@@ -8,6 +8,6 @@
 
 class OfflineModel : private ParsedObject, public BaseModel {
 public:
-    OfflineModel(const std::string& data_file);
+    OfflineModel(const std::string& data_file, bool is_convex_mode);
     double getObjectiveValue(const DoubleVec_t& x) const;
 };

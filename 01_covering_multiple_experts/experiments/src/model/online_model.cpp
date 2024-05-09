@@ -5,17 +5,24 @@ OnlineModel::OnlineModel(const OfflineModel& model) :
     _offline_model(model),
     time(0)
 {
-    nb_variables = _offline_model.getNbVariables();
-    nb_constraints = _offline_model.getNbConstraints();
-    is_minimization = _offline_model.isMinimization();
-    c = _offline_model.getCost();
+    is_minimization = _offline_model.is_minimization;
+    is_convex = _offline_model.is_convex;
+    nb_variables = _offline_model.nb_variables;
+    nb_constraints = _offline_model.nb_constraints;
+    batch_size = _offline_model.batch_size;
 
-    // At time = 0 there are no constraints
+    c = _offline_model.c;
+    e = _offline_model.e;
+
+    // Constraints at time = 0
     b.resize(1);
     A.resize(1);
+    if (is_convex) {
+
+    }
 }
 
-void OnlineModel::revealNextConstraint()
+void OnlineModel::revealNextConstraints()
 {
     time++;
     b.resize((time + 1));

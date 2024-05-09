@@ -16,7 +16,7 @@ DummyExpert::DummyExpert(const OfflineModel& off_model) :
     for (uint32_t j = 1; j < (off_model.getNbConstraints() + 1); j++) {
         dummy_solution[j] = dummy_solution[j-1];
 
-        on_model.revealNextConstraint();
+        on_model.revealNextConstraints();
         on_solver.addNewConstraints(j);
         DoubleVec_t solution = on_solver.solve();
         Solution::RoundSolutionIfNeeded(off_model, solution, j);

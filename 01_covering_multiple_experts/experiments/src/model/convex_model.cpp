@@ -3,12 +3,13 @@
 #include <cmath>
 
 
-ConvexModel::ConvexModel(const OfflineModel& model, const Experts& experts) :
+ConvexModel::ConvexModel(const Config& config, const OfflineModel& model, const Experts& experts) :
     _offline_model(model),
     _experts(experts),
     time(0),
     nb_constraints_per_time(model.getNbVariables() + 1),
-    nb_revealed_constraints(0)
+    nb_revealed_constraints(0),
+    is_convex(config.is_convex)
 {
     use_box_constraints = true;
 
@@ -46,7 +47,7 @@ ConvexModel::ConvexModel(const OfflineModel& model, const Experts& experts) :
     }
 }
 
-void ConvexModel::revealNextConstraint()
+void ConvexModel::revealNextConstraints()
 {
     // Add space for new constraints
     time++;
@@ -96,6 +97,14 @@ void ConvexModel::revealNextConstraint()
 
 double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
 {
+    if (is_convex) {
+        return getConvexObjectiveValue(w, w_prev);
+    }
+    return getLinearObjectiveValue(w, w_prev);
+}
+
+double ConvexModel::getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
+{
     const DoubleVec_t& c_lp = _offline_model.getCost();
     const DoubleMat_t& s = _experts.getSolutions(nb_revealed_constraints);
     const DoubleMat_t& s_prev = _experts.getSolutions((nb_revealed_constraints - 1));
@@ -122,7 +131,21 @@ double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w
     return value;
 }
 
+double ConvexModel::getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
+{
+    return 0;
+}
+
 void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
+{
+    if (is_convex) {
+        calculateLinearObjectiveValueDerivative(w, w_prev);
+    } else {
+        calculateConvexObjectiveValueDerivative(w, w_prev);
+    }
+}
+
+void ConvexModel::calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
     const DoubleVec_t& c_lp = _offline_model.getCost();
     const DoubleMat_t& s = _experts.getSolutions(nb_revealed_constraints);
@@ -146,6 +169,11 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
             c[(i + (k * _offline_model.getNbVariables()))] = c_lp[i] * s[k][i] * log_value;
         }
     }
+}
+
+void ConvexModel::calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
+{
+
 }
 
 uint32_t ConvexModel::getNbLPVariables() const
