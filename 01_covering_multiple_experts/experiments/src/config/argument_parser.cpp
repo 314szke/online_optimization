@@ -16,7 +16,7 @@ ArgumentParser::ArgumentParser(int argc, char** argv) :
 
 void ArgumentParser::parse()
 {
-    if (_argc != 2) {
+    if (_argc != 3) {
         displayUsage();
     }
 
@@ -30,6 +30,7 @@ void ArgumentParser::parse()
         checkIfFileExists(data_file);
         checkIfConfigFileExists(config_file);
         checkIfFileExists(expert_file);
+        checkOption(std::string(_argv[2]));
     } catch(...) {
         mode_generation = true;
         try {
@@ -48,7 +49,8 @@ bool ArgumentParser::modeIsGeneration() const
 void ArgumentParser::displayUsage()
 {
     std::stringstream message;
-    message << std::endl << std::endl << "Usage: ./OCME <test_name>" << std::endl;
+    message << std::endl << std::endl << "Usage: ./OCME <test_name> --linear" << std::endl;
+    message << std::endl << std::endl << "or:    ./OCME <convex_test_name> --convex" << std::endl;
     message << "1) If the test name exists in the data/ config/ and experts/ folders, the test is executed." << std::endl;
     message << "2) If 1) fails, if the test name exists in generation/ folder, the test is generated." << std::endl;
     message << "3) Otherwise ERROR!" << std::endl;
@@ -74,5 +76,16 @@ void ArgumentParser::checkIfConfigFileExists(std::string& filename)
             std::cout << "WARNING: No test specific config file found, using the general configuration file!" << std::endl;
             config_file = general_config;
         }
+    }
+}
+
+void ArgumentParser::checkOption(std::string option)
+{
+    if (option == std::string("--linear")) {
+        is_convex = false;
+    } else if (option == std::string("--convex")) {
+        is_convex = true;
+    } else {
+        throw std::runtime_error("invalid option");
     }
 }

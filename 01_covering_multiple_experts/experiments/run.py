@@ -7,7 +7,7 @@ def runWorstCaseExample():
         for N in range(10, 60, 10):
             for K in range(10, 60, 10):
                 print(f'N[{N}]\tK[{K}]')
-                subprocess.call(f'./OCME wc_n_{N}_k_{K} > output.txt', shell=True)
+                subprocess.call(f'./OCME wc_n_{N}_k_{K} --linear > output.txt', shell=True)
 
                 with open('output.txt', 'r') as f:
                     lines = f.readlines()
@@ -25,7 +25,7 @@ def runCounterExample():
                 N = L*K + 1
                 M = L* (K-1)
                 print(f'K[{K}]\tL[{L}]\tN[{N}]\tM[{M}]')
-                subprocess.call(f'./OCME ce_k_{K}_l_{L} > output.txt', shell=True)
+                subprocess.call(f'./OCME ce_k_{K}_l_{L} --linear > output.txt', shell=True)
 
                 with open('output.txt', 'r') as f:
                     lines = f.readlines()

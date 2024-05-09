@@ -5,7 +5,9 @@ Config::Config(const std::string& config_file) :
     time_horizon(0),
     max_search_iter(0),
     max_distance(0.0),
-    epsilon(0.0)
+    epsilon(0.0),
+    L(0),
+    is_convex(false)
 {
     f_in.open(config_file);
 
@@ -20,6 +22,7 @@ Config::Config(const std::string& config_file) :
     readParameter(max_distance);
     readParameter(gurobi_verbosity);
     readParameter(epsilon);
+    readParameter(L);
 
     f_in.close();
 }

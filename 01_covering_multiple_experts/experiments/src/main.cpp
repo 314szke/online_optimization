@@ -33,6 +33,7 @@ int main(int argc, char** argv)
 
     // Set up the model
     Config config(arg_parser.config_file);
+    config.is_convex = arg_parser.is_convex;
     OfflineModel offline_model(arg_parser.data_file);
     DummyExpert dummy_expert(offline_model);
 

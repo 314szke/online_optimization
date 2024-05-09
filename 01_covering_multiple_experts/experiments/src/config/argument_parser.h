@@ -14,10 +14,12 @@ public:
     std::string config_file;
     std::string expert_file;
     std::string generator_file;
+    bool is_convex;
 private:
     void displayUsage();
     void checkIfFileExists(std::string& filename);
     void checkIfConfigFileExists(std::string& filename);
+    void checkOption(std::string option);
 
     int _argc;
     char** _argv;
