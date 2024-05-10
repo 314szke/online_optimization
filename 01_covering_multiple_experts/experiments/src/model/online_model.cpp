@@ -2,42 +2,87 @@
 
 
 OnlineModel::OnlineModel(const OfflineModel& model) :
-    _offline_model(model),
-    time(0)
+    _offline_model(model)
 {
-    is_minimization = _offline_model.is_minimization;
-    is_convex = _offline_model.is_convex;
-    nb_variables = _offline_model.nb_variables;
-    nb_constraints = _offline_model.nb_constraints;
-    batch_size = _offline_model.batch_size;
+    is_convex = _offline_model.isConvex();
+    is_online = true;
 
-    c = _offline_model.c;
-    e = _offline_model.e;
+    nb_variables = _offline_model.getNbVariables();
+    nb_objective_variables = _offline_model.getNbObjectiveVariables();
 
-    // Constraints at time = 0
+    nb_constraints = _offline_model.getNbConstraints();
+    nb_initial_constraints = _offline_model.getNbInitialConstraints();
+
+    nb_batches = _offline_model.getNbConstraintBatches();
+    batch_size = _offline_model.getConstraintBatchSize();
+
+    c = _offline_model.getCost();
+    e = _offline_model.getCostExponent();
+
+    // Initial constraints
     b.resize(1);
     A.resize(1);
-    if (is_convex) {
 
+    b[0].resize(nb_initial_constraints, 0.0);
+    A[0].resize(nb_initial_constraints);
+
+    const DoubleVec_t& b_lp = _offline_model.getBound(0);
+    const DoubleMat_t& A_lp = _offline_model.getCoefficient(0);
+
+    for (uint32_t j = 0; j < nb_initial_constraints; j++) {
+        b[0][j] = b_lp[j];
+        A[0][j].resize(nb_variables, 0.0);
+        for (uint32_t i = 0; i < nb_variables; i++) {
+            A[0][j][i] = A_lp[j][i];
+        }
     }
+    nb_revealed_constraints = nb_initial_constraints;
 }
 
 void OnlineModel::revealNextConstraints()
 {
     time++;
-    b.resize((time + 1));
-    A.resize((time + 1));
-    online_step++;
+    b.resize(getNbSteps());
+    A.resize(getNbSteps());
+
+    b[time].resize(batch_size, 0.0);
+    A[time].resize(batch_size);
 
     const DoubleVec_t& b_lp = _offline_model.getBound(0);
     const DoubleMat_t& A_lp = _offline_model.getCoefficient(0);
 
-    b[time].resize(1);
-    b[time][0] = b_lp[(time - 1)];
-
-    A[time].resize(1);
-    A[time][0].resize(nb_variables);
-    for (uint32_t i = 0; i < nb_variables; i++) {
-        A[time][0][i] = A_lp[(time - 1)][i];
+    for (uint32_t j = 0; j < batch_size; j++) {
+        b[time][j] = b_lp[(nb_revealed_constraints + j)];
+        A[time][j].resize(nb_variables, 0.0);
+        for (uint32_t i = 0; i < nb_variables; i++) {
+            A[time][j][i] = A_lp[(nb_revealed_constraints + j)][i];
+        }
     }
+    nb_revealed_constraints += batch_size;
+}
+
+bool OnlineModel::isSatisfiedBy(const DoubleVec_t& x)
+{
+    const DoubleVec_t& b_lp = _offline_model.getBound(0);
+    const DoubleMat_t& A_lp = _offline_model.getCoefficient(0);
+
+    double value;
+    for (uint32_t j = 0; j < nb_revealed_constraints; j++) {
+        value = 0.0;
+        for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
+            value += A_lp[j][i] * x[i];
+        }
+        if (value < b_lp[j]) {
+            if ((b_lp[j] - value) < 0.000001) {
+                return true;
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+double OnlineModel::getObjectiveValue(const DoubleVec_t& x) const
+{
+    return _offline_model.getObjectiveValue(x);
 }

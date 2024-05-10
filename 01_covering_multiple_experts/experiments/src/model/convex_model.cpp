@@ -3,96 +3,109 @@
 #include <cmath>
 
 
-ConvexModel::ConvexModel(const Config& config, const OfflineModel& model, const Experts& experts) :
-    _offline_model(model),
-    _experts(experts),
-    time(0),
-    nb_constraints_per_time(model.getNbVariables() + 1),
-    nb_revealed_constraints(0),
-    is_convex(config.is_convex)
+ConvexModel::ConvexModel(const OfflineModel& model, const Experts& experts) :
+    online_model(model),
+    _experts(experts)
 {
+    is_convex = online_model.isConvex();
+    is_online = true;
     use_box_constraints = true;
 
-    nb_variables = _offline_model.getNbVariables() * experts.getNbExperts();
-    nb_constraints = 2 * _offline_model.getNbVariables();
-    is_minimization = _offline_model.isMinimization();
+    nb_variables = online_model.getNbVariables() * experts.getNbExperts();
+    nb_objective_variables = nb_variables;
+
+    nb_batches = online_model.getNbConstraintBatches();
+    batch_size = online_model.getConstraintBatchSize() + online_model.getNbVariables();
+
+    nb_initial_constraints = online_model.getNbInitialConstraints() + (2 * online_model.getNbVariables());
+    nb_constraints = nb_initial_constraints + (nb_batches * batch_size);
 
     c.resize(nb_variables, 0.0);
+
+    // Initial constraints
     b.resize(1);
     A.resize(1);
+    b[0].resize(nb_initial_constraints, 0.0);
+    A[0].resize(nb_initial_constraints);
 
-    // Constraint independent of time: the sum of weights is one
-    b[time].resize(nb_constraints);
-    A[time].resize(nb_constraints);
-    for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
-        b[time][i] = 1.0;
-        A[time][i].resize(nb_variables);
-        for (uint32_t v = 0; v < nb_variables; v++) {
-            A[time][i][v] = 0.0;
-        }
-        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            A[time][i][(i + (k * _offline_model.getNbVariables()))] = 1.0;
+    const DoubleVec_t& b_lp = online_model.getBound(0);
+    const DoubleMat_t& A_lp = online_model.getCoefficient(0);
+
+    for (uint32_t j = 0; j < online_model.getNbInitialConstraints(); j++) {
+        b[0][j] = b_lp[j];
+        A[0][j].resize(nb_variables, 0.0);
+        for (uint32_t i = 0; i < nb_variables; i++) {
+            A[0][j][i] = A_lp[j][i];
         }
     }
-    for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
-        uint32_t j = i + _offline_model.getNbVariables();
-        b[time][j] = -1.0;
-        A[time][j].resize(nb_variables);
-        for (uint32_t v = 0; v < nb_variables; v++) {
-            A[time][j][v] = 0.0;
-        }
+    nb_revealed_constraints = online_model.getNbInitialConstraints();
+
+    // Sum of weights is >= 1
+    uint32_t j;
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+        j = (nb_revealed_constraints + i);
+        b[0][j] = 1.0;
+        A[0][j].resize(nb_variables, 0.0);
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            A[time][j][(i + (k * _offline_model.getNbVariables()))] = -1.0;
+            A[0][j][(i + (k * online_model.getNbVariables()))] = 1.0;
         }
     }
+    nb_revealed_constraints += online_model.getNbVariables();
+
+    // Sum of weights is <= 1
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+        j = (nb_revealed_constraints + i);
+        b[0][j] = -1.0;
+        A[0][j].resize(nb_variables, 0.0);
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            A[0][j][(i + (k * online_model.getNbVariables()))] = -1.0;
+        }
+    }
+    nb_revealed_constraints = nb_initial_constraints;
 }
 
 void ConvexModel::revealNextConstraints()
 {
     // Add space for new constraints
     time++;
-    nb_revealed_constraints = (time - 1);
-    nb_constraints += nb_constraints_per_time;
-    online_step++;
+    online_model.revealNextConstraints();
 
-    b.resize((time + 1));
-    A.resize((time + 1));
+    b.resize(getNbSteps());
+    A.resize(getNbSteps());
 
-    // We have +1 constraint for the first constraint and +n constraint for the third constraint
-    b[time].resize(nb_constraints_per_time);
-    A[time].resize(nb_constraints_per_time);
+    b[time].resize(batch_size, 0.0);
+    A[time].resize(batch_size);
 
-    const DoubleVec_t& b_lp = _offline_model.getBound(0);
-    b[time][0] = b_lp[nb_revealed_constraints];
-    for (uint32_t j = 1; j < nb_constraints_per_time; j++) {
-        b[time][j] = 0.0;
-    }
+    const DoubleVec_t& b_lp = online_model.getBound(time);
+    const DoubleMat_t& A_lp = online_model.getCoefficient(time);
+    const DoubleMat_t& s_hat = _experts.getTightSolutions(time - 1); // time = 0 is reserved for initial constraints
+    const DoubleMat_t& s = _experts.getSolutions(time - 1);
 
-    for (uint32_t j = 0; j < nb_constraints_per_time; j++) {
-        A[time][j].resize(nb_variables);
-        for (uint32_t v = 0; v < nb_variables; v++) {
-            A[time][j][v] = 0.0;
-        }
-    }
+    // Constraints from the problem
+    for (uint32_t j = 0; j < online_model.getConstraintBatchSize(); j++) {
+        b[time][j] = b_lp[j];
+        A[time][j].resize(nb_variables, 0.0);
 
-    // Add new LP constraint satisfaction constraint
-    const DoubleMat_t& A_lp = _offline_model.getCoefficient(0);
-    const DoubleMat_t& s_hat = _experts.getTightSolutions(nb_revealed_constraints);
-
-    for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-        for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
-            A[time][0][(i + (k * _offline_model.getNbVariables()))] = A_lp[nb_revealed_constraints][i] * s_hat[k][i];
-        }
-    }
-
-    // Add non-negative variable constraint
-    const DoubleMat_t& s = _experts.getSolutions(nb_revealed_constraints);
-
-    for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            A[time][(i + 1)][(i + (k * _offline_model.getNbVariables()))] = s[k][i];
+            for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+                A[time][j][(i + (k * online_model.getNbVariables()))] = A_lp[j][i] * s_hat[k][i];
+            }
         }
     }
+
+    // Non-negative variable constraints
+    uint32_t j;
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+        j = online_model.getConstraintBatchSize() + i;
+        b[time][j] = 0.0;
+        A[time][j].resize(nb_variables, 0.0);
+
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            A[time][j][(i + (k * online_model.getNbVariables()))] = s[k][i];
+        }
+    }
+
+    nb_revealed_constraints += batch_size;
 }
 
 double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
@@ -105,23 +118,23 @@ double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w
 
 double ConvexModel::getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
 {
-    const DoubleVec_t& c_lp = _offline_model.getCost();
-    const DoubleMat_t& s = _experts.getSolutions(nb_revealed_constraints);
-    const DoubleMat_t& s_prev = _experts.getSolutions((nb_revealed_constraints - 1));
-    const DoubleVec_t& avg = _experts.getAverageSolutions(nb_revealed_constraints);
-    const DoubleVec_t& avg_prev = _experts.getAverageSolutions((nb_revealed_constraints - 1));
+    const DoubleVec_t& c_lp = online_model.getCost();
+    const DoubleMat_t& s = _experts.getSolutions(time - 1); // time = 0 is reserved for initial constraints
+    const DoubleMat_t& s_prev = _experts.getSolutions(time - 2);
+    const DoubleVec_t& avg = _experts.getAverageSolutions(time - 1);
+    const DoubleVec_t& avg_prev = _experts.getAverageSolutions(time - 2);
 
     double value = 0.0;
     double x = 0.0;
     double x_prev = 0.0;
     double log_value = 0.0;
 
-    for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
         x = 0.0;
         x_prev = 0.0;
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            x += s[k][i] * w[(i + (k * _offline_model.getNbVariables()))];
-            x_prev += s_prev[k][i] * w_prev[(i + (k * _offline_model.getNbVariables()))];
+            x += s[k][i] * w[(i + (k * online_model.getNbVariables()))];
+            x_prev += s_prev[k][i] * w_prev[(i + (k * online_model.getNbVariables()))];
         }
         log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
         value += c_lp[i] * ((x + avg[i]) * log_value);
@@ -147,26 +160,26 @@ void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const 
 
 void ConvexModel::calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
-    const DoubleVec_t& c_lp = _offline_model.getCost();
-    const DoubleMat_t& s = _experts.getSolutions(nb_revealed_constraints);
-    const DoubleMat_t& s_prev = _experts.getSolutions((nb_revealed_constraints - 1));
-    const DoubleVec_t& avg = _experts.getAverageSolutions(nb_revealed_constraints);
-    const DoubleVec_t& avg_prev = _experts.getAverageSolutions((nb_revealed_constraints - 1));
+    const DoubleVec_t& c_lp = online_model.getCost();
+    const DoubleMat_t& s = _experts.getSolutions(time - 1); // time = 0 is reserved for initial constraints
+    const DoubleMat_t& s_prev = _experts.getSolutions(time - 2);
+    const DoubleVec_t& avg = _experts.getAverageSolutions(time - 1);
+    const DoubleVec_t& avg_prev = _experts.getAverageSolutions(time - 2);
 
     double x = 0.0;
     double x_prev = 0.0;
     double log_value = 0.0;
 
-    for (uint32_t i = 0; i < _offline_model.getNbVariables(); i++) {
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
         x = 0.0;
         x_prev = 0.0;
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            x += s[k][i] * w[(i + (k * _offline_model.getNbVariables()))];
-            x_prev += s_prev[k][i] * w_prev[(i + (k * _offline_model.getNbVariables()))];
+            x += s[k][i] * w[(i + (k * online_model.getNbVariables()))];
+            x_prev += s_prev[k][i] * w_prev[(i + (k * online_model.getNbVariables()))];
         }
         log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
-            c[(i + (k * _offline_model.getNbVariables()))] = c_lp[i] * s[k][i] * log_value;
+            c[(i + (k * online_model.getNbVariables()))] = c_lp[i] * s[k][i] * log_value;
         }
     }
 }
@@ -178,5 +191,10 @@ void ConvexModel::calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, 
 
 uint32_t ConvexModel::getNbLPVariables() const
 {
-    return _offline_model.getNbVariables();
+    return online_model.getNbVariables();
+}
+
+uint32_t ConvexModel::getNbLPRevealedConstraints() const
+{
+    return online_model.getNbRevealedConstraints();
 }

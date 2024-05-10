@@ -8,7 +8,8 @@ class OnlineModel : public BaseModel {
 public:
     OnlineModel(const OfflineModel& model);
     void revealNextConstraints();
+    bool isSatisfiedBy(const DoubleVec_t& x);
+    double getObjectiveValue(const DoubleVec_t& x) const;
 private:
     const OfflineModel& _offline_model;
-    uint32_t time;
 };

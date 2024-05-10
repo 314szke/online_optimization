@@ -1,22 +1,18 @@
 #pragma once
 
 #include "model/offline_model.h"
+#include "model/online_model.h"
 
 
 class STD_Algorithm {
 public:
-    STD_Algorithm(const OfflineModel& model);
-
+    STD_Algorithm(const OfflineModel& off_model);
     const DoubleVec_t& solve();
     const DoubleMat_t& getSubSolutions() const;
     double getObjectiveValue() const;
 private:
-    double getConstraintValue(const uint32_t j);
-
-    const OfflineModel& _model;
-    const DoubleMat_t& A;
-    const DoubleVec_t& b;
-
+    const OfflineModel& offline_model;
+    OnlineModel online_model;
     DoubleVec_t solution;
     DoubleMat_t sub_solutions;
 };

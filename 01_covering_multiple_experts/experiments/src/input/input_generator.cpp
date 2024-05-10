@@ -189,7 +189,7 @@ void InputGenerator::generateExperts()
         on_model.revealNextConstraints();
         on_solver.addNewConstraints(j);
         DoubleVec_t solution = on_solver.solve();
-        Solution::RoundSolutionIfNeeded(off_model, solution, j);
+        Solution::RoundSolutionIfNeeded(off_model, solution, on_model.getNbRevealedConstraints());
 
         // Perfect experts
         for (uint32_t k = 0; k < nb_perfect_expert; k++) {
@@ -242,7 +242,7 @@ void InputGenerator::generateExperts()
                     constr_value += A[(j-1)][i] * random_solution[k][i];
                 }
             }
-            Solution::RoundSolutionIfNeeded(off_model, random_solution[k], j);
+            Solution::RoundSolutionIfNeeded(off_model, random_solution[k], on_model.getNbRevealedConstraints());
 
             for (uint32_t i = 0; i < (nb_variables - 1); i++) {
                 f_out << random_solution[k][i] << " ";

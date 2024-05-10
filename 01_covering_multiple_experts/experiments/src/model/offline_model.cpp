@@ -1,10 +1,11 @@
 #include "offline_model.h"
 
+#include <math.h>
 #include <sstream>
 #include <regex>
 
 
-static const std::regex OBJ_FUNC_PATTERN("\\s*(min|max)\\s+(?:\\+?\\s*[0-9\\.]+\\s+x[0-9]+(?:\\s*\\^\\s*[0-9]+)?\\s+)+(?:\\+?\\s*[0-9\\.]+\\s+x[0-9]+(?:\\s*\\^\\s*[0-9]+)?\\s*)(?:\\s*\\r?\\n?)?");
+static const std::regex OBJ_FUNC_PATTERN("\\s*min\\s+(?:\\+?\\s*[0-9\\.]+\\s+x[0-9]+(?:\\s*\\^\\s*[0-9]+)?\\s+)+(?:\\+?\\s*[0-9\\.]+\\s+x[0-9]+(?:\\s*\\^\\s*[0-9]+)?\\s*)(?:\\s*\\r?\\n?)?");
 static const std::regex CONSTRAINT_PATTERN("\\s*(?:(?:\\+|-)?\\s*[0-9\\.]+\\s+x[0-9]+)(?:\\s+(?:\\+|-)\\s*[0-9\\.]+\\s+x[0-9]+)+\\s+>=\\s+(?:\\+|-)?\\s*([0-9\\.]+)(?:\\s*\\r?\\n?)?");
 static const std::regex SIMPLE_VARIABLE_PATTERN("([0-9\\.]+)\\s*x([0-9]+)");
 static const std::regex VARIABLE_PATTERN("(\\+|-)\\s*([0-9\\.]+)\\s*x([0-9]+)\\s*\\^\\s*([0-9]+)");
@@ -22,13 +23,20 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
     is_convex = is_convex_mode;
 
     nb_variables = readInteger();
+    nb_objective_variables = nb_variables;
     nb_constraints = readInteger();
+    nb_revealed_constraints = nb_constraints;
+    nb_batches = nb_constraints;
+
     if (is_convex) {
         batch_size = readInteger();
+        nb_batches = (nb_constraints - nb_initial_constraints) / batch_size;
+        nb_initial_constraints = nb_objective_variables;
+        nb_variables = (nb_batches + 1) * nb_objective_variables;
     }
 
     c.resize(nb_variables, 0.0);
-    e.resize(nb_variables, 0);
+    e.resize(nb_variables, 1.0);
     b.resize(1);
     A.resize(1);
     b[0].resize(nb_constraints, 0.0);
@@ -43,11 +51,6 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
 
     std::smatch match;
     if (std::regex_match(line, match, OBJ_FUNC_PATTERN)) {
-        std::string obj_type = match[1].str();
-        if (obj_type == std::string("max")) {
-            is_minimization = false;
-        }
-
         std::stringstream ss;
         std::string sign;
         double x_cost;
@@ -177,7 +180,11 @@ double OfflineModel::getObjectiveValue(const DoubleVec_t& x) const
 {
     double value = 0.0;
     for (uint32_t i = 0; i < nb_variables; i++) {
-        value += c[i] * x[i];
+        if (is_convex) {
+            value += c[i] * std::pow(x[i], e[i]);
+        } else {
+            value += c[i] * x[i];
+        }
     }
     return value;
 }

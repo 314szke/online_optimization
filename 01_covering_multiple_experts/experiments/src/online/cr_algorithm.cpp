@@ -9,15 +9,15 @@
 CR_Algorithm::CR_Algorithm(const OfflineModel& model, const Config& config, const Experts& experts) :
     _model(model),
     _experts(experts),
-    convex_model(config, model, experts),
+    convex_model(model, experts),
     lp_solver(convex_model, config.gurobi_verbosity),
     frank_wolfe(config, convex_model, lp_solver),
     online_objective(0.0),
-    sub_solutions(_model.getNbConstraints()),
+    sub_solutions(_model.getNbConstraintBatches()),
     online_solution(model.getNbVariables(), 0.0),
     previous_solution(model.getNbVariables(), 0.0)
 {
-    for (uint32_t t = 0; t < _model.getNbConstraints(); t++) {
+    for (uint32_t t = 0; t < _model.getNbConstraintBatches(); t++) {
         sub_solutions[t].resize(model.getNbVariables(), 0.0);
     }
 }
@@ -26,14 +26,14 @@ const DoubleVec_t& CR_Algorithm::solve()
 {
     double temp_x = 0.0;
 
-    for (uint32_t t = 1; t < (_model.getNbConstraints() + 1); t++) {
+    for (uint32_t t = 1; t < (_model.getNbConstraintBatches() + 1); t++) {
         convex_model.revealNextConstraints();
         lp_solver.addNewConstraints(t);
 
         DoubleVec_t w = frank_wolfe.solve();
         verifyWeights(w);
         roundWeightsIfNeeded(w);
-        const DoubleMat_t& s = _experts.getSolutions((t - 1));
+        const DoubleMat_t& s = _experts.getSolutions((t - 1)); // t = 0 is reserved for initial constraints
 
         for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
             temp_x = 0.0;
@@ -48,7 +48,7 @@ const DoubleVec_t& CR_Algorithm::solve()
         for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
             sub_solutions[(t-1)][i] = online_solution[i];
         }
-        Solution::RoundSolutionIfNeeded(_model, sub_solutions[(t-1)], t);
+        Solution::RoundSolutionIfNeeded(_model, sub_solutions[(t-1)], convex_model.getNbLPRevealedConstraints());
 
         verifySolution(t);
         online_objective = _model.getObjectiveValue(online_solution);

@@ -24,13 +24,13 @@ Experts::Experts(const OfflineModel& model, const DummyExpert& dummy_expert, con
         throw std::runtime_error(message.str());
     }
 
-    solutions.resize(off_model.getNbConstraints());
-    tight_solutions.resize(off_model.getNbConstraints());
+    solutions.resize(off_model.getNbConstraintBatches());
+    tight_solutions.resize(off_model.getNbConstraintBatches());
 
     nb_real_experts = readInteger();
     nb_experts = nb_real_experts + 1; // +1 for dummy expert
 
-    for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
+    for (uint32_t t = 0; t < off_model.getNbConstraintBatches(); t++) {
         solutions[t].resize(nb_experts);
         tight_solutions[t].resize(nb_experts);
 
@@ -56,7 +56,7 @@ Experts::Experts(const OfflineModel& model, const DummyExpert& dummy_expert, con
     std::smatch match;
     std::stringstream ss;
     bool invalid = false;
-    for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
+    for (uint32_t t = 0; t < off_model.getNbConstraintBatches(); t++) {
         for (uint32_t k = 0; k < nb_real_experts; k++) {
             readLine();
             if (std::regex_match(line, match, SOLUTION_PATTERN)) {
@@ -89,8 +89,8 @@ Experts::Experts(const OfflineModel& model, const DummyExpert& dummy_expert, con
 
     f_in.close();
 
-    avg_solutions.resize(off_model.getNbConstraints());
-    for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
+    avg_solutions.resize(off_model.getNbConstraintBatches());
+    for (uint32_t t = 0; t < off_model.getNbConstraintBatches(); t++) {
         avg_solutions[t].resize(off_model.getNbVariables());
         for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
             double value = 0.0;
@@ -124,7 +124,7 @@ Experts::Experts(const OfflineModel& model, const DummyExpert& dummy_expert, con
         throw std::runtime_error(message.str());
     }
 
-    for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
+    for (uint32_t t = 0; t < off_model.getNbConstraintBatches(); t++) {
         for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
             for (uint32_t k = 0; k < nb_experts; k++) {
                 if ((solutions[t][k][i] < tight_solutions[t][k][i]) && std::abs(solutions[t][k][i] - tight_solutions[t][k][i]) > epsilon) {
@@ -139,7 +139,7 @@ Experts::Experts(const OfflineModel& model, const DummyExpert& dummy_expert, con
     // Used to display the competitive ratio of each expert
     objective_values.resize(nb_experts, 0.0);
     for (uint32_t k = 0; k < nb_experts; k++) {
-        objective_values[k] = off_model.getObjectiveValue(solutions[(off_model.getNbConstraints() - 1)][k]);
+        objective_values[k] = off_model.getObjectiveValue(solutions[(off_model.getNbConstraintBatches() - 1)][k]);
     }
 }
 
@@ -200,7 +200,7 @@ void Experts::tightenSolutions()
     }
 
     // All other constraints
-    for (uint32_t t = 1; t < off_model.getNbConstraints(); t++) {
+    for (uint32_t t = 1; t < off_model.getNbConstraintBatches(); t++) {
         for (uint32_t k = 0; k < nb_experts; k++) {
 
             // Check if previous value satisfies the new constraint
@@ -350,7 +350,7 @@ void Experts::setTightSolutionInTheInterval(uint32_t k, uint32_t t)
 
 int32_t Experts::findInvalidSolution(const DoubleMatVec_t& sol_vec)
 {
-    for (uint32_t t = 0; t < off_model.getNbConstraints(); t++) {
+    for (uint32_t t = 0; t < off_model.getNbConstraintBatches(); t++) {
         for (uint32_t k = 0; k < nb_experts; k++) {
             double value = 0.0;
             for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {

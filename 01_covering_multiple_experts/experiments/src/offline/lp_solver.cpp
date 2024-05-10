@@ -38,7 +38,7 @@ void LP_Solver::addNewConstraints(const uint32_t time)
     const DoubleVec_t& b = _model.getBound(time);
     const DoubleMat_t& A = _model.getCoefficient(time);
 
-    for (uint32_t j = 0; j < _model.getNbNewConstraints(time); j++) {
+    for (uint32_t j = 0; j < _model.getNbConstraintsAt(time); j++) {
         GRBLinExpr expr;
         uint32_t counter = 0;
         for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
@@ -64,11 +64,7 @@ const DoubleVec_t& LP_Solver::solve()
         objective += c[i] * variables[i];
     }
 
-    if (_model.isMinimization()) {
-        lp_model->setObjective(objective, GRB_MINIMIZE);
-    } else {
-        lp_model->setObjective(objective, GRB_MAXIMIZE);
-    }
+    lp_model->setObjective(objective, GRB_MINIMIZE);
 
     // Debug code
     //try {

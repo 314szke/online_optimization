@@ -4,18 +4,27 @@
 
 
 BaseModel::BaseModel() :
-    is_minimization(true),
     is_convex(false),
+    is_online(false),
     use_box_constraints(false),
     nb_variables(0),
     nb_constraints(0),
+    nb_objective_variables(0),
+    nb_initial_constraints(0),
+    nb_batches(0),
     batch_size(1),
-    online_step(1)
+    time(0),
+    nb_revealed_constraints(0)
 {}
 
-bool BaseModel::isMinimization() const
+bool BaseModel::isConvex() const
 {
-    return is_minimization;
+    return is_convex;
+}
+
+bool BaseModel::isOnline() const
+{
+    return is_online;
 }
 
 bool BaseModel::useBoxConstraints() const
@@ -28,22 +37,47 @@ uint32_t BaseModel::getNbVariables() const
     return nb_variables;
 }
 
+uint32_t BaseModel::getNbObjectiveVariables() const
+{
+    return nb_objective_variables;
+}
+
 uint32_t BaseModel::getNbConstraints() const
 {
-    return (nb_constraints / batch_size);
+    return nb_constraints;
 }
 
-uint32_t BaseModel::getNbNewConstraints(const uint32_t time) const
+uint32_t BaseModel::getNbInitialConstraints() const
 {
-    if (time >= b.size()) {
+    return nb_initial_constraints;
+}
+
+uint32_t BaseModel::getNbRevealedConstraints() const
+{
+    return nb_revealed_constraints;
+}
+
+uint32_t BaseModel::getNbConstraintBatches() const
+{
+    return nb_batches;
+}
+
+uint32_t BaseModel::getConstraintBatchSize() const
+{
+    return batch_size;
+}
+
+uint32_t BaseModel::getNbConstraintsAt(const uint32_t current_time) const
+{
+    if (current_time >= b.size()) {
         return 0;
     }
-    return b[time].size();
+    return b[current_time].size();
 }
 
-uint32_t BaseModel::getNbOnlineSteps() const
+uint32_t BaseModel::getNbSteps() const
 {
-    return online_step;
+    return (time + 1);
 }
 
 const DoubleVec_t& BaseModel::getCost() const
@@ -51,23 +85,23 @@ const DoubleVec_t& BaseModel::getCost() const
     return c;
 }
 
-const UIntVec_t& BaseModel::getCostExponent() const
+const DoubleVec_t& BaseModel::getCostExponent() const
 {
     return e;
 }
 
-const DoubleVec_t& BaseModel::getBound(const uint32_t time) const
+const DoubleVec_t& BaseModel::getBound(const uint32_t current_time) const
 {
-    if (time >= b.size()) {
+    if (current_time >= b.size()) {
         return empty_bound;
     }
-    return b[time];
+    return b[current_time];
 }
 
-const DoubleMat_t& BaseModel::getCoefficient(const uint32_t time) const
+const DoubleMat_t& BaseModel::getCoefficient(const uint32_t current_time) const
 {
-    if (time >= A.size()) {
+    if (current_time >= A.size()) {
         return empty_coefficient;
     }
-    return A[time];
+    return A[current_time];
 }
