@@ -6,7 +6,7 @@ Config::Config(const std::string& config_file) :
     max_search_iter(0),
     max_distance(0.0),
     epsilon(0.0),
-    L(0),
+    L(0.0),
     is_convex(false)
 {
     f_in.open(config_file);

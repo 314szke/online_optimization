@@ -14,6 +14,6 @@ public:
     double max_distance;
     uint32_t gurobi_verbosity;
     double epsilon;
-    uint32_t L;
+    double L;
     bool is_convex;
 };

@@ -9,7 +9,7 @@
 CR_Algorithm::CR_Algorithm(const OfflineModel& model, const Config& config, const Experts& experts) :
     _model(model),
     _experts(experts),
-    convex_model(model, experts),
+    convex_model(config, model, experts),
     lp_solver(convex_model, config.gurobi_verbosity),
     frank_wolfe(config, convex_model, lp_solver),
     online_objective(0.0),

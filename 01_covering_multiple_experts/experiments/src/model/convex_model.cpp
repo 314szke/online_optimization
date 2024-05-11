@@ -3,9 +3,10 @@
 #include <cmath>
 
 
-ConvexModel::ConvexModel(const OfflineModel& model, const Experts& experts) :
+ConvexModel::ConvexModel(const Config& config, const OfflineModel& model, const Experts& experts) :
     online_model(model),
-    _experts(experts)
+    _experts(experts),
+    L(config.L)
 {
     is_convex = online_model.isConvex();
     is_online = true;
@@ -146,7 +147,37 @@ double ConvexModel::getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVe
 
 double ConvexModel::getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
 {
-    return 0;
+    const DoubleVec_t& c_lp = online_model.getCost();
+    const DoubleVec_t& e_lp = online_model.getCostExponent();
+    const DoubleMat_t& s = _experts.getSolutions(time - 1); // time = 0 is reserved for initial constraints
+    const DoubleMat_t& s_prev = _experts.getSolutions(time - 2);
+    const DoubleVec_t& avg = _experts.getAverageSolutions(time - 1);
+    const DoubleVec_t& avg_prev = _experts.getAverageSolutions(time - 2);
+
+    double value = 0.0;
+    double x = 0.0;
+    double x_prev = 0.0;
+    double log_value = 0.0;
+    double df = 0.0;
+    double subpart = 0.0;
+
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+        x = 0.0;
+        x_prev = 0.0;
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            x += s[k][i] * w[(i + (k * online_model.getNbVariables()))];
+            x_prev += s_prev[k][i] * w_prev[(i + (k * online_model.getNbVariables()))];
+        }
+        log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
+        df = (c_lp[i] * e_lp[i]) * std::pow(x_prev, (e_lp[i] - 1));
+        subpart = (x + avg[i] - (2 * x_prev) - (2 * avg_prev[i]));
+
+        value += df * (((x + avg[i]) * log_value) - x);
+        value += (L / 2.0) * subpart * (x + avg[i]) * log_value;
+        value -= (L / 4.0) * std::pow(subpart, 2.0);
+    }
+
+    return value;
 }
 
 void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
@@ -186,7 +217,34 @@ void ConvexModel::calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, 
 
 void ConvexModel::calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
+    const DoubleVec_t& c_lp = online_model.getCost();
+    const DoubleVec_t& e_lp = online_model.getCostExponent();
+    const DoubleMat_t& s = _experts.getSolutions(time - 1); // time = 0 is reserved for initial constraints
+    const DoubleMat_t& s_prev = _experts.getSolutions(time - 2);
+    const DoubleVec_t& avg = _experts.getAverageSolutions(time - 1);
+    const DoubleVec_t& avg_prev = _experts.getAverageSolutions(time - 2);
 
+    double x = 0.0;
+    double x_prev = 0.0;
+    double log_value = 0.0;
+    uint32_t idx = 0;
+    double df = 0.0;
+
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+        x = 0.0;
+        x_prev = 0.0;
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            x += s[k][i] * w[(i + (k * online_model.getNbVariables()))];
+            x_prev += s_prev[k][i] * w_prev[(i + (k * online_model.getNbVariables()))];
+        }
+        log_value = std::log((x + avg[i]) / (x_prev + avg_prev[i]));
+
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            idx = (i + (k * online_model.getNbVariables()));
+            df = (c_lp[i] * e_lp[i]) * std::pow(x_prev, (e_lp[i] - 1));
+            c[idx] = s[k][i] * (df + L * (x + avg[i] - x_prev - avg_prev[i])) * log_value;
+        }
+    }
 }
 
 uint32_t ConvexModel::getNbLPVariables() const

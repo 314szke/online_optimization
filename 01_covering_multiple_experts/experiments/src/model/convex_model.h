@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base/base_model.h"
+#include "config/config.h"
 #include "model/offline_model.h"
 #include "model/online_model.h"
 #include "model/experts.h"
@@ -9,7 +10,7 @@
 
 class ConvexModel : public BaseModel {
 public:
-    ConvexModel(const OfflineModel& model, const Experts& experts);
+    ConvexModel(const Config& config, const OfflineModel& model, const Experts& experts);
 
     void revealNextConstraints();
 
@@ -26,5 +27,5 @@ private:
 
     OnlineModel online_model;
     const Experts& _experts;
-    uint32_t nb_revealed_constraints;
+    double L;
 };
