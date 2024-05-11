@@ -152,9 +152,9 @@ double ConvexModel::getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVe
 void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
     if (is_convex) {
-        calculateLinearObjectiveValueDerivative(w, w_prev);
-    } else {
         calculateConvexObjectiveValueDerivative(w, w_prev);
+    } else {
+        calculateLinearObjectiveValueDerivative(w, w_prev);
     }
 }
 

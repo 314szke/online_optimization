@@ -11,7 +11,7 @@ FrankWolfe::FrankWolfe(const Config& config, ConvexModel& model, LP_Solver& solv
     _solver(solver),
     _model(model)
 {
-    x.resize(_model.getNbVariables(), 1.0);
+    x.resize(_model.getNbVariables(), 0.0);
     x_prev.resize(_model.getNbVariables(), 0.0);
     v.resize(_model.getNbVariables(), 0.0);
     d.resize(_model.getNbVariables(), 0.0);
