@@ -19,7 +19,7 @@ public:
     LP_Solver(const BaseModel& model, uint32_t verbosity);
 
     void addNewConstraints(const uint32_t time);
-    const DoubleVec_t& solve();
+    const DoubleVec_t& solve(const DoubleVec_t& cost);
     double getObjectiveValue() const;
 private:
     const BaseModel& _model;

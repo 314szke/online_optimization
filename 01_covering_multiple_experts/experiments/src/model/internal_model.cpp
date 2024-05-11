@@ -1,9 +1,9 @@
-#include "convex_model.h"
+#include "internal_model.h"
 
 #include <cmath>
 
 
-ConvexModel::ConvexModel(const Config& config, const OfflineModel& model, const Experts& experts) :
+InternalModel::InternalModel(const Config& config, const OfflineModel& model, const Experts& experts) :
     online_model(model),
     _experts(experts),
     L(config.L)
@@ -22,6 +22,14 @@ ConvexModel::ConvexModel(const Config& config, const OfflineModel& model, const 
     nb_constraints = nb_initial_constraints + (nb_batches * batch_size);
 
     c.resize(nb_variables, 0.0);
+    dc.resize(nb_variables, 0.0);
+    e.resize(nb_variables, 1.0);
+
+    initial_solution.resize(nb_variables, 0.0);
+    // Choose the first expert
+    for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+        initial_solution[i] = 1.0;
+    }
 
     // Initial constraints
     b.resize(1);
@@ -65,7 +73,7 @@ ConvexModel::ConvexModel(const Config& config, const OfflineModel& model, const 
     nb_revealed_constraints = nb_initial_constraints;
 }
 
-void ConvexModel::revealNextConstraints()
+void InternalModel::revealNextConstraints()
 {
     // Add space for new constraints
     time++;
@@ -109,7 +117,7 @@ void ConvexModel::revealNextConstraints()
     nb_revealed_constraints += batch_size;
 }
 
-double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
+double InternalModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
 {
     if (is_convex) {
         return getConvexObjectiveValue(w, w_prev);
@@ -117,7 +125,7 @@ double ConvexModel::getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w
     return getLinearObjectiveValue(w, w_prev);
 }
 
-double ConvexModel::getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
+double InternalModel::getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
 {
     const DoubleVec_t& c_lp = online_model.getCost();
     const DoubleMat_t& s = _experts.getSolutions(time - 1); // time = 0 is reserved for initial constraints
@@ -145,7 +153,7 @@ double ConvexModel::getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVe
     return value;
 }
 
-double ConvexModel::getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
+double InternalModel::getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const
 {
     const DoubleVec_t& c_lp = online_model.getCost();
     const DoubleVec_t& e_lp = online_model.getCostExponent();
@@ -180,16 +188,17 @@ double ConvexModel::getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVe
     return value;
 }
 
-void ConvexModel::calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
+const DoubleVec_t& InternalModel::getObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
     if (is_convex) {
         calculateConvexObjectiveValueDerivative(w, w_prev);
     } else {
         calculateLinearObjectiveValueDerivative(w, w_prev);
     }
+    return c;
 }
 
-void ConvexModel::calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
+void InternalModel::calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
     const DoubleVec_t& c_lp = online_model.getCost();
     const DoubleMat_t& s = _experts.getSolutions(time - 1); // time = 0 is reserved for initial constraints
@@ -215,7 +224,7 @@ void ConvexModel::calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, 
     }
 }
 
-void ConvexModel::calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
+void InternalModel::calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev)
 {
     const DoubleVec_t& c_lp = online_model.getCost();
     const DoubleVec_t& e_lp = online_model.getCostExponent();
@@ -247,12 +256,12 @@ void ConvexModel::calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, 
     }
 }
 
-uint32_t ConvexModel::getNbLPVariables() const
+const DoubleVec_t& InternalModel::getInitialSolution() const
 {
-    return online_model.getNbVariables();
+    return initial_solution;
 }
 
-uint32_t ConvexModel::getNbLPRevealedConstraints() const
+uint32_t InternalModel::getNbOriginalRevealedConstraints() const
 {
     return online_model.getNbRevealedConstraints();
 }

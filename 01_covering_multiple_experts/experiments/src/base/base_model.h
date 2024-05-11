@@ -23,6 +23,11 @@ public:
     const DoubleVec_t& getCostExponent() const;
     const DoubleVec_t& getBound(const uint32_t current_time) const;
     const DoubleMat_t& getCoefficient(const uint32_t current_time) const;
+
+    double getObjectiveValue(const DoubleVec_t& x) const;
+    virtual double getObjectiveValue(const DoubleVec_t& x, const DoubleVec_t& x_prev) const;
+    const DoubleVec_t& getObjectiveValueDerivative(const DoubleVec_t& x);
+    virtual const DoubleVec_t& getObjectiveValueDerivative(const DoubleVec_t& x, const DoubleVec_t& x_prev);
 protected:
     BaseModel();
 
@@ -43,6 +48,7 @@ protected:
 
     // Online Linear Program parameters
     DoubleVec_t c;
+    DoubleVec_t dc;
     DoubleVec_t e;
     DoubleMat_t b;
     DoubleMatVec_t A;

@@ -18,7 +18,7 @@ DummyExpert::DummyExpert(const OfflineModel& off_model) :
 
         on_model.revealNextConstraints();
         on_solver.addNewConstraints(j);
-        DoubleVec_t solution = on_solver.solve();
+        DoubleVec_t solution = on_solver.solve(on_model.getCost());
         Solution::RoundSolutionIfNeeded(off_model, solution, on_model.getNbRevealedConstraints());
 
         for (uint32_t i = 0; i < on_model.getNbVariables(); i++) {
@@ -35,4 +35,9 @@ const DoubleVec_t& DummyExpert::getSolution(const uint32_t time) const
         return dummy_solution[(dummy_solution.size() - 1)];
     }
     return dummy_solution[time];
+}
+
+const DoubleVec_t& DummyExpert::getFinalSolution() const
+{
+    return dummy_solution.back();
 }

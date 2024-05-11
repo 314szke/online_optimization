@@ -6,12 +6,13 @@
 #include "config/argument_parser.h"
 #include "config/config.h"
 #include "input/input_generator.h"
-#include "model/convex_model.h"
 #include "model/experts.h"
+#include "model/internal_model.h"
 #include "model/offline_model.h"
 #include "model/solution.h"
 #include "offline/lp_solver.h"
 #include "online/cr_algorithm.h"
+#include "online/frank_wolfe.h"
 #include "online/std_algorithm.h"
 #include "visualization/print.hpp"
 
@@ -38,8 +39,14 @@ int main(int argc, char** argv)
 
 
     // Optimal Offline Solution
+    DoubleVec_t optimal_solution;
     LP_Solver lp_solver(offline_model, config.gurobi_verbosity);
-    DoubleVec_t optimal_solution = lp_solver.solve();
+    if (arg_parser.is_convex) {
+        FrankWolfe frank_wolfe(config, offline_model, lp_solver);
+        optimal_solution = frank_wolfe.solve(dummy_expert.getFinalSolution());
+    } else {
+        optimal_solution = lp_solver.solve(offline_model.getCost());
+    }
     Solution::RoundSolutionIfNeeded(offline_model, optimal_solution, offline_model.getNbConstraints());
     const double optimal_objective = lp_solver.getObjectiveValue();
     print_solution("OPT Offline", optimal_objective, optimal_solution);

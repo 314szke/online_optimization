@@ -1,5 +1,6 @@
 #include "base_model.h"
 
+#include <math.h>
 #include <sstream>
 
 
@@ -104,4 +105,35 @@ const DoubleMat_t& BaseModel::getCoefficient(const uint32_t current_time) const
         return empty_coefficient;
     }
     return A[current_time];
+}
+
+double BaseModel::getObjectiveValue(const DoubleVec_t& x) const
+{
+    double value = 0.0;
+    for (uint32_t i = 0; i < nb_variables; i++) {
+        if (is_convex) {
+            value += c[i] * std::pow(x[i], e[i]);
+        } else {
+            value += c[i] * x[i];
+        }
+    }
+    return value;
+}
+
+double BaseModel::getObjectiveValue(const DoubleVec_t& x, const DoubleVec_t& x_prev) const
+{
+    return getObjectiveValue(x);
+}
+
+const DoubleVec_t& BaseModel::getObjectiveValueDerivative(const DoubleVec_t& x)
+{
+    for (uint32_t i = 0; i < nb_variables; i++) {
+        dc[i] = (c[i] * e[i]) * std::pow(x[i], (e[i] - 1));
+    }
+    return dc;
+}
+
+const DoubleVec_t& BaseModel::getObjectiveValueDerivative(const DoubleVec_t& x, const DoubleVec_t& x_prev)
+{
+    return getObjectiveValueDerivative(x);
 }

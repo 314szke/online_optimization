@@ -1,6 +1,5 @@
 #include "offline_model.h"
 
-#include <math.h>
 #include <sstream>
 #include <regex>
 
@@ -36,6 +35,7 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
     }
 
     c.resize(nb_variables, 0.0);
+    dc.resize(nb_variables, 0.0);
     e.resize(nb_variables, 1.0);
     b.resize(1);
     A.resize(1);
@@ -174,17 +174,4 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
     }
 
     f_in.close();
-}
-
-double OfflineModel::getObjectiveValue(const DoubleVec_t& x) const
-{
-    double value = 0.0;
-    for (uint32_t i = 0; i < nb_variables; i++) {
-        if (is_convex) {
-            value += c[i] * std::pow(x[i], e[i]);
-        } else {
-            value += c[i] * x[i];
-        }
-    }
-    return value;
 }

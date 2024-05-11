@@ -4,30 +4,22 @@
 #include <sstream>
 
 
-FrankWolfe::FrankWolfe(const Config& config, ConvexModel& model, LP_Solver& solver) :
+FrankWolfe::FrankWolfe(const Config& config, BaseModel& model, LP_Solver& solver) :
     T(config.time_horizon),
     max_search_iter(config.max_search_iter),
     max_dist(config.max_distance),
+    x(model.getNbVariables(), 0.0),
+    x_prev(model.getNbVariables(), 0.0),
+    v(model.getNbVariables(), 0.0),
+    d(model.getNbVariables(), 0.0),
+    temp(model.getNbVariables(), 0.0),
     _solver(solver),
     _model(model)
-{
-    x.resize(_model.getNbVariables(), 0.0);
-    x_prev.resize(_model.getNbVariables(), 0.0);
-    v.resize(_model.getNbVariables(), 0.0);
-    d.resize(_model.getNbVariables(), 0.0);
-    temp.resize(_model.getNbVariables(), 0.0);
-}
+{}
 
-const DoubleVec_t& FrankWolfe::solve()
+const DoubleVec_t& FrankWolfe::solve(const DoubleVec_t& initial_solution)
 {
-    // Set initial feasible solution
-    for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
-        x[i] = 0.0;
-    }
-    // Choose the first expert
-    for (uint32_t i = 0; i < _model.getNbLPVariables(); i++) {
-        x[i] = 1.0;
-    }
+    x = initial_solution;
 
     double eta = 0.0;
     double euclid_norm = 0.0;
@@ -35,8 +27,7 @@ const DoubleVec_t& FrankWolfe::solve()
     // Optimize through T steps
     for (uint32_t t = 0; t < T; t++) {
         // Calculate v
-        _model.calculateObjectiveValueDerivative(x, x_prev);
-        v = _solver.solve();
+        v = _solver.solve(_model.getObjectiveValueDerivative(x, x_prev));
 
         // Calculate the distance
         euclid_norm = 0.0;
@@ -62,7 +53,7 @@ const DoubleVec_t& FrankWolfe::solve()
         }
     }
 
-    // Save x for objective value calculation
+    // Round the solution
     for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
         x[i] = round(x[i]);
         x_prev[i] = x[i];
@@ -98,6 +89,7 @@ double FrankWolfe::getObjectiveValue(double eta)
     for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
         temp[i] = x[i] + eta * d[i];
     }
+
     return _model.getObjectiveValue(temp, x_prev);
 }
 

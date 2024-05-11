@@ -1,7 +1,7 @@
 #pragma once
 
+#include "base/base_model.h"
 #include "config/config.h"
-#include "model/convex_model.h"
 #include "model/experts.h"
 #include "model/offline_model.h"
 #include "offline/lp_solver.h"
@@ -10,8 +10,8 @@
 
 class FrankWolfe {
 public:
-    FrankWolfe(const Config& config, ConvexModel& model, LP_Solver& solver);
-    const DoubleVec_t& solve();
+    FrankWolfe(const Config& config, BaseModel& model, LP_Solver& solver);
+    const DoubleVec_t& solve(const DoubleVec_t& initial_solution);
 private:
     double computeNewEta();
     double getObjectiveValue(double eta);
@@ -28,5 +28,5 @@ private:
     DoubleVec_t temp;
 
     LP_Solver& _solver;
-    ConvexModel& _model;
+    BaseModel& _model;
 };

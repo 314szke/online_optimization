@@ -157,7 +157,7 @@ void InputGenerator::generateExperts()
 
     OfflineModel off_model(_arg_parser.data_file, false);
     LP_Solver off_solver(off_model, 0);
-    DoubleVec_t optimal_solution = off_solver.solve();
+    DoubleVec_t optimal_solution = off_solver.solve(off_model.getCost());
     Solution::RoundSolutionIfNeeded(off_model, optimal_solution, off_model.getNbConstraints());
 
     OnlineModel on_model(off_model);
@@ -188,7 +188,7 @@ void InputGenerator::generateExperts()
     for (uint32_t j = 1; j < (nb_constraints + 1); j++) {
         on_model.revealNextConstraints();
         on_solver.addNewConstraints(j);
-        DoubleVec_t solution = on_solver.solve();
+        DoubleVec_t solution = on_solver.solve(on_model.getCost());
         Solution::RoundSolutionIfNeeded(off_model, solution, on_model.getNbRevealedConstraints());
 
         // Perfect experts

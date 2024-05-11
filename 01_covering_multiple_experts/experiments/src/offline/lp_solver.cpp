@@ -56,12 +56,11 @@ void LP_Solver::addNewConstraints(const uint32_t time)
     }
 }
 
-const DoubleVec_t& LP_Solver::solve()
+const DoubleVec_t& LP_Solver::solve(const DoubleVec_t& cost)
 {
-    const DoubleVec_t& c = _model.getCost();
     GRBLinExpr objective;
     for (uint32_t i = 0; i < _model.getNbVariables(); i++) {
-        objective += c[i] * variables[i];
+        objective += cost[i] * variables[i];
     }
 
     lp_model->setObjective(objective, GRB_MINIMIZE);

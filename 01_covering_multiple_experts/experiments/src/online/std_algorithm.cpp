@@ -26,11 +26,16 @@ const DoubleVec_t& STD_Algorithm::solve() {
         online_model.revealNextConstraints();
         const DoubleMat_t& A = online_model.getCoefficient(t + 1);
 
+        const DoubleVec_t& dc = online_model.getObjectiveValueDerivative(solution);
         while (!online_model.isSatisfiedBy(solution)) {
             for (uint32_t j = 0; j < online_model.getConstraintBatchSize(); j++) {
                 for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
                     if (A[j][i] != 0.0) {
-                        increasing_rate = (1.0 / online_model.getConstraintBatchSize()) * (A[j][i] / (c[i] * e[i])) * (solution[i] + (1.0 / online_model.getNbVariables()));
+                        if (online_model.isConvex()) {
+                            increasing_rate = (1.0 / online_model.getConstraintBatchSize()) * (A[j][i] / dc[i]) * (solution[i] + (1.0 / online_model.getNbVariables()));
+                        } else {
+                            increasing_rate = (1.0 / online_model.getConstraintBatchSize()) * (A[j][i] / c[i]) * (solution[i] + (1.0 / online_model.getNbVariables()));
+                        }
                         solution[i] += increasing_rate * DT;
                     }
                 }

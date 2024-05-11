@@ -17,6 +17,7 @@ OnlineModel::OnlineModel(const OfflineModel& model) :
     batch_size = _offline_model.getConstraintBatchSize();
 
     c = _offline_model.getCost();
+    dc.resize(nb_variables, 0.0);
     e = _offline_model.getCostExponent();
 
     // Initial constraints
@@ -80,9 +81,4 @@ bool OnlineModel::isSatisfiedBy(const DoubleVec_t& x)
         }
     }
     return true;
-}
-
-double OnlineModel::getObjectiveValue(const DoubleVec_t& x) const
-{
-    return _offline_model.getObjectiveValue(x);
 }

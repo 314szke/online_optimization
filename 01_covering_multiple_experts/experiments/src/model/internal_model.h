@@ -8,23 +8,24 @@
 #include "types/local_types.h"
 
 
-class ConvexModel : public BaseModel {
+class InternalModel : public BaseModel {
 public:
-    ConvexModel(const Config& config, const OfflineModel& model, const Experts& experts);
+    InternalModel(const Config& config, const OfflineModel& model, const Experts& experts);
 
     void revealNextConstraints();
 
     double getObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const;
-    void calculateObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev);
+    const DoubleVec_t& getObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev);
 
-    uint32_t getNbLPVariables() const;
-    uint32_t getNbLPRevealedConstraints() const;
+    const DoubleVec_t& getInitialSolution() const;
+    uint32_t getNbOriginalRevealedConstraints() const;
 private:
     double getLinearObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const;
     double getConvexObjectiveValue(const DoubleVec_t& w, const DoubleVec_t& w_prev) const;
     void calculateLinearObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev);
     void calculateConvexObjectiveValueDerivative(const DoubleVec_t& w, const DoubleVec_t& w_prev);
 
+    DoubleVec_t initial_solution;
     OnlineModel online_model;
     const Experts& _experts;
     double L;
