@@ -5,8 +5,9 @@
 
 
 static const std::regex OBJ_FUNC_PATTERN("\\s*min\\s+(?:\\+?\\s*[0-9\\.]+\\s+x[0-9]+(?:\\s*\\^\\s*[0-9]+)?\\s+)+(?:\\+?\\s*[0-9\\.]+\\s+x[0-9]+(?:\\s*\\^\\s*[0-9]+)?\\s*)(?:\\s*\\r?\\n?)?");
-static const std::regex CONSTRAINT_PATTERN("\\s*(?:(?:\\+|-)?\\s*[0-9\\.]+\\s+x[0-9]+)(?:\\s+(?:\\+|-)\\s*[0-9\\.]+\\s+x[0-9]+)+\\s+>=\\s+(?:\\+|-)?\\s*([0-9\\.]+)(?:\\s*\\r?\\n?)?");
+static const std::regex CONSTRAINT_PATTERN("\\s*(?:(?:\\+|-)?\\s*[0-9\\.]+\\s+x[0-9]+)(?:\\s+(?:\\+|-)\\s*[0-9\\.]+\\s+x[0-9]+)+\\s+>=\\s+(\\+|-)?\\s*([0-9\\.]+)(?:\\s*\\r?\\n?)?");
 static const std::regex SIMPLE_VARIABLE_PATTERN("([0-9\\.]+)\\s*x([0-9]+)");
+static const std::regex SIGNED_VARIABLE_PATTERN("(\\+|-)\\s*([0-9\\.]+)\\s*x([0-9]+)");
 static const std::regex VARIABLE_PATTERN("(\\+|-)\\s*([0-9\\.]+)\\s*x([0-9]+)\\s*\\^\\s*([0-9]+)");
 
 
@@ -29,8 +30,8 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
 
     if (is_convex) {
         batch_size = readInteger();
-        nb_batches = (nb_constraints - nb_initial_constraints) / batch_size;
         nb_initial_constraints = nb_objective_variables;
+        nb_batches = (nb_constraints - nb_initial_constraints) / batch_size;
         nb_variables = (nb_batches + 1) * nb_objective_variables;
     }
 
@@ -56,8 +57,9 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
         double x_cost;
         uint32_t x_exponent;
         uint32_t x_id;
-        for (uint32_t i = 0; i < nb_variables; i++) {
+        for (uint32_t i = 0; i < nb_objective_variables; i++) {
             if (is_convex) {
+                sign = "";
                 if (regex_search(line, match, VARIABLE_PATTERN)) {
                     ss << match[1].str();
                     ss >> sign;
@@ -78,7 +80,7 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
 
                     if (sign == std::string("+")) {
                         c[x_id] = x_cost;
-                    } else {
+                    } else if (sign == std::string("-")) {
                         c[x_id] = x_cost * -1;
                     }
                     e[x_id] = x_exponent;
@@ -111,19 +113,26 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
     }
 
     // Read the constraints
+    std::string sign;
+    double x_coefficient;
+    uint32_t x_id;
     for (uint32_t j = 0; j < nb_constraints; j++) {
         readLine();
+        sign = "";
         if (std::regex_match(line, match, CONSTRAINT_PATTERN)) {
             std::stringstream ss;
             ss << match[1].str();
+            ss >> sign;
+            ss.clear();
+            ss << match[2].str();
             ss >> b[0][j];
             ss.clear();
+            if (sign == std::string("-")) {
+                b[0][j] = b[0][j] * -1;
+            }
 
-            std::string sign;
-            double x_coefficient;
-            uint32_t x_id;
             if (is_convex) {
-                while (regex_search(line, match, VARIABLE_PATTERN)) {
+                while (regex_search(line, match, SIGNED_VARIABLE_PATTERN)) {
                     ss << match[1].str();
                     ss >> sign;
                     ss.clear();
@@ -142,7 +151,7 @@ OfflineModel::OfflineModel(const std::string& data_file, bool is_convex_mode)
 
                     if (sign == std::string("+")) {
                         A[0][j][x_id] = x_coefficient;
-                    } else {
+                    } else if (sign == std::string("-")) {
                         A[0][j][x_id] = x_coefficient * -1;
                     }
                     line = match.suffix();
