@@ -38,7 +38,7 @@ const DoubleVec_t& FrankWolfe::solve(const DoubleVec_t& initial_solution)
 
         // If the distance between the solutions is less than the limit, terminate
         if (euclid_norm < max_dist) {
-            return x;
+            break;
         }
 
         // Update eta
@@ -50,6 +50,11 @@ const DoubleVec_t& FrankWolfe::solve(const DoubleVec_t& initial_solution)
             if (x[i] < 0) {
                 x[i] = 0;
             }
+        }
+
+        // We don't update the solution anymore
+        if (eta < max_dist) {
+            break;
         }
     }
 

@@ -148,6 +148,18 @@ uint32_t Experts::getNbExperts() const
     return nb_experts;
 }
 
+DoubleMat_t Experts::getExpert(const uint32_t k) const
+{
+    DoubleMat_t expert(off_model.getNbConstraintBatches());
+    for (uint32_t t = 0; t < off_model.getNbConstraintBatches(); t++) {
+        expert[t].resize(off_model.getNbVariables());
+        for (uint32_t i = 0; i < off_model.getNbVariables(); i++) {
+            expert[t][i] = solutions[t][k][i];
+        }
+    }
+    return expert;
+}
+
 const DoubleMat_t& Experts::getSolutions(const int64_t t) const
 {
     if ((t < 0) || (t >= static_cast<int64_t>(solutions.size()))) {

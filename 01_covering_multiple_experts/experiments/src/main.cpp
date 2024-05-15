@@ -36,6 +36,7 @@ int main(int argc, char** argv)
     Config config(arg_parser.config_file);
     OfflineModel offline_model(arg_parser.data_file, arg_parser.is_convex);
     DummyExpert dummy_expert(offline_model);
+    Experts experts(offline_model, dummy_expert, config, arg_parser.expert_file);
 
 
     // Optimal Offline Solution
@@ -48,20 +49,27 @@ int main(int argc, char** argv)
         optimal_solution = lp_solver.solve(offline_model.getCost());
     }
     Solution::RoundSolutionIfNeeded(offline_model, optimal_solution, offline_model.getNbConstraints());
-    const double optimal_objective = lp_solver.getObjectiveValue();
+    const double optimal_objective = offline_model.getObjectiveValue(optimal_solution);
     print_solution("OPT Offline", optimal_objective, optimal_solution);
 
 
     // Online solution with Multiplicative Weight Update
-    STD_Algorithm std_algorithm(offline_model);
-    DoubleVec_t std_solution = std_algorithm.solve();
+    DoubleVec_t std_solution;
+    DoubleMat_t std_solutions;
+    if (arg_parser.is_convex) {
+        std_solutions = experts.getExpert(0);
+        std_solution = std_solutions.back();
+    } else {
+        STD_Algorithm std_algorithm(offline_model);
+        std_solution = std_algorithm.solve();
+        std_solutions = std_algorithm.getSubSolutions();
+    }
     Solution::RoundSolutionIfNeeded(offline_model, std_solution, offline_model.getNbConstraints());
-    const double std_objective = std_algorithm.getObjectiveValue();
+    const double std_objective = offline_model.getObjectiveValue(std_solution);
     print_solution("MWU Online", std_objective, std_solution);
 
 
     // Online Solution with convex regularization 1st layer
-    Experts experts(offline_model, dummy_expert, config, arg_parser.expert_file);
     CR_Algorithm cr_algorithm(offline_model, config, experts);
     DoubleVec_t online_solution = cr_algorithm.solve();
     Solution::RoundSolutionIfNeeded(offline_model, online_solution, offline_model.getNbConstraints());
@@ -69,7 +77,6 @@ int main(int argc, char** argv)
 
     // Save results to do the second layer of the algo
     const DoubleMat_t cr_solutions = cr_algorithm.getSubSolutions();
-    const DoubleMat_t std_solutions = std_algorithm.getSubSolutions();
     std::string tmp_file_name = "tmp.txt";
     std::ofstream tmp_save_file(tmp_file_name, std::ofstream::out | std::ofstream::trunc);
     tmp_save_file << "2" << std::endl;

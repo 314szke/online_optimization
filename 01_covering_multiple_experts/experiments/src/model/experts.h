@@ -12,6 +12,7 @@ public:
     Experts(const OfflineModel& model, const DummyExpert& dummy_expert, const Config& config, const std::string& expert_file);
 
     uint32_t getNbExperts() const;
+    DoubleMat_t getExpert(const uint32_t k) const;
     const DoubleMat_t& getSolutions(const int64_t t) const;
     const DoubleMat_t& getTightSolutions(const int64_t t) const;
     const DoubleVec_t& getAverageSolutions(const int64_t t) const;

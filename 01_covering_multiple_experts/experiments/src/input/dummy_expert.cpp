@@ -6,7 +6,7 @@
 
 
 DummyExpert::DummyExpert(const OfflineModel& off_model) :
-    init_value(0.0001),
+    init_value(0.000001),
     dummy_solution(off_model.getNbConstraintBatches() + 1)
 {
     OnlineModel on_model(off_model);
