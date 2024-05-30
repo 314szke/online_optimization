@@ -257,7 +257,7 @@ double Experts::getConstraintValue(uint32_t k, uint32_t t1, uint32_t t2)
 bool Experts::constraintIsNotTight(double value, double limit)
 {
     if (value < limit) {
-        if ((std::abs(limit) - std::abs(value)) > epsilon) {
+        if (std::abs(limit - value) > epsilon) {
             return true;
         }
     }
@@ -374,7 +374,7 @@ int32_t Experts::findInvalidSolution(const DoubleMatVec_t& sol_vec)
                     value += A[t][i] * sol_vec[t][k][i];
                 }
             if (value < b[t]) {
-                if ((std::abs(b[t]) - std::abs(value)) > epsilon) {
+                if (std::abs(b[t] - value) > epsilon) {
                     return t;
                 }
             }

@@ -23,7 +23,7 @@ bool Solution::ConstraintIsNotSatisfied(const OfflineModel& model, const DoubleV
             value += A[j][i] * x[i];
         }
         if (value < b[j]) {
-            if ((std::abs(b[j]) - std::abs(value)) > 0.001) {
+            if (std::abs(b[j] - value) > 0.001) {
                 std::stringstream message;
                 message << "ERROR: Solution " << value << " is too small for constraint " << j << " !" << std::endl;
                 throw std::runtime_error(message.str());

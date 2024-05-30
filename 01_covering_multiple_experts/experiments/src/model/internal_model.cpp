@@ -16,9 +16,9 @@ InternalModel::InternalModel(const Config& config, const OfflineModel& model, co
     nb_objective_variables = nb_variables;
 
     nb_batches = online_model.getNbConstraintBatches();
-    batch_size = online_model.getConstraintBatchSize() + online_model.getNbVariables();
+    batch_size = online_model.getNbInitialConstraints() + online_model.getConstraintBatchSize() + online_model.getNbVariables();
 
-    nb_initial_constraints = online_model.getNbInitialConstraints() + (2 * online_model.getNbVariables());
+    nb_initial_constraints = (2 * online_model.getNbVariables());
     nb_constraints = nb_initial_constraints + (nb_batches * batch_size);
 
     c.resize(nb_variables, 0.0);
@@ -37,20 +37,9 @@ InternalModel::InternalModel(const Config& config, const OfflineModel& model, co
     b[0].resize(nb_initial_constraints, 0.0);
     A[0].resize(nb_initial_constraints);
 
-    const DoubleVec_t& b_lp = online_model.getBound(0);
-    const DoubleMat_t& A_lp = online_model.getCoefficient(0);
-
-    for (uint32_t j = 0; j < online_model.getNbInitialConstraints(); j++) {
-        b[0][j] = b_lp[j];
-        A[0][j].resize(nb_variables, 0.0);
-        for (uint32_t i = 0; i < nb_variables; i++) {
-            A[0][j][i] = A_lp[j][i];
-        }
-    }
-    nb_revealed_constraints = online_model.getNbInitialConstraints();
-
     // Sum of weights is >= 1
-    uint32_t j;
+    nb_revealed_constraints = 0;
+    uint32_t j = 0;
     for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
         j = (nb_revealed_constraints + i);
         b[0][j] = 1.0;
@@ -85,27 +74,41 @@ void InternalModel::revealNextConstraints()
     b[time].resize(batch_size, 0.0);
     A[time].resize(batch_size);
 
+    const DoubleVec_t& b_lp_0 = online_model.getBound(0);
+    const DoubleMat_t& A_lp_0 = online_model.getCoefficient(0);
     const DoubleVec_t& b_lp = online_model.getBound(time);
     const DoubleMat_t& A_lp = online_model.getCoefficient(time);
     const DoubleMat_t& s_hat = _experts.getTightSolutions(time - 1); // time = 0 is reserved for initial constraints
     const DoubleMat_t& s = _experts.getSolutions(time - 1);
 
+    // Initial constraints need to be updated
+    for (uint32_t j = 0; j < online_model.getNbInitialConstraints(); j++) {
+        b[time][j] = b_lp_0[j];
+        A[time][j].resize(nb_variables, 0.0);
+        for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
+            for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
+                A[time][j][(i + (k * online_model.getNbVariables()))] = A_lp_0[j][i] * s_hat[k][i];
+            }
+        }
+    }
+
     // Constraints from the problem
-    for (uint32_t j = 0; j < online_model.getConstraintBatchSize(); j++) {
-        b[time][j] = b_lp[j];
+    uint32_t j = 0;
+    for (uint32_t idx = 0; idx < online_model.getConstraintBatchSize(); idx++) {
+        j = (idx + online_model.getNbInitialConstraints());
+        b[time][j] = b_lp[idx];
         A[time][j].resize(nb_variables, 0.0);
 
         for (uint32_t k = 0; k < _experts.getNbExperts(); k++) {
             for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
-                A[time][j][(i + (k * online_model.getNbVariables()))] = A_lp[j][i] * s_hat[k][i];
+                A[time][j][(i + (k * online_model.getNbVariables()))] = A_lp[idx][i] * s_hat[k][i];
             }
         }
     }
 
     // Non-negative variable constraints
-    uint32_t j;
     for (uint32_t i = 0; i < online_model.getNbVariables(); i++) {
-        j = online_model.getConstraintBatchSize() + i;
+        j = (i + online_model.getNbInitialConstraints() + online_model.getConstraintBatchSize());
         b[time][j] = 0.0;
         A[time][j].resize(nb_variables, 0.0);
 
