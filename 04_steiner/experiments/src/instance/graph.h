@@ -7,7 +7,10 @@
 class Graph {
 public:
     Graph();
+
     void initialize(uint32_t nb_vertices);
+    uint32_t IDX(uint32_t i, uint32_t j) const;
+    uint32_t size() const;
     void print() const;
 
     void setCost(uint32_t i, uint32_t j, double cost);
@@ -22,8 +25,6 @@ public:
     void activate(uint32_t v);
     bool isActive(uint32_t v) const;
 private:
-    uint32_t IDX(uint32_t i, uint32_t j) const;
-
     uint32_t n; // nb_vertices
     uint32_t m; // nb_edges
 

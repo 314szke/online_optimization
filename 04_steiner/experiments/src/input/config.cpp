@@ -3,8 +3,7 @@
 
 Config::Config(const std::string& config_file) :
     nb_vertices(0),
-    min_terminals(0),
-    max_terminals(0),
+    nb_terminals(0),
     nb_scenarios(0),
     dimension_size(0),
     random_seed(0),
@@ -20,8 +19,7 @@ Config::Config(const std::string& config_file) :
     }
 
     readParameter(nb_vertices);
-    readParameter(min_terminals);
-    readParameter(max_terminals);
+    readParameter(nb_terminals);
     readParameter(nb_scenarios);
     readParameter(dimension_size);
     readParameter(random_seed);

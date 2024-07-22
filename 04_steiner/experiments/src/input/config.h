@@ -10,8 +10,7 @@ public:
     Config(const std::string& config_file);
 
     uint32_t nb_vertices;
-    uint32_t min_terminals;
-    uint32_t max_terminals;
+    uint32_t nb_terminals;
     uint32_t nb_scenarios;
     uint32_t dimension_size;
     uint32_t random_seed;

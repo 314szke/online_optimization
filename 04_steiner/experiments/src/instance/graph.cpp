@@ -23,6 +23,30 @@ void Graph::initialize(uint32_t nb_vertices)
     is_active.resize(nb_vertices, false);
 }
 
+uint32_t Graph::IDX(uint32_t i, uint32_t j) const
+{
+    if (i == j) {
+        throw std::runtime_error("ERROR: No self loops!\n");
+    }
+
+    if (i >= n || j>= n) {
+        throw std::runtime_error("ERROR: Index out of bound!\n");
+    }
+
+    if (i > j) {
+        uint32_t tmp = i;
+        i = j;
+        j = tmp;
+    }
+
+    return (m - ((n-i-1)*(n-i))/2 + (j-i-1));
+}
+
+uint32_t Graph::size() const
+{
+    return n;
+}
+
 void Graph::print() const
 {
     std::cout << std::fixed << std::setprecision(1);
@@ -83,23 +107,4 @@ void Graph::activate(uint32_t v)
 bool Graph::isActive(uint32_t v) const
 {
     return is_active[v];
-}
-
-uint32_t Graph::IDX(uint32_t i, uint32_t j) const
-{
-    if (i == j) {
-        throw std::runtime_error("ERROR: No self loops!\n");
-    }
-
-    if (i >= n || j>= n) {
-        throw std::runtime_error("ERROR: Index out of bound!\n");
-    }
-
-    if (i > j) {
-        uint32_t tmp = i;
-        i = j;
-        j = tmp;
-    }
-
-    return (m - ((n-i-1)*(n-i))/2 + (j-i-1));
 }

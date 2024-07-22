@@ -8,9 +8,9 @@ Scenario::Scenario() :
     solution(0)
 {}
 
-Scenario::Scenario(const std::vector<uint32_t>& terminal_list, double prob) :
+Scenario::Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution) :
     occurrence(1),
     probability(prob),
     terminals(terminal_list),
-    solution(0)
+    solution(solution)
 {}
