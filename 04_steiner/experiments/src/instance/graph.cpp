@@ -32,9 +32,14 @@ void Graph::initialize(uint32_t nb_vertices)
     is_active.resize(nb_vertices, false);
 }
 
-uint32_t Graph::size() const
+uint32_t Graph::getNbVertices() const
 {
     return n;
+}
+
+uint32_t Graph::getNbEdges() const
+{
+    return m;
 }
 
 double Graph::getSteinerCost() const

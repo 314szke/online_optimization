@@ -8,7 +8,6 @@
 
 class Instance {
 public:
-    Instance();
     void print() const;
 
     Graph graph;

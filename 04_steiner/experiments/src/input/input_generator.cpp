@@ -82,14 +82,17 @@ void InputGenerator::generateScenarios(Instance& instance) {
 
 void InputGenerator::generateTerminals(Instance& instance)
 {
-    uint32_t max_value = static_cast<uint32_t>(std::pow(2, (config.nb_vertices - 1)) - 1);
     std::mt19937 engine(config.random_seed + 2);
-    std::uniform_int_distribution<uint32_t> random_bit_string(1, max_value);
-    std::bitset<MAX_BITSET_LENGTH> terminal_string(random_bit_string(engine));
+    std::vector<uint32_t> terminals((config.nb_vertices - 1), 0);
+    for (uint32_t idx = 0; idx < config.nb_terminals; idx++) {
+        terminals[idx] = 1;
+    }
+    std::shuffle(terminals.begin(), terminals.end(), engine);
 
     for (uint32_t idx = 0; idx < (config.nb_vertices - 1); idx++) {
-        if (terminal_string[idx]) {
+        if (terminals[idx] == 1) {
             instance.terminals.push_back(idx + 1);
         }
     }
+    std::shuffle(instance.terminals.begin(), instance.terminals.end(), engine);
 }

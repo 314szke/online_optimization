@@ -12,6 +12,7 @@ public:
     Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution);
     void print(uint32_t idx, const Graph& graph) const;
 
+    bool valid;
     uint32_t occurrence;
     double probability;
     std::vector<uint32_t> terminals;

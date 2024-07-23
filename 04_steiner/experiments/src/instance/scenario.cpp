@@ -5,6 +5,7 @@
 
 
 Scenario::Scenario() :
+    valid(true),
     occurrence(0),
     probability(0.0),
     terminals(0),
@@ -12,6 +13,7 @@ Scenario::Scenario() :
 {}
 
 Scenario::Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution) :
+    valid(true),
     occurrence(1),
     probability(prob),
     terminals(terminal_list),

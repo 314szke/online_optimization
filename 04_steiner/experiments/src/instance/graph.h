@@ -10,7 +10,8 @@ public:
     Graph(const Graph& graph);
 
     void initialize(uint32_t nb_vertices);
-    uint32_t size() const;
+    uint32_t getNbVertices() const;
+    uint32_t getNbEdges() const;
     double getSteinerCost() const;
 
     void print() const;
