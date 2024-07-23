@@ -13,6 +13,7 @@ public:
 private:
     void generateGraph(Instance& instance);
     void generateScenarios(Instance& instance);
+    void generateTerminals(Instance& instance);
 
     Config config;
 };

@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     Instance instance;
     InputGenerator generator(arg_parser.config_file);
     generator.generate(instance);
-    instance.graph.print();
+    instance.print();
 
     return 0;
 }

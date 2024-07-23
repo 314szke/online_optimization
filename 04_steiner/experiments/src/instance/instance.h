@@ -8,7 +8,10 @@
 
 class Instance {
 public:
-    uint32_t nb_terminals;
+    Instance();
+    void print() const;
+
     Graph graph;
     std::vector<Scenario> scenarios;
+    std::vector<uint32_t> terminals;
 };

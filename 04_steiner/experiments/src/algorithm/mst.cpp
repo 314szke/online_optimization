@@ -30,7 +30,7 @@ std::vector<uint32_t> MST(const Graph& graph, const std::vector<uint32_t>& termi
                 }
             }
         }
-        tree.push_back(graph.IDX(i,j));
+        tree.push_back(graph.getEdgeIndex(i,j));
         visited.push_back(i);
         remaining_terminals.erase(remaining_terminals.begin() + index);
     }

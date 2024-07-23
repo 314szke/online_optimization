@@ -9,15 +9,18 @@
 #include "algorithm/mst.h"
 
 
+#define MAX_BITSET_LENGTH 200
+
+
 InputGenerator::InputGenerator(const std::string& config_file) :
     config(config_file)
 {}
 
 void InputGenerator::generate(Instance& instance)
 {
-    instance.nb_terminals = config.nb_terminals;
     generateGraph(instance);
     generateScenarios(instance);
+    generateTerminals(instance);
 }
 
 void InputGenerator::generateGraph(Instance& instance)
@@ -48,17 +51,14 @@ void InputGenerator::generateGraph(Instance& instance)
 
 void InputGenerator::generateScenarios(Instance& instance) {
     uint32_t max_value = static_cast<uint32_t>(std::pow(2, (config.nb_vertices - 1)) - 1);
-    std::mt19937 engine(config.random_seed);
+    std::mt19937 engine(config.random_seed + 1);
     std::uniform_int_distribution<uint32_t> random_bit_string(1, max_value);
 
     double probability = (1.0 / config.nb_scenarios);
-    uint32_t random_number;
     for (uint32_t it = 0; it < config.nb_scenarios; it++) {
-        random_number = random_bit_string(engine);
-        std::bitset<200> terminal_string(random_number);
+        std::bitset<MAX_BITSET_LENGTH> terminal_string(random_bit_string(engine));
         std::vector<uint32_t> terminals;
 
-        // Vertex 0 is root
         for (uint32_t idx = 0; idx < (config.nb_vertices - 1); idx++) {
             if (terminal_string[idx]) {
                 terminals.push_back(idx + 1);
@@ -76,6 +76,20 @@ void InputGenerator::generateScenarios(Instance& instance) {
         }
         if (is_new) {
             instance.scenarios.push_back(Scenario(probability, terminals, MST(instance.graph, terminals)));
+        }
+    }
+}
+
+void InputGenerator::generateTerminals(Instance& instance)
+{
+    uint32_t max_value = static_cast<uint32_t>(std::pow(2, (config.nb_vertices - 1)) - 1);
+    std::mt19937 engine(config.random_seed + 2);
+    std::uniform_int_distribution<uint32_t> random_bit_string(1, max_value);
+    std::bitset<MAX_BITSET_LENGTH> terminal_string(random_bit_string(engine));
+
+    for (uint32_t idx = 0; idx < (config.nb_vertices - 1); idx++) {
+        if (terminal_string[idx]) {
+            instance.terminals.push_back(idx + 1);
         }
     }
 }
