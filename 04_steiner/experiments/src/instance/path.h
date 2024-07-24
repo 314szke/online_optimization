@@ -7,6 +7,7 @@
 class Path {
 public:
     Path();
+    void print() const;
 
     double cost;
     double weighted_cost;

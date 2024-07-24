@@ -108,6 +108,15 @@ double Graph::getCost(uint32_t i, uint32_t j) const
     return costs[getEdgeIndex(i,j)];
 }
 
+void Graph::setWeight(uint32_t e, double weight)
+{
+    if (e > m) {
+        throw std::runtime_error("ERROR: Edge index out of range!\n");
+    }
+
+    weights[e] = weight;
+}
+
 void Graph::setWeight(uint32_t i, uint32_t j, double weight)
 {
     weights[getEdgeIndex(i,j)] = weight;

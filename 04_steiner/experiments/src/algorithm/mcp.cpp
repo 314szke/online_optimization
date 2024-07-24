@@ -32,7 +32,7 @@ Path MCWP(const Graph& graph, uint32_t terminal)
         if (idx == terminal) {
             costs[idx] = 0;
         } else {
-            costs[idx] = graph.getCost(terminal, idx) * graph.getWeight(terminal, idx);
+            costs[idx] = graph.getCost(terminal, idx) * (1.0 - graph.getWeight(terminal, idx));
         }
         previous[idx] = terminal;
         Q.push_back(idx);
@@ -60,7 +60,7 @@ Path MCWP(const Graph& graph, uint32_t terminal)
 
         for (uint32_t idx = 0; idx < graph.getNbVertices(); idx++) {
             if (Q[idx] != -1) {
-                new_cost = costs[vertex] + graph.getCost(vertex, idx) * graph.getWeight(vertex, idx);
+                new_cost = costs[vertex] + graph.getCost(vertex, idx) * (1.0 - graph.getWeight(vertex, idx));
                 if (new_cost < costs[idx]) {
                     costs[idx] = new_cost;
                     previous[idx] = vertex;
@@ -86,7 +86,7 @@ Path MCWP(const Graph& graph, uint32_t terminal)
     do {
         vertex = previous[vertex];
         path.cost += graph.getCost(path.vertices.back(), vertex);
-        path.weighted_cost += graph.getCost(path.vertices.back(), vertex) * graph.getWeight(path.vertices.back(), vertex);
+        path.weighted_cost += graph.getCost(path.vertices.back(), vertex) * (1.0 - graph.getWeight(path.vertices.back(), vertex));
         path.vertices.push_back(vertex);
     } while (vertex != terminal);
     return path;

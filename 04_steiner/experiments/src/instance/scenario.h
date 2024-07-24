@@ -10,11 +10,15 @@ class Scenario {
 public:
     Scenario();
     Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution);
+
+    void checkIfStillFeasible(const std::vector<uint32_t>& terminal_list);
+    bool containsEdge(uint32_t e) const;
     void print(uint32_t idx, const Graph& graph) const;
 
-    bool valid;
     uint32_t occurrence;
     double probability;
     std::vector<uint32_t> terminals;
     std::vector<uint32_t> solution;
+
+    bool feasible;
 };

@@ -5,20 +5,45 @@
 
 
 Scenario::Scenario() :
-    valid(true),
     occurrence(0),
     probability(0.0),
     terminals(0),
-    solution(0)
+    solution(0),
+    feasible(true)
 {}
 
 Scenario::Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution) :
-    valid(true),
     occurrence(1),
     probability(prob),
     terminals(terminal_list),
-    solution(solution)
+    solution(solution),
+    feasible(true)
 {}
+
+void Scenario::checkIfStillFeasible(const std::vector<uint32_t>& current_terminals)
+{
+    if (! feasible || current_terminals.empty()) {
+        return;
+    }
+
+    // This check is done after every terminal
+    feasible = false;
+    for (uint32_t idx = 0; idx < terminals.size(); idx++) {
+        if (current_terminals.back() == terminals[idx]) {
+            feasible = true;
+        }
+    }
+}
+
+bool Scenario::containsEdge(uint32_t e) const
+{
+    for (uint32_t idx = 0; idx < solution.size(); idx++) {
+        if (solution[idx] == e) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void Scenario::print(uint32_t idx, const Graph& graph) const
 {
