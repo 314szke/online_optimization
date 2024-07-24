@@ -12,4 +12,5 @@ public:
     double cost;
     double weighted_cost;
     std::vector<uint32_t> vertices;
+    std::vector<uint32_t> edges;
 };

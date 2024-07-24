@@ -8,12 +8,12 @@
 
 class InputGenerator {
 public:
-    InputGenerator(const std::string& config_file);
+    InputGenerator(const Config& config);
     void generate(Instance& instance);
 private:
     void generateGraph(Instance& instance);
     void generateScenarios(Instance& instance);
     void generateTerminals(Instance& instance);
 
-    Config config;
+    const Config& _config;
 };

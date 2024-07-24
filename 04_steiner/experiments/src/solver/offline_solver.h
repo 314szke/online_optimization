@@ -13,5 +13,6 @@ public:
     const std::vector<uint32_t>& getSolution() const;
 private:
     Graph _graph;
+    const std::vector<uint32_t>& _terminals;
     std::vector<uint32_t> solution;
 };

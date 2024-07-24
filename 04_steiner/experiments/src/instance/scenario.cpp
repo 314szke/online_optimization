@@ -30,8 +30,41 @@ void Scenario::checkIfStillFeasible(uint32_t current_terminal)
     for (uint32_t idx = 0; idx < terminals.size(); idx++) {
         if (current_terminal == terminals[idx]) {
             feasible = true;
+            break;
         }
     }
+}
+
+bool Scenario::containsVertex(uint32_t v) const
+{
+    for (uint32_t idx = 0; idx < terminals.size(); idx++) {
+        if (terminals[idx] == v) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Scenario::containsSolution(const Graph& graph, const std::vector<uint32_t>& sub_solution)
+{
+    if (sub_solution.size() > solution.size()) {
+        return false;
+    }
+
+    uint32_t counter = 0;
+    for (uint32_t idx = 0; idx < sub_solution.size(); idx++) {
+        if (graph.isBought(sub_solution[idx])) {
+            counter++;
+        } else {
+            for (uint32_t jdx = 0; jdx < solution.size(); jdx++) {
+                if (sub_solution[idx] == solution[jdx]) {
+                    counter++;
+                }
+            }
+        }
+    }
+
+    return counter == sub_solution.size();
 }
 
 bool Scenario::containsEdge(uint32_t e) const

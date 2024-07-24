@@ -17,7 +17,7 @@ void GreedySolver::print() const
 
 void GreedySolver::connectTerminal(uint32_t t)
 {
-    uint32_t vertex = MCP(_graph, t);
+    uint32_t vertex = MinCostPathFinder::MinCostEdge(_graph, t);
     _graph.buy(vertex, t);
     _graph.activate(t);
     solution.push_back(_graph.getEdgeIndex(vertex, t));

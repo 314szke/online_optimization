@@ -6,6 +6,7 @@ Config::Config(const std::string& config_file) :
     nb_terminals(0),
     nb_scenarios(0),
     dimension_size(0),
+    lambda(0.0),
     random_seed(0),
     line_counter(0),
     config_pattern("[a-zA-Z_]+\\s+=\\s+([0-9\\.]*)\\s*[\\S\\s]*")
@@ -22,12 +23,14 @@ Config::Config(const std::string& config_file) :
     readParameter(nb_terminals);
     readParameter(nb_scenarios);
     readParameter(dimension_size);
+    readParameter(lambda);
     readParameter(random_seed);
 
     f_in.close();
 }
 
-void Config::readParameter(uint32_t& parameter)
+template<typename T>
+void Config::readParameter(T& parameter)
 {
     line.resize(0);
     std::getline(f_in, line);

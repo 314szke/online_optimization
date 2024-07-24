@@ -13,9 +13,11 @@ public:
     uint32_t nb_terminals;
     uint32_t nb_scenarios;
     uint32_t dimension_size;
+    double lambda;
     uint32_t random_seed;
 private:
-    void readParameter(uint32_t& parameter);
+    template<typename T>
+    void readParameter(T& parameter);
 
     std::ifstream f_in;
     std::string line;

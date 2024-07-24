@@ -57,33 +57,33 @@ void Graph::print() const
 {
     std::cout << std::fixed << std::setprecision(1);
     for (uint32_t i = 0; i < n; i++) {
-        std::cout << "    " << (i+1) << "       ";
+        std::cout << "\t" << (i+1) << "\t";
     }
     std::cout << std::endl;
 
     for (uint32_t i = 0; i < n; i++) {
         if (is_active[i]) {
             std::cout << "\033[1;31m"; // red on
-            std::cout << (i+1) << "  ";
+            std::cout << (i+1) << "\t";
             std::cout << "\033[1;0m"; // red off
         } else {
-            std::cout << (i+1) << "  ";
+            std::cout << (i+1) << "\t";
         }
         for (uint32_t j = 0; j < (i+1); j++) {
             std::cout << "\033[1;30m"; // black on
-            std::cout << "(0.0, 0.0)  ";
+            std::cout << "(0.0, 0.0)\t";
             std::cout << "\033[1;0m"; // black off
         }
         for (uint32_t j = (i+1); j < n; j++) {
             if (isBought(i,j)) {
                 std::cout << "\033[1;31m"; // red on
                 std::cout << "\e[1m"; // bold on
-                std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")  ";
+                std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")\t";
                 std::cout << "\e[0m"; // bold off
                 std::cout << "\033[1;0m"; // red off
             } else {
                 std::cout << "\e[1m"; // bold on
-                std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")  ";
+                std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")\t";
                 std::cout << "\e[0m"; // bold off
             }
         }
@@ -108,6 +108,22 @@ double Graph::getCost(uint32_t i, uint32_t j) const
     return costs[getEdgeIndex(i,j)];
 }
 
+double Graph::getCurrentCost(uint32_t e) const
+{
+    if (e > m) {
+        throw std::runtime_error("ERROR: Edge index out of range!\n");
+    }
+    if (is_bought[e]) {
+        return 0;
+    }
+    return costs[e];
+}
+
+double Graph::getCurrentCost(uint32_t i, uint32_t j) const
+{
+    return getCurrentCost(getEdgeIndex(i,j));
+}
+
 void Graph::setWeight(uint32_t e, double weight)
 {
     if (e > m) {
@@ -120,6 +136,14 @@ void Graph::setWeight(uint32_t e, double weight)
 void Graph::setWeight(uint32_t i, uint32_t j, double weight)
 {
     weights[getEdgeIndex(i,j)] = weight;
+}
+
+double Graph::getWeight(uint32_t e) const
+{
+    if (e > m) {
+        throw std::runtime_error("ERROR: Edge index out of range!\n");
+    }
+    return weights[e];
 }
 
 double Graph::getWeight(uint32_t i, uint32_t j) const
@@ -138,6 +162,14 @@ void Graph::buy(uint32_t e)
 void Graph::buy(uint32_t i, uint32_t j)
 {
     is_bought[getEdgeIndex(i,j)] = true;
+}
+
+bool Graph::isBought(uint32_t e) const
+{
+    if (e > m) {
+        throw std::runtime_error("ERROR: Edge index out of range!\n");
+    }
+    return is_bought[e];
 }
 
 bool Graph::isBought(uint32_t i, uint32_t j) const
