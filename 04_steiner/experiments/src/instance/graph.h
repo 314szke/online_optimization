@@ -12,10 +12,9 @@ public:
     void initialize(uint32_t nb_vertices);
     uint32_t getNbVertices() const;
     uint32_t getNbEdges() const;
-    double getSteinerCost() const;
 
+    double getSteinerCost() const;
     void print() const;
-    void printSolution() const;
 
     void setCost(uint32_t i, uint32_t j, double cost);
     double getCost(uint32_t i, uint32_t j) const;
