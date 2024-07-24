@@ -7,29 +7,25 @@ Predictor::Predictor(Graph& graph, std::vector<Scenario>& scenarios) :
     _graph(graph),
     _scenarios(scenarios)
 {
-    std::vector<uint32_t> no_terminals;
-    updateWeights(no_terminals);
+    updateWeights(0);
 }
 
-void Predictor::updateWeights(const std::vector<uint32_t>& terminals)
+void Predictor::updateWeights(uint32_t terminal)
 {
-    std::vector<uint32_t> ordered_terminals = terminals;
-    std::sort(ordered_terminals.begin(), ordered_terminals.end());
-
     double sum_probabilities = 0.0;
-    for (auto scenario : _scenarios) {
-        scenario.checkIfStillFeasible(terminals);
-        if (scenario.feasible) {
-            sum_probabilities += scenario.probability;
+    for (uint32_t idx = 0; idx < _scenarios.size(); idx++) {
+        _scenarios[idx].checkIfStillFeasible(terminal);
+        if (_scenarios[idx].feasible) {
+            sum_probabilities += _scenarios[idx].probability;
         }
     }
 
     double weight;
     for (uint32_t e = 0; e < _graph.getNbEdges(); e++) {
         weight = 0.0;
-        for (auto scenario : _scenarios) {
-            if (scenario.feasible && scenario.containsEdge(e)) {
-                weight += scenario.probability;
+        for (uint32_t idx = 0; idx < _scenarios.size(); idx++) {
+            if (_scenarios[idx].feasible && _scenarios[idx].containsEdge(e)) {
+                weight += _scenarios[idx].probability;
             }
         }
         weight = weight / sum_probabilities;

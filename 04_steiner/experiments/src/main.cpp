@@ -23,10 +23,13 @@ int main(int argc, char** argv)
     WeightedGreedySolver solver(instance.graph);
 
     //instance.print();
+    instance.graph.print();
     while (instance.isRunning()) {
         uint32_t t = instance.getNextTerminal();
+        predictor.updateWeights(t);
         greedy.connectTerminal(t);
         solver.connectTerminal(t);
+        instance.graph.print();
     }
 
     offline.print();

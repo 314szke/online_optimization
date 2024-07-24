@@ -11,7 +11,7 @@ public:
     Scenario();
     Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution);
 
-    void checkIfStillFeasible(const std::vector<uint32_t>& terminal_list);
+    void checkIfStillFeasible(uint32_t current_terminal);
     bool containsEdge(uint32_t e) const;
     void print(uint32_t idx, const Graph& graph) const;
 

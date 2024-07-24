@@ -20,16 +20,15 @@ Scenario::Scenario(double prob, const std::vector<uint32_t>& terminal_list, std:
     feasible(true)
 {}
 
-void Scenario::checkIfStillFeasible(const std::vector<uint32_t>& current_terminals)
+void Scenario::checkIfStillFeasible(uint32_t current_terminal)
 {
-    if (! feasible || current_terminals.empty()) {
+    if (! feasible || current_terminal == 0) { // 0 is root
         return;
     }
 
-    // This check is done after every terminal
     feasible = false;
     for (uint32_t idx = 0; idx < terminals.size(); idx++) {
-        if (current_terminals.back() == terminals[idx]) {
+        if (current_terminal == terminals[idx]) {
             feasible = true;
         }
     }

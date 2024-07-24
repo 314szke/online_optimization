@@ -10,7 +10,7 @@
 class Predictor {
 public:
     Predictor(Graph& graph, std::vector<Scenario>& scenarios);
-    void updateWeights(const std::vector<uint32_t>& terminals);
+    void updateWeights(uint32_t terminal);
 private:
     Graph& _graph;
     std::vector<Scenario>& _scenarios;
