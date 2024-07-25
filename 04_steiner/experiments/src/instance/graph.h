@@ -14,6 +14,7 @@ public:
     uint32_t getNbEdges() const;
 
     double getSteinerCost() const;
+    double getSteinerCost(const std::vector<uint32_t>& solution) const;
     void print() const;
 
     void setCost(uint32_t i, uint32_t j, double cost);

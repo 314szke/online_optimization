@@ -1,5 +1,6 @@
 #include "graph.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
@@ -46,6 +47,26 @@ double Graph::getSteinerCost() const
 {
     double value = 0;
     for (uint32_t edge = 0; edge < m; edge++) {
+        if (is_bought[edge]) {
+            value += costs[edge];
+        }
+    }
+    return value;
+}
+
+double Graph::getSteinerCost(const std::vector<uint32_t>& solution) const
+{
+    // Make sure there are no duplicates
+    std::vector<uint32_t> edges = solution;
+    std::sort(edges.begin(), edges.end());
+    auto last = std::unique(edges.begin(), edges.end());
+    edges.erase(last, edges.end());
+
+    double value = 0;
+    for (auto edge : edges) {
+        if (edge > m) {
+            throw std::runtime_error("ERROR: Edge index out of range!\n");
+        }
         if (is_bought[edge]) {
             value += costs[edge];
         }

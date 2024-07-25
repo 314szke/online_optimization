@@ -14,6 +14,14 @@ XuMoseleyAlgorithm::XuMoseleyAlgorithm(const Graph& graph, const VertexPredictor
 void XuMoseleyAlgorithm::print() const
 {
     std::cout << ">>> Xu-Moseley Solution <<<" << std::endl;
+
+    const std::vector<uint32_t>& terminals = _predictor.getPredictedTerminals();
+    std::cout << "Predicted Terminals: [";
+    for (uint32_t idx = 0; idx < (terminals.size() - 1); idx++) {
+        std::cout << (terminals[idx] + 1) << ", ";
+    }
+    std::cout << (terminals[(terminals.size() - 1)] + 1) << "]" << std::endl;
+
     _graph.print();
 }
 
