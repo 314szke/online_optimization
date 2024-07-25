@@ -12,7 +12,8 @@ public:
     void generate(Instance& instance);
 private:
     void generateGraph(Instance& instance);
-    void generateScenarios(Instance& instance);
+    void generateUniformScenarios(Instance& instance);
+    void generateNormalScenarios(Instance& instance);
     void generateTerminals(Instance& instance);
 
     const Config& _config;

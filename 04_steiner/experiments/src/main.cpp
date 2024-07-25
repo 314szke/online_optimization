@@ -12,6 +12,8 @@
 #include "solver/weighted_greedy_solver.h"
 #include "solver/Xu_Moseley_algorithm.h"
 
+#include "statistics/data_exporter.h"
+
 
 int main(int argc, char** argv)
 {
@@ -42,12 +44,22 @@ int main(int argc, char** argv)
         xm_algorithm.connectTerminal(t);
         solver.connectTerminal(t);
 
-        instance.graph.print();
+        //instance.graph.print();
     }
 
     greedy.print();
     xm_algorithm.print();
     solver.print();
 
+
+    DataExporter exporter(
+        arg_parser.test_name,
+        instance,
+        offline.getSolution(),
+        xm_algorithm.getSolution(),
+        greedy.getSolution(),
+        solver.getSolution());
+
+    exporter.exportToFile();
     return 0;
 }

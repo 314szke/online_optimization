@@ -19,7 +19,8 @@ InputGenerator::InputGenerator(const Config& config) :
 void InputGenerator::generate(Instance& instance)
 {
     generateGraph(instance);
-    generateScenarios(instance);
+    //generateUniformScenarios(instance);
+    generateNormalScenarios(instance);
     generateTerminals(instance);
 }
 
@@ -49,7 +50,7 @@ void InputGenerator::generateGraph(Instance& instance)
     instance.graph.activate(0);
 }
 
-void InputGenerator::generateScenarios(Instance& instance) {
+void InputGenerator::generateUniformScenarios(Instance& instance) {
     uint32_t max_value = static_cast<uint32_t>(std::pow(2, (_config.nb_vertices - 1)) - 1);
     std::mt19937 engine(_config.random_seed + 1);
     std::uniform_int_distribution<uint32_t> random_bit_string(1, max_value);
@@ -75,7 +76,40 @@ void InputGenerator::generateScenarios(Instance& instance) {
             }
         }
         if (is_new) {
-            instance.scenarios.push_back(Scenario(probability, terminals, MST(instance.graph, terminals)));
+            std::vector<uint32_t> solution = MST(instance.graph, terminals);
+            double cost = instance.graph.getSteinerCost(solution);
+            instance.scenarios.push_back(Scenario(cost, probability, terminals, solution));
+        }
+    }
+}
+
+void InputGenerator::generateNormalScenarios(Instance& instance)
+{
+    std::mt19937 engine(_config.random_seed + 1);
+    std::uniform_real_distribution<double> random_bit(0.0, 1.0);
+
+    double probability = (1.0 / _config.nb_scenarios);
+    for (uint32_t it = 0; it < _config.nb_scenarios; it++) {
+        std::vector<uint32_t> terminals;
+        for (uint32_t idx = 0; idx < (_config.nb_vertices - 1); idx++) {
+            if (random_bit(engine) > 0.5) {
+                terminals.push_back(idx + 1);
+            }
+        }
+
+        bool is_new = true;
+        for (uint32_t idx = 0; idx < instance.scenarios.size(); idx++) {
+            if (terminals == instance.scenarios[idx].terminals) {
+                is_new = false;
+                instance.scenarios[idx].occurrence += 1;
+                instance.scenarios[idx].probability += probability;
+                break;
+            }
+        }
+        if (is_new) {
+            std::vector<uint32_t> solution = MST(instance.graph, terminals);
+            double cost = instance.graph.getSteinerCost(solution);
+            instance.scenarios.push_back(Scenario(cost, probability, terminals, solution));
         }
     }
 }

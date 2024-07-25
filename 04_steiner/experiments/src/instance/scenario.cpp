@@ -5,6 +5,7 @@
 
 
 Scenario::Scenario() :
+    cost(0.0),
     occurrence(0),
     probability(0.0),
     terminals(0),
@@ -12,7 +13,8 @@ Scenario::Scenario() :
     feasible(true)
 {}
 
-Scenario::Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution) :
+Scenario::Scenario(double obj_cost, double prob, const std::vector<uint32_t>& terminal_list, const std::vector<uint32_t>& solution) :
+    cost(obj_cost),
     occurrence(1),
     probability(prob),
     terminals(terminal_list),

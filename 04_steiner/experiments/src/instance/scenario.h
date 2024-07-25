@@ -9,7 +9,7 @@
 class Scenario {
 public:
     Scenario();
-    Scenario(double prob, const std::vector<uint32_t>& terminal_list, std::vector<uint32_t> solution);
+    Scenario(double obj_cost, double prob, const std::vector<uint32_t>& terminal_list, const std::vector<uint32_t>& solution);
 
     void checkIfStillFeasible(uint32_t current_terminal);
 
@@ -19,6 +19,7 @@ public:
 
     void print(uint32_t idx, const Graph& graph) const;
 
+    double cost;
     uint32_t occurrence;
     double probability;
     std::vector<uint32_t> terminals;

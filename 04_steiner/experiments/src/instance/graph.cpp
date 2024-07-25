@@ -67,9 +67,7 @@ double Graph::getSteinerCost(const std::vector<uint32_t>& solution) const
         if (edge > m) {
             throw std::runtime_error("ERROR: Edge index out of range!\n");
         }
-        if (is_bought[edge]) {
-            value += costs[edge];
-        }
+        value += costs[edge];
     }
     return value;
 }
