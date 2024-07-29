@@ -6,9 +6,8 @@
 #include "instance/path.h"
 
 
-WeightedGreedySolver::WeightedGreedySolver(Graph& graph, EdgePredictor& predictor) :
+WeightedGreedySolver::WeightedGreedySolver(Graph& graph) :
     _graph(graph),
-    _predictor(predictor),
     MCPF(_graph)
 {}
 
@@ -21,11 +20,6 @@ void WeightedGreedySolver::print(uint32_t verbosity) const
 void WeightedGreedySolver::connectTerminal(uint32_t t)
 {
     Path p = MCPF.MinCostWeightedPath(t);
-    while (p.edges.size() > 1 && !_predictor.supportsSubSolution(p.edges)) {
-        _predictor.discountWeights();
-        p = MCPF.MinCostWeightedPath(t);
-    }
-
     for (uint32_t idx = 1; idx < p.vertices.size(); idx++) {
         _graph.buy(p.vertices[(idx-1)], p.vertices[idx]);
         _graph.activate(p.vertices[idx]);

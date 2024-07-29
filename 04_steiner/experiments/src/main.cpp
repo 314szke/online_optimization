@@ -31,8 +31,8 @@ int main(int argc, char** argv)
     VertexPredictor vertex_predictor(instance.graph, instance.scenarios);
     XuMoseleyAlgorithm xm_algorithm(instance.graph, vertex_predictor);
 
-    EdgePredictor edge_predictor(instance.graph, instance.scenarios, config.lambda);
-    WeightedGreedySolver solver(instance.graph, edge_predictor);
+    EdgePredictor edge_predictor(instance.graph, instance.scenarios, config.edge_weight_limit);
+    WeightedGreedySolver solver(instance.graph);
 
     offline.print(config.verbosity);
 

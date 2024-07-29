@@ -6,7 +6,7 @@ Config::Config(const std::string& config_file) :
     nb_terminals(0),
     nb_scenarios(0),
     dimension_size(0),
-    lambda(0.0),
+    edge_weight_limit(0.0),
     random_seed(0),
     verbosity(0),
     line_counter(0),
@@ -24,7 +24,7 @@ Config::Config(const std::string& config_file) :
     readParameter(nb_terminals);
     readParameter(nb_scenarios);
     readParameter(dimension_size);
-    readParameter(lambda);
+    readParameter(edge_weight_limit);
     readParameter(random_seed);
     readParameter(verbosity);
 

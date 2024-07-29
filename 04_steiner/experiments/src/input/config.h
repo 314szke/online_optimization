@@ -13,7 +13,7 @@ public:
     uint32_t nb_terminals;
     uint32_t nb_scenarios;
     uint32_t dimension_size;
-    double lambda;
+    double edge_weight_limit;
     uint32_t random_seed;
     uint32_t verbosity;
 private:
