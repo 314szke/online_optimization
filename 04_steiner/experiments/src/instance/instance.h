@@ -13,7 +13,7 @@ public:
 
     bool isRunning() const;
     uint32_t getNextTerminal();
-    void print() const;
+    void print(uint32_t verbosity) const;
 
     uint32_t time;
     Graph graph;

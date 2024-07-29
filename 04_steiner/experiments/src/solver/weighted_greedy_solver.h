@@ -11,7 +11,7 @@
 class WeightedGreedySolver {
 public:
     WeightedGreedySolver(Graph& graph, EdgePredictor& predictor);
-    void print() const;
+    void print(uint32_t verbosity) const;
 
     void connectTerminal(uint32_t t);
     const std::vector<uint32_t>& getSolution() const;

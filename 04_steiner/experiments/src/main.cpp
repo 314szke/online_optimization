@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     EdgePredictor edge_predictor(instance.graph, instance.scenarios, config.lambda);
     WeightedGreedySolver solver(instance.graph, edge_predictor);
 
-    offline.print();
+    offline.print(config.verbosity);
 
     while (instance.isRunning()) {
         uint32_t t = instance.getNextTerminal();
@@ -44,12 +44,14 @@ int main(int argc, char** argv)
         xm_algorithm.connectTerminal(t);
         solver.connectTerminal(t);
 
-        //instance.graph.print();
+        if (config.verbosity > 1) {
+            instance.graph.print(config.verbosity);
+        }
     }
 
-    greedy.print();
-    xm_algorithm.print();
-    solver.print();
+    greedy.print(config.verbosity);
+    xm_algorithm.print(config.verbosity);
+    solver.print(config.verbosity);
 
 
     DataExporter exporter(

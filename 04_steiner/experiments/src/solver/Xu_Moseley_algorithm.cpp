@@ -11,7 +11,7 @@ XuMoseleyAlgorithm::XuMoseleyAlgorithm(const Graph& graph, const VertexPredictor
     MCPF(_graph)
 {}
 
-void XuMoseleyAlgorithm::print() const
+void XuMoseleyAlgorithm::print(uint32_t verbosity) const
 {
     std::cout << ">>> Xu-Moseley Solution <<<" << std::endl;
 
@@ -22,7 +22,7 @@ void XuMoseleyAlgorithm::print() const
     }
     std::cout << (terminals[(terminals.size() - 1)] + 1) << "]" << std::endl;
 
-    _graph.print();
+    _graph.print(verbosity);
 }
 
 void XuMoseleyAlgorithm::connectTerminal(uint32_t t)

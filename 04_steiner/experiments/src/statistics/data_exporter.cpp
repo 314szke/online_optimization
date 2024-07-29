@@ -29,7 +29,7 @@ void DataExporter::exportToFile()
     for (uint32_t e = 0; e < (_instance.graph.getNbEdges() - 1); e++) {
         scenario_file << "E" << (e+1) << ";";
     }
-    scenario_file << "E" << (_instance.graph.getNbEdges() - 1) << std::endl;
+    scenario_file << "E" << _instance.graph.getNbEdges() << std::endl;
 
     for (uint32_t idx = 0; idx < _instance.scenarios.size(); idx++) {
         scenario_file << (idx+1) << ";";

@@ -16,11 +16,11 @@ uint32_t Instance::getNextTerminal()
     return terminals[(time - 1)];
 }
 
-void Instance::print() const
+void Instance::print(uint32_t verbosity) const
 {
     for (uint32_t idx = 0; idx < scenarios.size(); idx++) {
         if (scenarios[idx].feasible) {
-            scenarios[idx].print((idx+1), graph);
+            scenarios[idx].print((idx+1), graph, verbosity);
         }
     }
 }

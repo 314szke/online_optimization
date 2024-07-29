@@ -72,41 +72,43 @@ double Graph::getSteinerCost(const std::vector<uint32_t>& solution) const
     return value;
 }
 
-void Graph::print() const
+void Graph::print(uint32_t verbosity) const
 {
-    std::cout << std::fixed << std::setprecision(1);
-    for (uint32_t i = 0; i < n; i++) {
-        std::cout << "\t" << (i+1) << "\t";
-    }
-    std::cout << std::endl;
-
-    for (uint32_t i = 0; i < n; i++) {
-        if (is_active[i]) {
-            std::cout << "\033[1;31m"; // red on
-            std::cout << (i+1) << "\t";
-            std::cout << "\033[1;0m"; // red off
-        } else {
-            std::cout << (i+1) << "\t";
-        }
-        for (uint32_t j = 0; j < (i+1); j++) {
-            std::cout << "\033[1;30m"; // black on
-            std::cout << "(0.0, 0.0)\t";
-            std::cout << "\033[1;0m"; // black off
-        }
-        for (uint32_t j = (i+1); j < n; j++) {
-            if (isBought(i,j)) {
-                std::cout << "\033[1;31m"; // red on
-                std::cout << "\e[1m"; // bold on
-                std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")\t";
-                std::cout << "\e[0m"; // bold off
-                std::cout << "\033[1;0m"; // red off
-            } else {
-                std::cout << "\e[1m"; // bold on
-                std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")\t";
-                std::cout << "\e[0m"; // bold off
-            }
+    if (verbosity > 1) {
+        std::cout << std::fixed << std::setprecision(1);
+        for (uint32_t i = 0; i < n; i++) {
+            std::cout << "\t" << (i+1) << "\t";
         }
         std::cout << std::endl;
+
+        for (uint32_t i = 0; i < n; i++) {
+            if (is_active[i]) {
+                std::cout << "\033[1;31m"; // red on
+                std::cout << (i+1) << "\t";
+                std::cout << "\033[1;0m"; // red off
+            } else {
+                std::cout << (i+1) << "\t";
+            }
+            for (uint32_t j = 0; j < (i+1); j++) {
+                std::cout << "\033[1;30m"; // black on
+                std::cout << "(0.0, 0.0)\t";
+                std::cout << "\033[1;0m"; // black off
+            }
+            for (uint32_t j = (i+1); j < n; j++) {
+                if (isBought(i,j)) {
+                    std::cout << "\033[1;31m"; // red on
+                    std::cout << "\e[1m"; // bold on
+                    std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")\t";
+                    std::cout << "\e[0m"; // bold off
+                    std::cout << "\033[1;0m"; // red off
+                } else {
+                    std::cout << "\e[1m"; // bold on
+                    std::cout << "(" << getCost(i,j) << ", " << getWeight(i,j) << ")\t";
+                    std::cout << "\e[0m"; // bold off
+                }
+            }
+            std::cout << std::endl;
+        }
     }
 
     std::cout << "Steiner tree cost = ";

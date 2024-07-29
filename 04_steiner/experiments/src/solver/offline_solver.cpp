@@ -18,7 +18,7 @@ OfflineSolver::OfflineSolver(const Graph& graph, const std::vector<uint32_t>& te
     }
 }
 
-void OfflineSolver::print() const
+void OfflineSolver::print(uint32_t verbosity) const
 {
     std::cout << ">>> Offline Solution <<<" << std::endl;
     std::cout << "Terminals: [";
@@ -27,7 +27,7 @@ void OfflineSolver::print() const
     }
     std::cout << (_terminals[(_terminals.size() - 1)] + 1) << "]" << std::endl;
 
-    _graph.print();
+    _graph.print(verbosity);
 }
 
 const std::vector<uint32_t>& OfflineSolver::getSolution() const

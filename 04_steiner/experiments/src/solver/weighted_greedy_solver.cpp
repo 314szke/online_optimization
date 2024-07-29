@@ -12,10 +12,10 @@ WeightedGreedySolver::WeightedGreedySolver(Graph& graph, EdgePredictor& predicto
     MCPF(_graph)
 {}
 
-void WeightedGreedySolver::print() const
+void WeightedGreedySolver::print(uint32_t verbosity) const
 {
     std::cout << ">>> Weighted Greedy Solution <<<" << std::endl;
-    _graph.print();
+    _graph.print(verbosity);
 }
 
 void WeightedGreedySolver::connectTerminal(uint32_t t)

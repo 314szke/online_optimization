@@ -8,6 +8,7 @@ Config::Config(const std::string& config_file) :
     dimension_size(0),
     lambda(0.0),
     random_seed(0),
+    verbosity(0),
     line_counter(0),
     config_pattern("[a-zA-Z_]+\\s+=\\s+([0-9\\.]*)\\s*[\\S\\s]*")
 {
@@ -25,6 +26,7 @@ Config::Config(const std::string& config_file) :
     readParameter(dimension_size);
     readParameter(lambda);
     readParameter(random_seed);
+    readParameter(verbosity);
 
     f_in.close();
 }

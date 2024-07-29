@@ -79,7 +79,7 @@ bool Scenario::containsEdge(uint32_t e) const
     return false;
 }
 
-void Scenario::print(uint32_t idx, const Graph& graph) const
+void Scenario::print(uint32_t idx, const Graph& graph, uint32_t verbosity) const
 {
     std::cout << std::fixed << std::setprecision(2);
     std::cout << idx << ". Scenario (" << occurrence << ", " << probability << ")" << std::endl;
@@ -90,5 +90,5 @@ void Scenario::print(uint32_t idx, const Graph& graph) const
     for (auto e : solution) {
         print_graph.buy(e);
     }
-    print_graph.print();
+    print_graph.print(verbosity);
 }

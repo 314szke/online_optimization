@@ -17,7 +17,7 @@ public:
     bool containsEdge(uint32_t e) const;
     bool containsSolution(const Graph& graph, const std::vector<uint32_t>& sub_solution);
 
-    void print(uint32_t idx, const Graph& graph) const;
+    void print(uint32_t idx, const Graph& graph, uint32_t verbosity) const;
 
     double cost;
     uint32_t occurrence;

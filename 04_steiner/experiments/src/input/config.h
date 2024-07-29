@@ -15,6 +15,7 @@ public:
     uint32_t dimension_size;
     double lambda;
     uint32_t random_seed;
+    uint32_t verbosity;
 private:
     template<typename T>
     void readParameter(T& parameter);

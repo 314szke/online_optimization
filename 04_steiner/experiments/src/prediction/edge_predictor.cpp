@@ -1,6 +1,7 @@
 #include "edge_predictor.h"
 
 #include <algorithm>
+#include <iostream>
 
 
 EdgePredictor::EdgePredictor(Graph& graph, std::vector<Scenario>& scenarios, double lambda) :
@@ -38,12 +39,17 @@ void EdgePredictor::updateWeights(uint32_t terminal)
             }
         }
         weight = weight / sum_probabilities;
-        _graph.setWeight(e, weight);
+        if (weight > 0.5) {
+            _graph.setWeight(e, weight);
+        } else {
+            _graph.setWeight(e, 0.0);
+        }
     }
 }
 
 void EdgePredictor::discountWeights()
 {
+    std::cout << "EDGES are discounted!" << std::endl;
     double weight;
     for (uint32_t edge = 0; edge < _graph.getNbEdges(); edge++) {
         weight = _graph.getWeight(edge);

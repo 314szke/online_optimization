@@ -15,7 +15,7 @@ public:
 
     double getSteinerCost() const;
     double getSteinerCost(const std::vector<uint32_t>& solution) const;
-    void print() const;
+    void print(uint32_t verbosity) const;
 
     void setCost(uint32_t i, uint32_t j, double cost);
     double getCost(uint32_t i, uint32_t j) const;
