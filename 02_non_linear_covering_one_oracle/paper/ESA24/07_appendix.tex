@@ -1,0 +1,212 @@
+%!TEX root = ./main.tex
+
+\section*{Appendix}
+
+\section{An example from the introduction} \label{apix:example-introduction}
+
+The following example demonstrates why an approach where we alternate between the solutions of the prediction oracle and the primal-dual method does not work for non-linear objective functions.
+
+Consider the objective of $x_{11}^p + ... + x_{1k}^p + x_{21}^p + ... + x_{2k}^p$ where $k$ and $p$ are some integers, and two algorithms: Algorithm $1$ and Algorithm $2$. At every time $t$, the constraint is $x_{1t} + x_{2t} \geq 1$ and Algorithm $1$ always sets $x_{1t} = 1$ and Algorithm $2$ always sets $x_{2t} = 1$. Any alternating strategy has a cost of $1$ at any time $t$. The optimal cost is $1/2^p$ at any time $t$ by setting $x_{1t} = x_{2t} = 1/2$. The competitive ratio is $2^p$. We can generalize this example for $n$ algorithms ($n$ types of variables $x_{1t}, x_{2t}, ..., x_{nt}$). The same computation gives the competitive ratio of $n^p$. 
+
+This example shows that the competitive ratio (of the algorithm that alternates between two solutions) is not captured by any function intrinsically depending only on $\lambda$ and $\mu$ (as there is a parameter $n$ in the competitive ratio). In this particular example, for a degree-$p$ polynomial with positive coefficients, $\lambda$ and $\mu$ are finite bounded values independent of $n$ (precise values can be found in Section~\ref{sec:energy}).
+
+\section{Complete proof of \cref{lem:bound-x} in \cref{sec:covering}} \label{apix:lemma-proof}
+\setcounter{theorem}{3}
+\begin{restatable}{lemma}{BoundX}
+	Let $e$ be an arbitrary resource.
+	At any moment $\tau$ during the execution of the algorithm,
+	when $t$ constraints have already been released, it always holds that
+	$$
+	x_{e}	\geq  \frac{\eta}{b^{t_{e}^{*}}_{e}(A) \ d}
+			\left[ \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
+					\cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A) \cdot \alpha^{t'}_{A} \biggr) - 1 \right]
+	$$
+	where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-covering:bmax}.
+\end{restatable}
+\begin{proof}
+	Let us fix a resource $e$ and prove the lemma by induction. At the beginning of the execution, when no constraint has been released yet, both sides of the lemma are 0.
+	Let us assume that the lemma holds until the release of the $t^{\text{th}}$ constraint $\sum_{e} a^{t}_{e} x_{e} \geq 1$.
+	Consider a moment $\tau$ during the algorithm's execution
+	and let $A^{*}$ be the current set of resources $e'$ such that $x_{e'} = 1$.
+	If at time~$\tau$, $x_{e} = 1$, then by the algorithm's design, the set $A^{*}$ has been updated such that
+	$e \in A^{*}$. As such, the increasing rates of both sides in the lemma inequality are 0.
+	In the remaining of the proof, we assume that  $x_{e} < 1$.
+	We recall that by the algorithm's design, $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
+	We consider two cases $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$
+	and $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.
+
+	\textbf{Case 1: $\beta_{e} > \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
+	In this case, by the algorithm's design, the value of $\beta_{e}$ remains unchanged at time~$\tau$ (line \ref{algo-covering:beta}) ($\frac{\partial \beta_{e}}{\partial \tau} = 0$).
+	The lemma's right-hand side's derivative according to $\tau$ is
+	\begin{align*}
+	&\sum_{t' \le t} \frac{\partial \alpha^{t'}_{A^{*}}}{\partial \tau} \cdot
+		\frac{b^{t'}_{e}(A^{*}) \ \eta }{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
+			\cdot \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e} } \cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \biggr) \\
+	%
+	&\leq \frac{\partial \alpha^{t}_{A^{*}}}{\partial \tau} \cdot
+		\frac{b^{t}_{e}(A^{*}) \ \eta }{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}} \cdot \left( \frac{b^{t_{e}^{*}}_{e}(A) \ d}{\eta}\ x_{e} + 1 \right) \\
+	%
+	&= \frac{1}{\lambda \ln(1+2d^{2}/\eta)} \cdot
+		\frac{b^{t}_{e}(A^{*}) \ \eta }{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}} \cdot \left( \frac{b^{t_{e}^{*}}_{e}(A) \ d}{\eta}\ x_{e} + 1 \right) \\
+	%
+	&\leq  \frac{b^{t}_{e}(A^{*}) \ x_{e}}{\lambda\ \beta_{e}} + \frac{\eta}{\lambda\ \beta_{e}\ d} \\
+	%
+	&\leq \frac{\partial x_{e}}{\partial \tau}
+	\end{align*}
+	%
+	In the first inequality, we use the induction hypothesis and $\frac{\partial \alpha^{t}_{A^{*}}}{\partial \tau} > 0$
+	and $\frac{\partial \alpha^{t'}_{A^{*}}}{\partial \tau} \leq 0$ for $t' < t$ and $\frac{\partial \beta_{e}}{\partial \tau} = 0$.
+	The equality follows the increasing rate of $\alpha^{t}_{A^{*}}$.
+	The last inequality is due to the increasing rate of $x_{e}$.
+	The rate on the left-hand side is always larger than on the right-hand side, so the lemma inequality holds.
+
+	\textbf{Case 2: $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x})$.}
+	In this case, by the algorithm's design, $\frac{1}{\lambda} \nabla_{e} F(\vect{x})$ is locally non-decreasing at $\tau$ (since otherwise,
+	by line \ref{algo-covering:beta}, $\beta_{e}$ is not maintained to be equal to $\frac{1}{\lambda} \nabla_{e} F(\vect{x})$).
+	Therefore, $\frac{\partial \beta_{e}}{\partial \tau} \geq 0$ and so $\partial \bigl(\frac{1}{\beta_{e}}\bigr)/\partial \tau \leq 0$.
+	Hence, the derivative of the right-hand side of the lemma inequality according to $\tau$ is upper bounded by
+	\begin{align*}
+	\sum_{t' \le t} \frac{\partial \alpha^{t}_{A^{*}}}{\partial \tau} \cdot
+		\frac{b^{t'}_{e}(A^{*}) \ \eta}{b^{t_{e}^{*}}_{e}(A) \ d} \cdot \frac{\ln(1+2d^{2}/\eta)}{\beta_{e}}
+			\cdot \exp\biggl( \frac{\ln(1+2d^{2}/\eta)}{\beta_{e} } \cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \biggr)
+	\end{align*}
+	which is bounded by $\frac{\partial x_{e}}{\partial \tau}$ by the same argument as the previous case. The lemma follows.
+\end{proof}
+
+
+\section{Complete proofs from application related propositions} \label{sec:appix-proofs}
+To apply Theorem \ref{thm:covering-formal} on specific problems, we need to determine the local-smoothness parameters for the multilinear extension.
+\cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, in particular for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
+be degree-$k$ polynomials with non-negative coefficients and let $f:~\{0,1\}^{n}~\rightarrow~\mathbb{R}^{+}$ be the cost function
+defined as $f(\one_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{e} \bigr)$ where $a_{e} \geq 0$ for every
+$e$ and $b_{\ell} \geq 0$ for every $1 \leq \ell \leq L$.
+Then the multilinear extension $F$ of $f$ is $(O(k \ln(d/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2d^{2}/\eta)})$-locally smooth.
+We will use these parameters to derive the guarantees for the following problems.
+
+
+%%% **************************
+%%% **************************
+%%% **************************
+
+\subsection{Energy Minimization in Scheduling}
+
+Reducing carbon emissions is a global effort in which energy-efficient algorithms play an essential role. For example, \cite{Albers10:Energy-efficient-algorithms} and \cite{GuCaiZengZhangJinDai:2019} studied energy-efficient algorithms for scheduling.
+
+Given $m$ unrelated machines, we need to assign jobs that arrive online. Each job $j$ has a release date $r_{j}$, a deadline $d_{j}$, and a vector of machine dependent processing times $p_{ij}$. Contrary to performance-oriented scheduling, our goal is to design an assignment policy which can minimize the total energy consumption of the execution. To achieve this, we can adjust the machines' speed $s_{ij}(t)$ during the time interval $[t,t+1)$ for the execution of job $j$. Every machine $i$ has a non-decreasing energy power function $P_{i}(\cdot)$. Typically, $P_{i}(z) = z^{k_{i}}$ for some constant $k_{i} \geq 1$. The execution's total energy is $\sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$.
+
+In the classic online setting, this problem is well understood: there exists an $O(k^{k})$-competitive algorithm \cite{Thang20:Online-Primal-Dual} where $k = \max_{i} \{k_{i}\}$
+and this bound is tight up to a constant factor \cite{Caragiannis08:Better-bounds}. In our extended study with predictions we represent this problem with the following non-linear program. The objective is $\min \sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$ and the constraints are:
+$$
+\sum_{i=1}^{m} x_{ij} = 1,  \qquad \qquad \sum_{t = r_{j}}^{d_{j}-1} s_{ij}(t) \geq p_{ij} x_{ij}, \qquad  \qquad s_{ij}(t) \geq 0  \qquad \forall\ i,\ t
+$$
+where $x_{ij} \in \{0,1\}$ indicates whether job $j$ is assigned to machine $i$
+and $s_{ij}(t) \geq 0$ denotes the speed of machine $i$ executing job $j$ during the time interval $[t, t+1)$.
+The first constraint guarantees that job $j$ is assigned to some machine, and the second one ensures
+that the job $j$ is completed on time (on the machine where the job is assigned). At the arrival of
+job $j$, the prediction provides a solution $pred(x_{ij})$ and a speed $pred(s_{ij}(t))$ for $r_{j} \leq t \leq d_{j} - 1$.
+Using our framework, we can deduce the following result.
+
+\setcounter{theorem}{7}
+\begin{proposition}
+Algorithm~\ref{algo:covering} gives a
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl(k^{k} \log^{k} \frac{m}{\eta}\bigr)$-robust fractional solution
+for the energy minimization problem.
+\end{proposition}
+%
+\begin{proof}
+The objective function $\sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$ is a polynomial of degree $k = \max_{i} k_{i}$;
+so its multilinear extension is
+$(O(k \ln(m/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2m^{2}/\eta)})$-locally smooth
+(the maximal number of positive coefficients in a constraint $d = m$).
+Therefore, applying Theorem~\ref{thm:covering-formal},
+Algorithm~\ref{algo:covering} provides a $O(\frac{1}{1 - \eta})$-consistent and $O\bigl(k^{k} \ln^{k} \frac{m}{\eta}\bigr)$-robust
+fractional solution.
+\end{proof}
+
+
+
+%%% **************************
+%%% **************************
+%%% **************************
+
+\subsection{Online Submodular Mimimization}	\label{apix:sub-min}
+
+Submodular minimization is a widespread subject in optimization and machine learning \cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}. Let us consider the problem of minimizing an online monotone submodular function subject to covering constraints.
+A set-function $f: 2^{\mathcal{E}} \rightarrow \mathbb{R}+$ is \emph{submodular} if
+$f(S \cup e) - f(S) \geq f(T \cup e) - f(T)$ for all $S \subset T \subseteq \mathcal{E}$.
+Let $F$ be the multilinear extension of a monotone submodular function $f$. Function $F$
+admits two useful properties. First, if $f$ is monotone, then so is $F$. Second, $F$ is concave in
+the positive direction, meaning that $\nabla F(\vect{x}) \geq \nabla F(\vect{y})$ for all $\vect{x} \leq \vect{y}$, where $\vect{x} \leq \vect{y}$ is defined as $x_{e} \leq y_{e} ~\forall e$.
+
+To apply Algorithm~\ref{algo:covering}, we need to determine the local-smoothness parameters.
+An important concept in studying submodular functions is the \emph{curvature}. Given a submodular
+function $f$, the \emph{total curvature} $\kappa_{f}$ (\cite{ConfortiCornuejols84:Submodular-set-functions}) of $f$ is defined as
+$
+\kappa_{f} = 1 - \min_{e} \frac{f(\one_{\mathcal{E}}) - f(\one_{\mathcal{E} \setminus \{e\}})}{f(\one_{\{e\}})}.
+$
+Intuitively, the total curvature measures how far away $f$ is from being \emph{modular}. This concept of
+curvature is used to determine both upper and lower bounds on the approximation ratios
+for many submodular and learning problems (see \cite{ConfortiCornuejols84:Submodular-set-functions,GoemansHarvey09:Approximating-submodular,BalcanHarvey12:Learning-Submodular,Vondrak10:Submodularity-and-Curvature:,IyerJegelka13:Curvature-and-optimal,SviridenkoVondrak17:Optimal-approximation}).
+The following lemma shows a useful property of the total curvature.
+
+\setcounter{theorem}{8}
+\begin{proposition}
+Algorithm~\ref{algo:covering} gives a
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \frac{\log (d/\eta)}{1 - \kappa_{f}} \bigr)$-robust fractional  solution
+for the submodular minimization under covering constraints.
+\end{proposition}
+\begin{proof}
+Let $F$ be the multilinear extension of $f$.
+It is sufficient to verify that $F$ is $\bigl(\frac{1}{1-\kappa_{f}},0\bigr)$-locally smooth.
+Recall that, by definition of the multilinear extension,
+$F(\vect{x}) = \mathbb{E} \bigl[ f(\one_{T})\bigr]$ where $T$ is a random set
+such that a resource $e$ appears in $T$ with probability $x_{e}$. Moreover, as $F$ is linear in $x_{e}$, we have
+%
+\begin{align*}
+\nabla_{e} F(\vect{x}) %= \frac{\partial F(\vect{x}) }{\partial x_{e}}
+&= F(x_{1}, \ldots, x_{e-1}, 1, x_{e+1}, \ldots, x_{n}) - F(x_{1}, \ldots, x_{e-1}, 0, x_{e+1}, \ldots, x_{n}) \\
+&= \mathbb{E} \biggl[ f\bigl(\one_{R \cup \{e\}}\bigr) - f\bigl(\one_{R}\bigr) \biggr]
+\end{align*}
+where $R$ is a random subset of resources $N \setminus \{e\}$ such that $e'$ is included with probability $x_{e'}$.
+Therefore, to prove that $F$ is $(\lambda,\mu)$-locally-smooth, it is equivalent to show that,
+for any set $S \subset \mathcal{E}$ and for any vectors $\vect{x}^{e} \in [0,1]^{n}$ for $e \in \mathcal{E}$,
+%
+\begin{equation*}	\label{eq:min-local-smooth-equiv}
+\sum_{e \in S} \mathbb{E} \biggl[ f\bigl(\one_{R^{e} \cup \{e\}}\bigr) - f\bigl(\one_{R^{e}}\bigr) \biggr]
+\leq \lambda f\bigl( \one_{S} \bigr) + \mu \mathbb{E} \biggl[ f\bigl(\one_{R}\bigr) \biggr]
+\end{equation*}
+%
+where $R^{e}$ is a random subset of resources $N \setminus \{e\}$ such that $e'$ is included with probability $x^{e}_{e'}$
+and $R$ is a random subset of resources $N \setminus \{e\}$ such that $e'$ is included with probability $\max_{e \in S} x^{e}_{e'}$.
+
+The $\bigl(\frac{1}{1-\kappa_{f}},0\bigr)$-local smoothness of $F$ holds due to submodularity and \cref{lem:curvature} (see below), so
+for any subsets $R^{e}$, we have
+\begin{align*}
+	\sum_{e \in S} \left[ f\bigl(\one_{R^{e} \cup \{e\}}\bigr) - f\bigl(\one_{R^{e}}\bigr) \right]
+		\leq \sum_{e \in S} \left[ f\bigl(\one_{\{e\}}\bigr) \right]
+		\leq \frac{1}{1 -\kappa_{f}} \cdot f(\one_{S})
+\end{align*}
+Therefore, applying Theorem~\ref{thm:covering-formal}, the proposition follows.
+%Algorithm~\ref{algo:covering} gives a fractional
+%$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \frac{\log (d/\eta)}{1 - \kappa_{f}} \bigr)$-robust solution.
+\end{proof}
+
+\begin{lemma}		\label{lem:curvature}
+	For any set $S$, it always holds that
+	$$
+	f(\one_{S}) \geq (1-\kappa_{f}) \sum_{e \in S} f(\one_{\{e\}}).
+	$$
+\end{lemma}
+\begin{proof}
+	Let $S = \{e_{1}, \ldots, e_{m}\}$ be an
+	arbitrary subset of $\mathcal{E}$. Let $S_{i} = \{e_{1}, \ldots, e_{i}\}$ for $1 \leq i \leq m$ and $S_{0} = \emptyset$.
+	We have
+	\begin{align*}
+	f(\one_{S})
+	&\geq  f(\one_{\mathcal{E}}) -  f(\one_{\mathcal{E} \setminus S})
+	= \sum_{i=0}^{m-1}  f(\one_{\mathcal{E} \setminus S_{i}}) - f(\one_{\mathcal{E} \setminus S_{i+1}})
+	\geq \sum_{i=1}^{m}  f(\one_{\mathcal{E}}) - f(\one_{\mathcal{E} \setminus \{e_{i}\}}) \\
+	&\geq (1 - \kappa_{f}) \sum_{i=1}^{m} f(\one_{e_{i}})
+	\end{align*}
+	where the first two inequalities are due to the submodularity of $f$, and the last inequality follows the definition of curvature.
+\end{proof}

@@ -1,0 +1,162 @@
+%!TEX root = ./main.tex
+
+\section{Applications}	\label{sec:app}
+\setcounter{theorem}{5}
+
+%\input{04_norm}
+
+\subsection{Norm minimization} 	\label{appix-norm}
+
+As a first application, we consider problems where the objective function is the $\ell_{k}$-norm. Formally,  $f(\vect{x}) = \|C \vect{x}\|_{k}$, where $C \in \mathbb{R}_{+}^{m \times n}$ is a matrix with non-negative coefficients. The corresponding optimization problem is: $\min \|C \vect{x}\|_{k}$ subject to $B \vect{x} \geq 0$. To apply our framework, we first determine the $(\lambda, \mu)$-local-smoothness parameters of $\|C \vect{x}\|_{k}$.
+
+\begin{lemma} \label{lem-makespan}
+For $C \in \mathbb{R}^{m \times n}$, function $f(\vect{x}) := \|C \vect{x}\|_{k}$ is $(k,0)$-locally-smooth.
+\end{lemma}
+%
+\begin{proof}
+To prove the lemma, we show that for every subset $S \subseteq \{1, \ldots, n\}$ and for every $\vect{x} \in [0,1]^{n}$, the following holds.
+%
+\begin{align}	\label{ineq:lp-smooth}
+\sum_{e \in S} \nabla_{e} f(\vect{x}) \leq  k \cdot \|C \cdot \one_{S}\|_{k}
+\end{align}
+%
+The partial derivative is
+%
+\begin{align*}
+\frac{\partial f(\vect{x})}{\partial x_{e}}
+= k \cdot \sum_{i = 1}^{m} \frac{c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m}
+		\bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \bigr)^{k} \right]^{(k-1)/k}},
+\end{align*}
+so when we sum over $S$, we get
+\begin{align*}
+\sum_{e \in S} \frac{\partial f(\vect{x})}{\partial x_{e}}
+= k \cdot \frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \bigr)^{k} \right]^{(k-1)/k}}.
+\end{align*}
+%
+Therefore, inequality (\ref{ineq:lp-smooth}) is equivalent to
+\begin{align*}
+\frac{ \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot \bigl( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \bigr)^{k-1} }{ \left[ \sum_{i' = 1}^{m} \bigl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \bigr)^{k} \right]^{(k-1)/k}}
+	\leq   \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}.
+\end{align*}
+%
+By multiplying both sides with the denominator of the left-hand side, we get
+%
+\begin{align*}
+    \sum_{e \in S} \sum_{i = 1}^{m} c_{i,e} \cdot & \left( \sum_{e' = 1}^{n} c_{i,e'} x_{e'} \right)^{k-1} \leq \\
+    & \left[ \sum_{i'=1}^{m} \biggl( \biggl( \sum_{e'= 1}^{n} c_{i',e'} x_{e'} \biggr)^{k-1} \biggr)^{k/(k-1)} \right]^{(k-1)/k}
+    	\cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
+\end{align*}
+which is equivalent to
+\begin{align*}
+    \sum_{i=1}^{m} & \biggl( \sum_{e: e \in S} c_{i,e} \biggr) \cdot \biggl( \sum_{e'=1}^{n} c_{i,e'} x_{e'} \biggr)^{k-1} \leq \\
+    & \left \| \left( \biggl( \sum_{e'=1}^{n} c_{1,e'} x_{1,e'} \biggr)^{k-1}, \ldots, \biggl( \sum_{e'=1}^{n} c_{m,e'} x_{m,e'} \biggr)^{k-1} \right) \right \|_{\frac{k}{k-1}}
+    		\cdot \biggl \| \biggl( \sum_{e: e \in S} c_{1,e}, \ldots , \sum_{e: e \in S} c_{m,e}  \biggr) \biggr \|_{k}
+\end{align*}
+The last inequality above is true by the H\"older inequality ($\| a \cdot b\|_{1} \leq \| a \|_{p} \cdot \| b \|_{q}$ where $1/p + 1/q = 1$), so the lemma holds.
+\end{proof}
+
+\begin{proposition}	\label{prop:norm}
+Algorithm~\ref{algo:covering} gives an
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( k \cdot \log (d/\eta)\bigr)$-robust fractional solution
+for the problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints.
+\end{proposition}
+
+\cref{prop:norm} follows immediately from our framework.
+This result implies that in the standard online setting (which does not have predictions, so $\eta = 1$), Algorithm~\ref{algo:covering}
+achieves the asymptotically \emph{optimal} competitive ratio of  $O\bigl( k \cdot \log (d)\bigr)$
+for the problem of minimizing $\|C \vect{x}\|_{k}$ under covering constraints. (See the lower bound
+of $\Omega\bigl( k \cdot \log (d)\bigr)$ in \cite{AzarCohen14:Online-Covering}.)
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Online mixed packing and covering}	\label{appix-mixed}
+In an online mixed packing and covering problem (studied in \cite{AzarBhaskar13:Online-mixed}),
+we are given a set of packing constraints $C \vect{x} \leq \one$ (where $C \in \mathbb{R}^{m \times n}$),
+and a set of covering constraints $B \vect{x} \geq \one$. The coefficients of all the constraints are positive,
+and the packing constraints are known in advance, but the covering constraints arrive one at a time.
+The goal is to increase $\vect{x} \geq \mathbb{0}$ after the arrival of each covering constraint
+such that the new constraint is satisfied and the factor~$\xi$ by which $C \vect{x} \leq \xi \cdot \one$ is as small as possible. In other words, we want to satisfy the covering constraints that arrive online with the smallest possible packing constraint violation.
+
+This problem can be formalized as: $\min \| C \vect{x}\|_{\infty}$ subject to online constraints $B \vect{x} \geq \one$.
+As the $\ell_{\log m}$-norm is a constant approximation for the $\ell_{\infty}$-norm, we can replace the objective with $\min \| C \vect{x}\|_{\log m}$.
+As a corollary of Proposition~\ref{prop:norm}, we get a fractional solution that is
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \log k \cdot \log (d/\eta)\bigr)$-robust.
+Moreover, in the standard online setting, our algorithm is $O\bigl( \log m \cdot \log d \bigr)$-competitive. This is \emph{optimal} up to a constant factor
+due to the lower bound of $O\bigl( \log m \cdot \log d \bigr)$ in \cite{AzarBhaskar13:Online-mixed}.
+
+
+
+%\subsection{Load Balancing}
+%
+%Load balancing is a classic problem in discrete optimization with wide-ranging applications (for example, resource management in data centres).
+%This problem revolves around assigning jobs that arrive online to $m$ available unrelated machines while minimizing their maximum load.
+%Each arriving job $j$ reveals its machine dependent execution time $p_{ij}$ where $i \in \{1, m\}$ is the machine's index. The load $\ell_{i}$ of machine $i$ is the total processing time of the jobs assigned
+%to it. This load balancing problem is a well understood standard online problem and it has a tight competitive ratio of $\Theta(\log m)$ (\cite{BorodinEl-Yaniv05:Online-computation,Caragiannis08:Better-bounds}).
+%
+%In our online setting with predictions, the jobs not only arrive with their machine dependent execution time $p_{ij}$, but their machine dependent prediction as well. Formally, $x_{ij} \in \{0,1\}$ indicates whether job $j$ is assigned to machine $i$, and the oracle provides $pred(x_{ij}) \in \{0,1\}$. We can formulate the online load balancing problem as a non-linear program. The objective is $\min \max_{i=1}^{m} \ell_{i} = \min \max_{i=1}^{m} \bigl(\sum_{j} p_{ij} x_{ij}\bigr)$, and the constraint is $\sum_{i=1}^{m} x_{ij} = 1$ which guarantees that each job $j$ is assigned to some machine $i$. Applying our framework for non-linear programs with covering constraints, Proposition~\ref{prop:load} follows.
+%
+%\begin{proposition} \label{prop:load}
+%Algorithm~\ref{algo:covering} gives a
+%$O(\frac{1}{1 - \eta})$-consistent and $O\bigl((\log m) \log^{2} \frac{m}{\eta}\bigr)$-robust fractional solution
+%for the load balancing problem.
+%\end{proposition}
+
+
+\subsection{Energy Minimization in Scheduling}		\label{sec:energy}
+
+Reducing carbon emissions is a global effort in which energy-efficient algorithms play an essential role. For example, \cite{Albers10:Energy-efficient-algorithms} and \cite{GuCaiZengZhangJinDai:2019} studied energy-efficient algorithms for scheduling.
+
+Given $m$ unrelated machines, we need to assign jobs that arrive online. Each job $j$ has a release date $r_{j}$, a deadline $d_{j}$, and a vector of machine dependent processing times $p_{ij}$. Contrary to performance-oriented scheduling, our goal is to design an assignment policy which can minimize the total energy consumption of the execution. To achieve this, we can adjust the machines' speed $s_{ij}(t)$ during the time interval $[t,t+1)$ for the execution of job $j$. Every machine $i$ has a non-decreasing energy power function $P_{i}(\cdot)$. Typically, $P_{i}(z) = z^{k_{i}}$ for some constant $k_{i} \geq 1$. The execution's total energy is $\sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$.
+
+In the classic online setting, this problem is well understood: there exists an $O(k^{k})$-competitive algorithm \cite{Thang20:Online-Primal-Dual} where $k = \max_{i} \{k_{i}\}$
+and this bound is tight up to a constant factor \cite{Caragiannis08:Better-bounds}. In our extended study with predictions we represent this problem with the following non-linear program. The objective is $\min \sum_{i} \sum_{t} P(\sum_{j} s_{ij}(t))$ and the constraints are:
+$$
+\sum_{i=1}^{m} x_{ij} = 1,  \qquad \qquad \sum_{t = r_{j}}^{d_{j}-1} s_{ij}(t) \geq p_{ij} x_{ij}, \qquad  \qquad s_{ij}(t) \geq 0  \qquad \forall\ i,\ t
+$$
+where $x_{ij} \in \{0,1\}$ indicates whether job $j$ is assigned to machine $i$
+and $s_{ij}(t) \geq 0$ denotes the speed of machine $i$ executing job $j$ during the time interval $[t, t+1)$.
+The first constraint guarantees that job $j$ is assigned to some machine, and the second one ensures
+that the job $j$ is completed on time (on the machine where the job is assigned). At the arrival of
+job $j$, the prediction provides a solution $pred(x_{ij})$ and a speed $pred(s_{ij}(t))$ for $r_{j} \leq t \leq d_{j} - 1$.
+
+
+To apply Theorem \ref{thm:covering-formal} on specific problems, we must determine the multilinear extension's local smoothness parameters.
+\cite{Thang20:Online-Primal-Dual} provided these parameters for some broad classes of functions, particularly for polynomials with non-negative coefficients. Let $g_{\ell}: \mathbb{R} \rightarrow \mathbb{R}$ for $1 \leq \ell \leq L$
+be degree-$k$ polynomials with non-negative coefficients and let $f:~\{0,1\}^{n}~\rightarrow~\mathbb{R}^{+}$ be the cost function
+defined as $f(\one_{S}) = \sum_{\ell} b_{\ell} g_{\ell}\bigl( \sum_{e \in S} a_{e} \bigr)$ where $a_{e} \geq 0$ for every
+$e$ and $b_{\ell} \geq 0$ for every $1 \leq \ell \leq L$.
+Then the multilinear extension $F$ of $f$ is $(O(k \ln(d/\eta))^{k-1}, \frac{k-1}{k \ln(1 + 2d^{2}/\eta)})$-locally smooth.
+%We will use these parameters to derive the guarantees for the following problems.
+Using our framework, we can deduce the following result.
+
+\begin{proposition}
+Algorithm~\ref{algo:covering} gives a
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl(k^{k} \log^{k} \frac{m}{\eta}\bigr)$-robust fractional solution
+for the energy minimization problem.
+\end{proposition}
+
+
+\subsection{Online Submodular Mimimization}	\label{sec:sub-min}
+
+Submodular minimization is a widespread subject in optimization and machine learning \cite{IwataFleischer01:A-combinatorial-strongly,Bachothers13:Learning-with,Bach16:Submodular-functions:,BalkanskiSinger:2020}. Let us consider the problem of minimizing an online monotone submodular function subject to covering constraints.
+A set-function $f: 2^{\mathcal{E}} \rightarrow \mathbb{R}+$ is \emph{submodular} if
+$f(S \cup e) - f(S) \geq f(T \cup e) - f(T)$ for all $S \subset T \subseteq \mathcal{E}$.
+Let $F$ be the multilinear extension of a monotone submodular function $f$. Function $F$
+admits two useful properties. First, if $f$ is monotone, then so is $F$. Second, $F$ is concave in
+the positive direction, meaning that $\nabla F(\vect{x}) \geq \nabla F(\vect{y})$ for all $\vect{x} \leq \vect{y}$, where $\vect{x} \leq \vect{y}$ is defined as $x_{e} \leq y_{e} ~\forall e$.
+
+To apply Algorithm~\ref{algo:covering}, we need to determine the local-smoothness parameters.
+An important concept in studying submodular functions is the \emph{curvature}. Given a submodular
+function $f$, the \emph{total curvature} $\kappa_{f}$ \cite{ConfortiCornuejols84:Submodular-set-functions} of $f$ is defined as
+$
+\kappa_{f} = 1 - \min_{e} \frac{f(\one_{\mathcal{E}}) - f(\one_{\mathcal{E} \setminus \{e\}})}{f(\one_{\{e\}})}.
+$
+Intuitively, the total curvature measures how far away $f$ is from being \emph{modular}. This concept of
+curvature is used to determine both upper and lower bounds on the approximation ratios
+for many submodular and learning problems (see \cite{ConfortiCornuejols84:Submodular-set-functions,GoemansHarvey09:Approximating-submodular,BalcanHarvey12:Learning-Submodular,Vondrak10:Submodularity-and-Curvature:,IyerJegelka13:Curvature-and-optimal,SviridenkoVondrak17:Optimal-approximation}).
+
+\begin{proposition}
+Algorithm~\ref{algo:covering} gives a
+$O(\frac{1}{1 - \eta})$-consistent and $O\bigl( \frac{\log (d/\eta)}{1 - \kappa_{f}} \bigr)$-robust fractional  solution
+for the submodular minimization under covering constraints.
+\end{proposition}
