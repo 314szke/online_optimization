@@ -1,21 +1,5 @@
-
-\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, anonymous]{lipics-v2021}
-%This is a template for producing LIPIcs articles.
-%See lipics-v2021-authors-guidelines.pdf for further information.
-%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
-%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
-%for section-numbered lemmas etc., use "numberwithinsect"
-%for enabling cleveref support, use "cleveref"
-%for enabling autoref support, use "autoref"
-%for anonymousing the authors (e.g. for double-blind review), add "anonymous"
-%for enabling thm-restate support, use "thm-restate"
-%for enabling a two-column layout for the author/affilation part (only applicable for > 6 authors), use "authorcolumns"
-%for producing a PDF according the PDF/A standard, add "pdfa"
-
-%\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
-%\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
-
-%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+\documentclass[anon,12pt]{alt2025} % Anonymized submission
+%\documentclass[final,12pt]{alt2025} % Include author names
 
 
 %%%% Ours %%%%
@@ -26,6 +10,9 @@
 \usepackage{amsmath}
 \usepackage{dsfont}
 \usepackage{mathbbol}
+\usepackage{capt-of}
+\usepackage{cleveref}
+\usepackage{thm-restate}
 
 \newcommand{\pred}{\texttt{pred}}
 \newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}}
@@ -33,58 +20,45 @@
 %%%%%%%%%%%%%%
 
 
-\bibliographystyle{plainurl}% the mandatory bibstyle
+% The following packages will be automatically loaded:
+% amsmath, amssymb, natbib, graphicx, url, algorithm2e
 
-\title{Online Primal-Dual Algorithm with Predictions\\for Non-Linear Covering Problems} %TODO Please add
+\title[Online Non-Linear Covering]{Online Primal-Dual Algorithm with Predictions\\ for Non-Linear Covering Problems}
+\usepackage{times}
+% Use \Name{Author Name} to specify the name.
+% If the surname contains spaces, enclose the surname
+% in braces, e.g. \Name{John {Smith Jones}} similarly
+% if the name has a "von" part, e.g \Name{Jane {de Winter}}.
+% If the first letter in the forenames is a diacritic
+% enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
 
-%%\titlerunning{Dummy short title} %TODO optional, please use if title is longer than one line
-%\author{Kevi Enik\H{o}}{Université Grenoble Alpes, France}{eniko.kevi@univ-grenoble-alpes.fr}{}{}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional. Use additional curly braces to indicate the correct name splitting when the last name consists of multiple name parts.
-%
-%\author{Nguyen Kim Thang}{Université Grenoble Alpes, France}{kim-thang.nguyen@univ-grenoble-alpes.fr}{}{}
-%\authorrunning{Kevi Enik\H{o} and Nguyen Kim Thang} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+% Two authors with the same address
+% \altauthor{\Name{Author Name1} \Email{abc@sample.com}\and
+%  \Name{Author Name2} \Email{xyz@sample.com}\\
+%  \addr Address}
 
-\Copyright{Kevi Enik\H{o} and Nguyen Kim Thang} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+% Three or more authors with the same address:
+% \altauthor{\Name{Author Name1} \Email{an1@sample.com}\\
+%  \Name{Author Name2} \Email{an2@sample.com}\\
+%  \Name{Author Name3} \Email{an3@sample.com}\\
+%  \addr Address}
 
-\ccsdesc[500]{{Theory of computation~Online learning algorithms}}
-%TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm
-
-\keywords{learning-augmented algorithm, non-linear objective, primal-dual algorithm, covering problems, mixed packing and covering, predictions, online algorithm with advice} %TODO mandatory; please add comma-separated list of keywords
-
-%\category{} %optional, e.g. invited paper
-
-%\relatedversion{} %optional, e.g. full version hosted on arXiv, HAL, or other respository/website
-%\relatedversiondetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93]{Classification (e.g. Full Version, Extended Version, Previous Version}{URL to related version} %linktext and cite are optional
-
-%\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
-%\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
-
-%\funding{(Optional) general funding statement \dots}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
-
-%\acknowledgements{I want to thank \dots}%optional
-
-%\nolinenumbers %uncomment to disable line numbering
-
-
-
-%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\EventEditors{John Q. Open and Joan R. Access}
-\EventNoEds{2}
-\EventLongTitle{42nd Conference on Very Important Topics (CVIT 2016)}
-\EventShortTitle{CVIT 2016}
-\EventAcronym{CVIT}
-\EventYear{2016}
-\EventDate{December 24--27, 2016}
-\EventLocation{Little Whinging, United Kingdom}
-\EventLogo{}
-\SeriesVolume{42}
-\ArticleNo{23}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Authors with different addresses:
+\altauthor{%
+ \Name{Eniko Kevi} \Email{eniko.kevi@univ-grenoble-alpes.fr}\\
+ \Name{Nguyen Kim Thang} \Email{kim-thang.nguyen@univ-grenoble-alpes.fr}\\
+ \addr 150 Pl. du Torrent, 38400 Saint-Martin-d'Heres, France
+}
 
 \begin{document}
 
 \maketitle
 
 \input{00_abstract}
+
+\begin{keywords}%
+    learning-augmented algorithm, non-linear objective, primal-dual algorithm, covering problems, predictions, online algorithm with advice
+\end{keywords}
 
 \input{01_introduction}
 \input{02_covering}
@@ -101,6 +75,7 @@
 \appendix
 
 \input{07_appendix}
+\clearpage
 \input{05_experiments}
 
 \end{document}

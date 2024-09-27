@@ -1,13 +1,13 @@
 %!TEX root = ./main.tex
 
-\section{Primal-Dual Framework for Covering Constraints}		\label{sec:covering}
+\section{The framework}		\label{sec:covering}
 
 \subsection{Formulation}
 We formulate the online covering problem that we described in the Preliminaries as a problem of finding the minimum cost solution among all the possible solutions. This formulation has an exponential number of variables and constraints; however, it allows us to transform the non-linear objective function into a linear one, which is crucial for our algorithm and proofs.
 
 Let $S \subseteq \mathcal{E}$ be a \emph{solution} if $\one_{S}$ corresponds to a feasible solution. Let $x_{e}$ be a variable indicating whether resource $e$ is selected.
 Let $z_{S}$ be an indicator variable for solution $S$. If $z_{S} = 1$, then every variable
-$x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S} = 1$ if and only if $\one_{S}$ is the selected solution of the online covering problem. At each time step~$t$ during the execution, a new constraint is revealed. For every subset $A \subseteq \mathcal{E}$, we define the value $c^{t}(A) := \max\{0,\ 1 - \sum_{e \in A} a^{t}_{e}\}$, to be the amount we need until constraint satisfaction. Given this value, we normalize the constraint coefficients to be $a^{t}_{e}(A) := \min\{a_{e}^{t},\ c^{t}(A)\}$. Finally, we define $b^{t}_{e}(A) := a^{t}_{e}(A)\ /\ c^{t}(A)$ where $c^{t}(A) > 0$. The values $b^{t}_{e}(A)$ correspond to the coefficients in the knapsack inequality constraints \cite{CarrFleischer:2000}. The primal and dual programs are:
+$x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S} = 1$ if and only if $\one_{S}$ is the selected solution of the online covering problem. At each time step~$t$ during the execution, a new constraint is revealed. For every subset $A \subseteq \mathcal{E}$, we define the value $c^{t}(A) := \max\{0,\ 1 - \sum_{e \in A} a^{t}_{e}\}$, to be the amount we need until constraint satisfaction. Given this value, we normalize the constraint coefficients to be $a^{t}_{e}(A) := \min\{a_{e}^{t},\ c^{t}(A)\}$. Finally, we define $b^{t}_{e}(A) := a^{t}_{e}(A)\ /\ c^{t}(A)$ where $c^{t}(A) > 0$. The values $b^{t}_{e}(A)$ correspond to the coefficients in the knapsack inequality constraints \citep{CarrFleischer:2000}. The primal and dual programs are:
 
 \vspace{-0.6cm}
 \begin{minipage}[t]{0.45\textwidth}
@@ -32,7 +32,7 @@ $x_{e} = 1$ if $e \in S$, and $x_{e} = 0$ if $e \notin S$. Otherwise, $z_S = 0$.
 \end{minipage}
 \vspace{-0.6cm}
 
-In the primal program, the first constraints are knapsack-constraints \cite{CarrFleischer:2000} of the given polytope, and they are equivalent to $\sum_{e \notin A} a_{e}^{t}(A) \ x_{e} \geq c^{t}(A)$. It is sufficient to satisfy constraints where $c^{t}(A) > 0$. The second primal constrain ensures that if a resource $e$ is chosen, the selected solution must contain $e$.
+In the primal program, the first constraints are knapsack-constraints \citep{CarrFleischer:2000} of the given polytope, and they are equivalent to $\sum_{e \notin A} a_{e}^{t}(A) \ x_{e} \geq c^{t}(A)$. It is sufficient to satisfy constraints where $c^{t}(A) > 0$. The second primal constrain ensures that if a resource $e$ is chosen, the selected solution must contain $e$.
 The third constraint guarantees that \emph{one} solution is selected.
 
 \subsection{Algorithm}
@@ -95,7 +95,7 @@ Starting from line \ref{algo-decrease}, the algorithm decreases some of the dual
 Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual variables $\alpha^{t}_{A}$ and $\beta_{e}$ are assigned during the execution, but not $\gamma$. To make the dual solution feasible, we set $\gamma = -\frac{\mu}{4\lambda \cdot \ln(1+2d^{2}/\eta)} F(\vect{x}(\tau))$ (see Lemma~\ref{lem:prim-dual-feasible}). Each $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau'))$, for some primal solution $\vect{x}(\tau')$, where $\tau' \le \tau$. Moreover, $\vect{x}(\tau) \geq \bigvee_{\tau' \le \tau} \vect{x}(\tau')$ (each coordinate $x_{e}(\tau) = \max_{\tau' \le \tau}\{x_{e}(\tau')\}$), since the $x_e$-variables are non-decreasing. Consequently, each $\beta_{e} \geq \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$. Using these properties, Lemma~\ref{lem:bound-x} gives a lower bound on $\vect{x}(\tau)$. We highlight that the proof if this lemma does \emph{not} require the gradient of $F$ to be monotone.
 (With this assumption, the algorithm can set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
 
-
+\setcounter{theorem}{0}
 \begin{restatable}{lemma}{BoundX}
 \label{lem:bound-x}
 Let $e$ be an arbitrary resource.
@@ -111,7 +111,7 @@ where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-cover
 \begin{proof}
 	The proof is available in \cref{apix:lemma-proof}.
 \end{proof}
-
+%
 \begin{lemma} \label{lem:prim-dual-feasible}
 The primal and dual variables are feasible.
 \end{lemma}
@@ -123,13 +123,13 @@ While a primal covering constraint is unsatisfied, the $x_e$-variables are incre
 also satisfied, since the algorithms maintains $z_{S} = \prod_{e \in S} x_{e} \prod_{e \notin S} (1 - x_{e})$.
 If we choose an element $e$ with probability $x_{e}$, then $z_{S}$ is the probability
 that the set of selected items is $S$. Therefore, the total probability $\sum_{S} z_{S} = 1$. By a similar argument, we get the following:
-$
+\[
 	\sum_{S: e \in S} z_{S} = x_{e} \sum_{S' \subseteq E \setminus \{e\}} \prod_{e' \in S'} x_{e'} \prod_{e' \notin S'} (1 - x_{e'}) = x_{e}
-$
+\]
 since
-$
+\[
 	\sum_{S' \subseteq E \setminus \{e\}} \prod_{e' \in S'} x_{e'} \prod_{e' \notin S'} (1 - x_{e'}) = 1
-$.
+\].
 
 \textbf{Dual feasibility.} Let us now prove that the first dual constraint is always satisfied during the execution. The algorithm maintains $\sum_{t' \le t} \sum_{A: e \notin A} b^{t'}_{e}(A)\ \alpha^{t'}_{A} \leq \beta_{e}$. % (strict inequality happens only if $x_{e} = 1$).
 Whenever this inequality is violated, the algorithm decreases (see line \ref{algo-covering:decrease}) some of the $\alpha$-variables in a way that the increasing rate of $\sum_{t' \le t} \sum_{A: e \notin A} b^{t'}_{e}(A)\ \alpha^{t'}_{A}$ is at most 0. By the $\beta$-variables' definition, the first dual constraint holds.
@@ -234,5 +234,3 @@ the set~$S_{1}$. Moreover, the algorithm's primal objective value restricted to 
 the prediction's, since $\forall e \in S_{1} : x_{e} \leq 1 = pred(x_{e}$).
 We can deduce that the algorithm is $O\bigl( \frac{1}{1 - \eta} \bigr)$-consistent with the prediction.
 \end{proof}
-
-
