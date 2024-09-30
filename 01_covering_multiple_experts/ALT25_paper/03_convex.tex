@@ -2,10 +2,10 @@
 
 \section{Online \emph{non-linear} covering with experts} \label{sec:convex}
 
-While linear programs are suitable to represent many optimization problems, they are not expressive enough to capture some practically relevant problems (for example, makespan minimization and congestion management). This section takes a step further toward a general framework and proposes an algorithm with multiple experts for $0$-$1$ covering optimization problems with non-linear objectives.
+While linear programs are suitable to represent many optimization problems, they are not expressive enough to capture some practically relevant problems (for example, makespan minimization and congestion management). This section takes a step further towards a general framework and proposes an algorithm with multiple experts for $0$-$1$ optimization problems with non-linear objectives and linear constraints.
 
-%The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
-%The \texttt{LIN-COMB} benchmark's non-linear objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the non-linear objective function into a linear one.
+The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
+The \texttt{LIN-COMB} benchmark's non-linear objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate \texttt{LIN-COMB} as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the non-linear objective function into a linear one.
 
 \begin{figure}[ht]
 \begin{mdframed}
@@ -41,36 +41,14 @@ While linear programs are suitable to represent many optimization problems, they
         \end{align*}
 \end{minipage}
 \end{mdframed}
-\caption{Reformulation and relaxation of the \texttt{LIN-COMB} benchmark}
+\caption{Reformulation and relaxation of the \texttt{LIN-COMB} benchmark and its dual}
 \label{fig:reformulation}
 \end{figure}
 
-\paragraph{Benchmark reformulation.} Let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be the indicator variable for solution $S$: $z_{S} = 1$ iff every variable $x_{i} = 1$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$; and $z_S = 0$ otherwise. In other words, $z_{S}$ indicates if the final solution is $S$. The formulation and its dual are given above. In the formulation,
-the first constraint guarantees that we have a linear combination of expert solutions.
+\paragraph{Benchmark reformulation.} Let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be the indicator variable for solution $S$: $z_{S} = 1$ iff every variable $x_{i} = 1$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$; and $z_S = 0$ otherwise. In other words, $z_{S}$ indicates if the final solution is $S$. The formulation and its dual are on \cref{fig:reformulation}. On the left of the figure, the first constraint guarantees that we have a linear combination of the experts' solutions.
 The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$ must be used as well. The third constraint ensures that at each time step, one solution should be selected. In the last constraint,
 $y_S^{t}$ intuitively represents the fractional increase of the usage of solution $S$ at time $t$.
 
-%The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
-
-
-%\begin{figure}[ht]
-%    \begin{mdframed}
-%        \vspace{-8pt}
-%        \begin{align*}
-%            && \max \sum_{t=1}^{T}  (\alpha^{t} &+ \gamma^{t}) \\
-%        %
-%            (w_{k}^{t}) \qquad && \alpha^{t} - \sum_{i=1}^{n} s_{i,k}^{t} \beta_{i}^{t} &\leq 0  &\forall\ k,t\\
-%        %
-%            (y_{S}^{t}) \qquad && \xi_{S}^{t}   &\leq c_{S}  &\forall\ S,t \\
-%        %
-%            (z_{S}^{t}) \qquad && \sum_{i \in S}\beta_{i}^{t} + \gamma^{t} - \xi_{S}^{t} + \xi_{S}^{t+1}  &\leq 0  &\forall\ S,t \\
-%        %
-%            && \alpha^{t}, \beta_{i}^{t} & \ge 0 & \forall\ S,i,t
-%        \end{align*}
-%    \end{mdframed}
-%    \caption{Dual formulation of the reformulation of the \texttt{LIN-COMB} benchmark}
-%    \label{fig:ref-dual}
-%\end{figure}
 
 \subsection{Non-linear objective function properties} \label{sec:f-properties}
 
@@ -82,33 +60,22 @@ We consider objective function $f$ that satisfies the following properties:
 \end{itemize}
 %
 Moreover, the objective function also satisfies the gradient-Lipschitz and $(\lambda,\mu)$-locally-smooth properties below.
-\begin{itemize}
-	\item A function $f$ is $L$-\emph{gradient-Lipschitz}, if its derivatives are Lipschitz-continuous with the constant $L$.
-		Formally, for all $x$ and $y$: $\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|$.
-	\item A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
-   		 if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
-    \begin{equation*}	\label{eq:min-local-smooth}
+%
+\begin{definition}[$L$-gradient-Lipschitz]
+    A function $f$ is $L$-gradient-Lipschitz, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
+    \[\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|\]
+\end{definition}
+%
+\begin{definition}[$(\lambda,\mu)$-local-smoothness \cite{Thang20:Online-Primal-Dual}]
+    %Let $\mathcal{E}$ be a set of $n$ resources.
+    A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
+    if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
+    \begin{equation*}	\label{eq:min-local-smooth-convex}
     \sum_{i \in S} \nabla_{i} f(x) \leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu f\bigl( x \bigr)
     \end{equation*}
     where $\nabla_{i} F(x)$ denotes $\partial F(x)/\partial x_{i}$ and $\vect{1}_{S}$ is the vector where the entry of the $i^{\text{th}}$ coordinate equals 1 if $i \in S$
     and equals 0 otherwise.
-\end{itemize}
-
-%\begin{definition}[$L$-gradient-Lipschitz]
-%    A function $f$ is $L$-gradient-Lipschitz, if its derivatives are Lipschitz-continuous with the constant $L$. Formally, for all $x$ and $y$:
-%    \[\|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|\]
-%\end{definition}
-%
-%\begin{definition}[$(\lambda,\mu)$-local-smoothness \cite{Thang20:Online-Primal-Dual}]
-%    %Let $\mathcal{E}$ be a set of $n$ resources.
-%    A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
-%    if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
-%    \begin{equation*}	\label{eq:min-local-smooth}
-%    \sum_{i \in S} \nabla_{i} f(x) \leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu f\bigl( x \bigr)
-%    \end{equation*}
-%    where $\nabla_{i} F(x)$ denotes $\partial F(x)/\partial x_{i}$ and $\vect{1}_{S}$ is the vector where the entry of the $i^{\text{th}}$ coordinate equals 1 if $i \in S$
-%    and equals 0 otherwise.
-%\end{definition}
+\end{definition}
 
 Note that the notation of gradient-Lipschitz is also called smoothness in literature. The notation of $(\lambda,\mu)$-locally-smoothness, introduced in \cite{Thang20:Online-Primal-Dual}, is rooted in the work of \cite{Roughgarden15:Intrinsic-Robustness}
 in the domain of algorithmic game theory in which it is termed the smoothness argument.
@@ -133,7 +100,7 @@ To avoid confusion, we use the terms gradient-Lipschitzness and $(\lambda,\mu)$-
 \biggr\}
 \end{align*}
 where $\delta_{i}^{t} = \frac{1}{K} \sum_{k} s_{i,k}^{t}$ and $L$ is the gradient-Lipschitz constant of $f$.
-
+%
 \begin{theorem}
-Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.
+Algorithm 2 is $O(\ln(K \rho)) \frac{\lambda}{1 - \mu \ln (K\rho)}$-competitive with the \texttt{LIN-COMB} benchmark.\\ (Proof in \cref{sec:convex-proofs}.)
 \end{theorem}
