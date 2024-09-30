@@ -39,7 +39,7 @@ The relaxed formulation of \texttt{LIN-COMB} is visible on Figure~\ref{fig:relax
 			\end{align*}
 		\end{minipage}
 	\end{mdframed}
-	\caption{The relaxation of the \texttt{LIN-COMB} benchmark}
+	\caption{The relaxation of the \texttt{LIN-COMB} benchmark and its dual}
 	\label{fig:relaxation}
 \end{figure}
 
@@ -209,26 +209,26 @@ Algorithm 1 is $O(\ln(K \rho))$-competitive with the \texttt{LIN-COMB} benchmark
 %
 \begin{proof}
 
-	\begin{minipage}[t]{8cm}
+	\noindent\begin{minipage}[t]{7.8cm}
 		If the value of $s_{i,k}^{t}$ is in $\{0,1\}$ for every $i,k,t$, then
 		\[
 			\rho = \max_{i} \max_{t',t''} \left\{\frac{\sum_{k=1}^{K} s_{i,k}^{t'}}{\sum_{k=1}^{K} s_{i,k}^{t''}} : \sum_{k=1}^{K} s_{i,k}^{t''} > 0 \right\}
 			\leq \frac{K}{1}
 		\]
-		Therefore, the competitive ratio of our algorithm with the \texttt{LIN-COMB} benchmark is $O(\log (K \rho)) = O(\log (K^2))$.
+		Therefore, the competitive ratio of our algorithm with the \texttt{LIN-COMB} benchmark is $O(\log (K \rho)) = O(\log (K^2))$. \hfill To obtain an algorithm that is com-
 	\end{minipage}
 	\hspace{0.5cm}
-	\begin{minipage}[t]{5cm}
+	\begin{minipage}[t]{6.6cm}
 			\vspace{-1.0cm}
-			\centering
-			\hspace{0.45cm}
-			\includegraphics[width=\textwidth]{./Img/algo_structure.pdf}
+			%\centering
+			%\hspace{0.5cm}
+			\includegraphics[width=\textwidth]{./Img/algo_mini.pdf}
 			\vspace{-0.35cm}
 			%\caption{Overview of the algorithm's components.}
 			\label{fig:algo-layers}
 	\end{minipage}
 
-	To obtain an algorithm that is competitive with both the \texttt{LIN-COMB} and the worst-case benchmarks,
+	\noindent petitive with both the \texttt{LIN-COMB} and the worst-case benchmarks,
 	we proceed as follows. (The figure %\cref{fig:algo-layers}
 	serves as an illustration in which  $E_1,\ \dots,\ E_K$ correspond to the online problem's experts.)
 	We first apply the main algorithm on the $K$ experts' predictions to obtain an online algorithm, named $A$.
