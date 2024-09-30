@@ -9,7 +9,7 @@ While linear programs are suitable to represent many optimization problems, they
 The performance guarantee proof of our previous algorithm relies on the primal-dual method, which bounds the algorithm's total cost by bounding at each time step the primal with the dual increase.
 The \texttt{LIN-COMB} benchmark's non-linear objective function (visible on \cref{fig:benchmark}) does not allow us to express the objective's cost by additive terms like in the linear case. To keep the primal-dual proving technique, we reformulate the \texttt{LIN-COMB} benchmark as finding the minimum cost linear combination among all possible linear combinations. This formulation has an exponential number of variables and constraints, but it transforms the non-linear objective function into a linear one.
 
-To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution, if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be a (relaxed) indicator variable for solution $S$. If $z_{S} = a$, for some $a \in (0,1]$, then every variable $x_{i} = a$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S}$ indicates the fraction with which the solution $S$ participates in the final solution. The new formulation is visible on \cref{fig:reformulation} and its dual on \cref{fig:ref-dual}. Intuitively, $y_S^{t}$ indicates the fractional increase of the usage of solution $S$ at time $t$. The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$, must be used as well. The third constrain guarantees that we have a linear combination of the feasible solutions.
+To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}$ as a set that contains all the indices of the original covering problem's variable $x$. Then, let $S \subseteq \mathcal{E}$ be a solution, if $\vect{1}_{S}$ corresponds to a feasible solution. Recall that we consider $0$-$1$ optimization problems, so each coordinate $x_i$ of a feasible solution has a value at most $1$. Let $z_{S}$ be a (relaxed) indicator variable for solution $S$. If $z_{S} = a$, for some $a \in (0,1]$, then every variable $x_{i} = a$ if $i \in S$, and $x_{i} = 0$ if $i \notin S$. Otherwise, $z_S = 0$. In other words, $z_{S}$ indicates the fraction with which the solution $S$ participates in the final solution. The new formulation is visible on \cref{fig:reformulation-convex} and its dual on \cref{fig:ref-dual}. Intuitively, $y_S^{t}$ indicates the fractional increase of the usage of solution $S$ at time $t$. The second constraint guarantees that if the linear combination of the experts' solutions sets a variable $x_i$ to a non-zero value, then every solution that includes $x_i$, must be used as well. The third constrain guarantees that we have a linear combination of the feasible solutions.
 
 \begin{figure}[ht]
     \begin{mdframed}
@@ -29,7 +29,7 @@ To explain the reformulation, let us first define $\mathcal{E} = \{1,2,\dots,n\}
         \end{align*}
     \end{mdframed}
     \caption{Reformulation and relaxation of the \texttt{LIN-COMB} benchmark}
-    \label{fig:reformulation}
+    \label{fig:reformulation-convex}
 \end{figure}
 
 The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original formulation. According to the theorem of weak duality, the dual of the new formulation is a lower bound to the new formulation. Our proposed algorithm sets the variable $x$ of the original covering problem and the dual of the new formulation of the \texttt{LIN-COMB} benchmark. Afterwards, we show that at every time step, the increase of the objective cost in the original covering problem is bounded by the increase of the dual objective cost of the \texttt{LIN-COMB} benchmark's reformulation.
@@ -53,7 +53,7 @@ The new formulation of the \texttt{LIN-COMB} benchmark lower bounds its original
     \label{fig:ref-dual}
 \end{figure}
 
-\subsection{Non-linear objective function properties} \label{sec:f-properties}
+\subsection{Non-linear objective function properties} \label{sec:f-properties-convex}
 
 For vectors $x, y \in \mathcal{R}^{n}$, we say that $x \geq y$ iff $x_{i} \geq y_{i}$ for all $1 \leq i \leq n$.
 In this section, we consider objective function $f$ that satisfies the following properties:
@@ -74,7 +74,7 @@ Moreover, the objective function also satisfies the gradient-Lipschitz and $(\la
     %Let $\mathcal{E}$ be a set of $n$ resources.
     A differentiable function $f: [0,1]^{n} \rightarrow \mathbb{R}^{+}$ is $(\lambda,\mu)$-\emph{locally-smooth}
     if for  for every set $S \subseteq \{1, 2, \ldots, n\}$, the following inequality holds:
-    \begin{equation*}	\label{eq:min-local-smooth}
+    \begin{equation*}	\label{eq:min-local-smooth-convex}
     \sum_{i \in S} \nabla_{i} f(x) \leq \lambda f\bigl( \vect{1}_{S} \bigr) + \mu f\bigl( x \bigr)
     \end{equation*}
     where $\nabla_{i} F(x)$ denotes $\partial F(x)/\partial x_{i}$ and $\vect{1}_{S}$ is the vector where the entry of the $i^{\text{th}}$ coordinate equals 1 if $i \in S$
@@ -149,7 +149,7 @@ Moreover, if $\sum_{k} w_{i,k}^{t} s_{i,k}^{t} > 0$, meaning that $\nu_{i}^{t} =
 \end{align}
 
 
-\paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the non-linear program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the L-gradient-Lipschitz of $f$ (see the definitions at \cref{sec:f-properties}).
+\paragraph{Dual variables and feasibility.} We set the dual variables of the reformulation of our \texttt{LIN-COMB} benchmark based on the dual variables of the non-linear program used inside the algorithm. The dual formulation is visible on \cref{fig:ref-dual}. The constants $\lambda$ and $\mu$ correspond to the $(\lambda,\mu)$-local-smoothness, and $L$ to the L-gradient-Lipschitz of $f$ (see the definitions at \cref{sec:f-properties-convex}).
 %
 \begin{align*}
     \alpha^{t} &= \frac{1}{\lambda}  \biggl( \theta^{t} + \sum_{i=1}^{n} \chi_{i} \biggr), \\

@@ -1,0 +1,80 @@
+\documentclass[anon,12pt]{alt2025} % Anonymized submission
+%\documentclass[final,12pt]{alt2025} % Include author names
+
+
+%%% Our includes
+\usepackage{amsmath}
+\usepackage[capitalise,noabbrev]{cleveref}
+\usepackage{graphicx}
+\usepackage{mdframed}
+\usepackage{paralist}
+\usepackage{wrapfig}
+\usepackage{dsfont}
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage{xfrac}
+
+
+%%% Our new defines
+\newcommand{\vect}[1]{\ensuremath {\mathbf{#1}}}
+\newtheorem{claim}{Claim}
+
+
+\title[Online Non-Linear Covering with Multiple Experts]{Online Non-Linear Covering with Multiple Experts}
+\usepackage{times}
+% Use \Name{Author Name} to specify the name.
+% If the surname contains spaces, enclose the surname
+% in braces, e.g. \Name{John {Smith Jones}} similarly
+% if the name has a "von" part, e.g \Name{Jane {de Winter}}.
+% If the first letter in the forenames is a diacritic
+% enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
+
+% Two authors with the same address
+% \altauthor{\Name{Author Name1} \Email{abc@sample.com}\and
+%  \Name{Author Name2} \Email{xyz@sample.com}\\
+%  \addr Address}
+
+% Three or more authors with the same address:
+% \altauthor{\Name{Author Name1} \Email{an1@sample.com}\\
+%  \Name{Author Name2} \Email{an2@sample.com}\\
+%  \Name{Author Name3} \Email{an3@sample.com}\\
+%  \addr Address}
+
+% Authors with different addresses:
+\altauthor{%
+ \Name{Eniko Kevi} \Email{eniko.kevi@univ-grenoble-alpes.fr}\\
+ \Name{Nguyen Kim Thang} \Email{kim-thang.nguyen@univ-grenoble-alpes.fr}\\
+ \addr 150 Pl. du Torrent, 38400 Saint-Martin-d'Heres, France
+}
+
+\begin{document}
+\maketitle
+
+\input{00_abstract}
+
+\begin{keywords}
+    learning-augmented algorithm, non-linear objective, multiple experts, multiple oracles, primal-dual algorithm, covering problem, predictions, online algorithm with advice
+\end{keywords}
+
+\input{01_introduction}
+\input{02_covering}
+\input{03_convex}
+\input{032_short_experiments}
+\input{04_conclusion}
+
+\clearpage
+
+\bibliography{references}
+
+\clearpage
+
+\appendix
+%
+\input{05_appendix}
+\input{06_counter_example}
+\input{02_covering_proofs}
+\input{07_convex}
+\clearpage
+\input{03_experiments}
+
+\end{document}
