@@ -42,11 +42,11 @@ We present a framework for non-linear online covering problems with an intricate
 Inspired by the approach of \cite{BamasMaggiori20:The-Primal-Dual-method}, our model (detailed previously) combines an oracle's predictions with the primal-dual method in a way that the oracle's predictions influence the updates of the primal and dual variables. The construction of our algorithm follows the multiplicative weight update method based on the gradient of the multilinear extension of the problem's objective function (see section \ref{sec-prelim}~Preliminaries of \cite{Thang20:Online-Primal-Dual}). This technique generalizes the multiplicative weight update introduced in \cite{BuchbinderNaor09:The-Design-of-Competitive,AzarBuchbinder16:Online-Algorithms}. Using the local-smoothness notion of the multilinear extension, we can prove the feasibility of the primal and dual solutions (even when the prediction is infeasible). Afterwards, the algorithm's performance is established using the local-smoothness and confidence parameters.
 
 
-\begin{restatable}{theorem}{Covering}
+\begin{theorem}{Covering}
     \label{thm:covering}
     (Informal definition.) Given a non-linear online covering problem, let $F$ be the multilinear extension (see section \ref{sec-prelim}~Preliminaries) of the problem's objective function. Assuming ($\lambda$,$\mu$)-local-smoothness properties on $F$, for every confidence parameter $\eta$ of the prediction oracle, where $\eta \in (0,1]$, there exists an $O\bigl( \frac{1}{1 - \eta} \bigr)$-consistent and
     $O\bigl( \frac{\lambda}{1 - \mu}  \cdot \ln \left(\frac{d}{\eta}\right) \bigr)$-robust algorithm for the non-linear online fractional covering problem ($d$ is the maximum number of non-zero coefficients in a constraint).
-\end{restatable}
+\end{theorem}
 
 Since Theroem~\ref{thm:covering} relies on several parameters, it may be challenging to appreciate its importance. As an example, when the objective function of our problem is a polynomial of degree~$k$, the competitive ratio of state-of-the-art online algorithms \emph{without} predictions is in $O(k^k log(d))$. Meanwhile, the consistency of our framework is $O(1 / (1-\eta))$ and the robustness is $O(k^k log(d/\eta))$. Thus, even if the oracle is erroneous and produces a solution at most up to a factor of $k^k$ times the optimal one, it is still possible to surpass previous worst-case guarantees. We show the applicability of our framework through several problems such as load balancing,
 energy minimization, and submodular minimization (see \cref{sec:app}).

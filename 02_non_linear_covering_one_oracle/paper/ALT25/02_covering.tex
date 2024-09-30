@@ -96,7 +96,7 @@ Let $\vect{x}(\tau)$ be the algorithm's primal solution at time $\tau$. The dual
 (With this assumption, the algorithm can set $\beta_{e} = \frac{1}{\lambda} \nabla_{e} F(\vect{x}(\tau))$ at each step $\tau$ of the execution.)
 
 \setcounter{theorem}{0}
-\begin{restatable}{lemma}{BoundX}
+\begin{lemma}{BoundX}
 \label{lem:bound-x}
 Let $e$ be an arbitrary resource.
 At any moment $\tau$ during the execution of the algorithm,
@@ -107,7 +107,7 @@ x_{e}	\geq  \frac{\eta}{b^{t_{e}^{*}}_{e}(A) \ d}
 				\cdot \sum_{A: e \notin A} \sum_{t' \le t} b^{t'}_{e}(A) \cdot \alpha^{t'}_{A} \biggr) - 1 \right]
 $$
 where $b^{t_{e}^{*}}_{e}(A)$ is defined in the algorithm on line~\ref{algo-covering:bmax}.
-\end{restatable}
+\end{lemma}
 \begin{proof}
 	The proof is available in \cref{apix:lemma-proof}.
 \end{proof}
