@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+%\usepackage[pdftex]{graphicx,color}
+\usepackage{graphicx,color}
+\usepackage{amsmath,amssymb,dsfont,fullpage,epsfig,multirow,longtable}
+\usepackage{epsfig,epstopdf,hhline}
+\usepackage{cases}
+\usepackage{wrapfig}
+\usepackage{algorithm}
+%\usepackage[noend]{algorithmic}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\usepackage[numbers]{natbib}
+\usepackage[top=0.5 in, bottom=1 in, left=1 in, right=1 in, letterpaper]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,decorations.pathreplacing,shapes}
+
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage{enumerate}
+
+% Ours
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{setspace}
+\usepackage{caption}
+\setlength{\textfloatsep}{8pt}
+
+%\declaretheorem[name=Theorem]{thm}
+
+% for affiliation
+\usepackage{authblk}
+
+%%%%%%%%%% Start TeXmacs macrosƒ
+\newenvironment{proof}{\noindent\emph{Proof\ }}{\hspace*{\fill}$\Box$\medskip}
+\newenvironment{claimproof}{\noindent\emph{Proof of claim\ }}{\hspace*{\fill}$\Box$\medskip}
+\newenvironment{plainproof}{\noindent\emph{Proof\ }}{}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{claim}{Claim}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\usepackage{amsmath}
+\usepackage{paralist}
+\usepackage{framed}
+
+%%comment in algorithms
+\renewcommand{\algorithmiccomment}[1]{\hfill  {\small  \tt \# #1}}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newcommand{\pred}{\texttt{pred}}
+\newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\one}{\ensuremath{\mathds{1}}}
+\newcommand{\PoA}{\text{PoA}}
+\newcommand{\E}{\ensuremath{\mathbb{E}}}
+% bullet dot
+\newcommand\sbullet[1][.75]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
+
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T5]{fontenc} % Output font encoding for international characters
+
+\usepackage{color, colortbl}
+\usepackage{hyperref}
+\hypersetup{colorlinks,
+            linkcolor=blue,
+            citecolor=blue,
+            urlcolor=magenta,
+            linktocpage,
+            plainpages=false}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+
+
+\newcommand{\comment}[1]{\textcolor{blue}{{\footnotesize
+#1}}\marginpar{\raggedright\tiny \textcolor{blue}{Comment}}}
+
+
+\begin{document}
+
+\textbf{Problem:}
+
+\begin{itemize}
+    \item $n$ buyers
+    \item each buyer $i$ with budget $B_i$
+    \item evaluation function: $v_i : [0,1] -> \mathbb{R}^+$
+    \begin{itemize}
+        \item concave
+        \item non-decreasing
+    \end{itemize}
+    \item bid: $0 \le b_i \le B_i$
+    \item sum of bids: $\sum_i b_i = B$
+    \item fraction received: $d_i = \frac{b_i}{B}$
+    \item utility: $u_i(\vec{b}) = v_i(d_i) - b_i$
+    \item effective welfare: $ew_i(\vec{b}) = \min\{B_i,\ v_i(d_i)\}$
+\end{itemize}
+
+\[
+    \textnormal{Social welfare: } \max_{d} \left\{\sum_{i=1}^{n}  v_i(d_i) \right\} \qquad \textnormal{Effective welfare: } \max_{d} \left\{\sum_{i=1}^{n}  \min\{B_i,\ v_i(d_i)\} \right\}
+\]
+
+\vspace{1cm}
+\textbf{Formulation:}
+
+\begin{minipage}[t]{0.59\textwidth}
+	\begin{align*}
+		\max  \sum_{S \subseteq \mathcal{S}} &c_{S}\ z_{S} \\
+		(\alpha) \hspace{1cm} \sum_{i=1}^{n} \ x_{i} &= 1 & &  \\
+		(\beta_i) \hspace{0.82cm} \sum_{S: i \in S} z_{S}  &= x_{i}	& & \forall i \\
+		(\gamma) \hspace{1cm} \sum_{S \subseteq \mathcal{S}} z_{S} &= 1 & & \\
+		x_{i} &\in [0,1] & & \forall i\\
+		z_{S} &\in \{0,1\} & & \forall S \subseteq \mathcal{S}\\
+	\end{align*}
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+	\begin{align*}
+		\min \alpha &+ \gamma \\
+		\alpha &\ge \beta_i  &  \forall i \\
+		\sum_{i \in S} \beta_{i} + \gamma &\ge c_{S}  & & \forall S \subseteq \mathcal{S}\\
+		\alpha, \gamma &\geq 0 & & \\
+		\beta_i &\geq 0 & & \forall i
+\end{align*}
+\end{minipage}
+
+
+\vspace{1cm}
+\textbf{Setting the dual variables:}
+
+\begin{minipage}[t]{0.3\textwidth}
+\begin{align*}
+    \alpha &= \frac{\mu+1}{\mu} \max_i \left\{ u_i(\vec{b}) \right\} \\
+    \gamma &= \mu \sum_{i} b_i \\
+    \beta_i &= \frac{\mu+1}{\mu} u_i(\vec{b})
+\end{align*}
+\end{minipage}
+\begin{minipage}[t]{0.6\textwidth}
+\end{minipage}
+
+\end{document}
