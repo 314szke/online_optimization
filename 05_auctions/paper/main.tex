@@ -68,6 +68,7 @@
 
 \usepackage{color, colortbl}
 \usepackage{hyperref}
+\usepackage{xfrac}
 \hypersetup{colorlinks,
             linkcolor=blue,
             citecolor=blue,
@@ -86,23 +87,11 @@
 
 \section{Problem}
 
-\begin{itemize}
-    \item $n$ buyers
-    \item each buyer $i$ with budget $B_i$
-    \item evaluation function: $v_i : [0,1] -> \mathbb{R}^+$
-    \begin{itemize}
-        \item concave
-        \item non-decreasing
-    \end{itemize}
-    \item bid: $0 \le b_i \le B_i$
-    \item sum of bids: $\sum_i b_i = B$
-    \item fraction received: $d_i = \frac{b_i}{B}$
-    \item utility: $u_i(\vec{b}) = v_i(d_i) - b_i$
-    \item effective welfare: $ew_i(\vec{b}) = \min\{B_i,\ v_i(d_i)\}$
-\end{itemize}
-
+The problem consists of $n$ buyers, where each buyer $i$ has a budget $B_i$. Additionally, the buyers have an evaluation function $V_i : [0,1] -> \mathbb{R}^+$, which is non-decreasing and concave. The auctioneer lists one item only, for which the buyers can submit a private bid $b_i$, such that $0 \le b_i \le B_i$. From the bid $b_i$, buyer $i$ receives a fraction $d_i = \sfrac{b_i}{B}$ of the item, where $B = \sum_i b_i$. The utility of buyer $i$ is $U_i(\vec{b}) = V_i(d_i) - b_i$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\ V_i(d_i)\}$
 
 \section{Formulation}
+
+The following formulation transforms the initial problem to finding the solution that maximizes the effective welfare among all possible solutions. For simplicity, the fractions of assignments are discretized ($d_i \in k_{\epsilon} : 0 \le k \le \sfrac{1}{\epsilon}$). A solution $S = \{(i, d_i) : 0 \le d_i \le 1\}$ assigns a fraction to each buyer, such that $\sum_{(i,d_{i}) \in S} d_{i} \le 1$. The variable $z_S$ indicates which solution is chosen.
 
 \begin{minipage}[t]{0.59\textwidth}
 	\begin{align*}
@@ -120,37 +109,28 @@
 \end{minipage}
 
 
-\section{Setting the dual variables:}
+\section{Setting the dual variables}
 
-Let $d^{*}$ be a Nash equilibrium.
-To get the tight bound, define $\beta = \hat{V}'(d^{*}_{i})$ (the latter term is the same for every $i$), $\gamma = \sum_{i=1}^{n} \bigl( 2V_i(d^{*}_{i}) - d^{*}_{i}\hat{V}'_i(d^{*}_{i}) \bigr)$.
-The notation is taken in Chapter 21 of AGT book.
-
-\subsection{Optimal bound for effective welfare}
-Consider an equilibrium $\vect{b}$. Let $d_{i}^*$ be the fraction received by $i$ in the equilibrium, i.e., $d^{*}_{i} = \frac{b_{i}}{\sum_{j=1}^{n} b_{j}}$.
+Consider a Nash equilibrium $\vect{b}$. Let $d_{i}^*$ be the fraction received by $i$ in the equilibrium ($d^{*}_{i}~=~\sfrac{b_{i}}{B}$).
 Using the KKT conditions (similar to Chapter 21 of AGT book), for any bidder $i$ with the equilibrium bid $0 < b_{i} < B_{i}$, we have
 $$
-\hat{V}'_{i}\biggl( \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr)
-= V'_{i}\biggl( \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr) \cdot \biggl( 1 - \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr)
-= \sum_{j=1}^{n} b_{j}
+\hat{V}'_{i}\biggl( \frac{b_{i}}{B} \biggr)
+= V'_{i}\biggl( \frac{b_{i}}{B} \biggr) \cdot \biggl( 1 - \frac{b_{i}}{B} \biggr)
+= B
 $$
+where $B = \sum_{j=1}^{n} b_{j}$ is the sum of the bids.
 Note that for all bidders $i$ and $i'$ such that $0 < b_{i}, b_{i'} < B_{i}$ then
 $ \hat{V}'_{i}(d^{*}_{i})  = \hat{V}'_{i'}(d_{i'}^*)$.
-
-\clearpage
-Define
-$$
-\beta = \hat{V}'_{i}(d^{*}_{i})
-$$
-and
-$\gamma = \sum_{i=1}^{n} \gamma_{i}$
-where
-$$
-\gamma_{i} = \begin{cases}
-			B_{i} \text{ if } V_{i}(d^{*}_{i}) \geq B_{i}, \\
-			2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})
-			\end{cases}
-$$
+%
+Let us define the dual variables $\beta$ and $\gamma$ as the following:
+\begin{align*}
+	\beta &= \hat{V}'_{i}(d^{*}_{i}) = B\\
+	\gamma &= \sum_{i=1}^{n} \gamma_{i}\\
+\gamma_{i} &= \begin{cases}
+	B_{i} \text{ if } V_{i}(d^{*}_{i}) \geq B_{i}, \\
+	2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})
+\end{cases}
+\end{align*}
 
 \paragraph{Feasibility.}
 The dual constraints reads
@@ -198,7 +178,7 @@ The ratio between primal and dual is at most 2.
 	\forall\ i : && 2 \min\{V_i(d_i^*), B_i \} &\ge b_i + \gamma_i \\
 	\textnormal{if } V_i(d_i^*) \ge B_i : && 2B_i &\ge b_i + B_i\\
 	\textnormal{otherwise :} && 2 V_i(d_i^*) &\ge b_i + 2 V_{i}(d^{*}_{i}) - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})\\
-	\textnormal{since : } && b_i - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i}) &= b_i - \frac{b_i}{\sum_{j=1}^{n} b_j} \sum_{j=1}^{n} b_j = 0\\
+	\textnormal{since : } && b_i - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i}) &= b_i - \frac{b_i}{B} B = 0\\
 	&& 2 V_{i}(d^{*}_{i}) &\ge 2 V_{i}(d^{*}_{i})
 \end{align*}
 
