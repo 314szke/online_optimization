@@ -84,7 +84,7 @@
 
 \begin{document}
 
-\textbf{Problem:}
+\section{Problem}
 
 \begin{itemize}
     \item $n$ buyers
@@ -101,75 +101,8 @@
     \item effective welfare: $ew_i(\vec{b}) = \min\{B_i,\ v_i(d_i)\}$
 \end{itemize}
 
-\[
-    \textnormal{Social welfare: } \max_{d} \left\{\sum_{i=1}^{n}  v_i(d_i) \right\} \qquad \textnormal{Effective welfare: } \max_{d} \left\{\sum_{i=1}^{n}  \min\{B_i,\ v_i(d_i)\} \right\}
-\]
 
-\vspace{1cm}
-\textbf{Formulation:}
-A drawback of this formulation is that we compare to only integral assignments. 
-
-\begin{minipage}[t]{0.59\textwidth}
-	\begin{align*}
-		\max  \sum_{S \subseteq \mathcal{S}} &c_{S}\ z_{S} \\
-		(\alpha) \hspace{1cm} \sum_{i=1}^{n} \ x_{i} &= 1 & &  \\
-		(\beta_i) \hspace{0.82cm} \sum_{S: i \in S} z_{S}  &= x_{i}	& & \forall i \\
-		(\gamma) \hspace{1cm} \sum_{S \subseteq \mathcal{S}} z_{S} &= 1 & & \\
-		x_{i} &\in [0,1] & & \forall i\\
-		z_{S} &\in \{0,1\} & & \forall S \subseteq \mathcal{S}\\
-	\end{align*}
-\end{minipage}
-\begin{minipage}[t]{0.3\textwidth}
-	\begin{align*}
-		\min \alpha &+ \gamma \\
-		\alpha &\ge \beta_i  &  \forall i \\
-		\sum_{i \in S} \beta_{i} + \gamma &\ge c_{S}  & & \forall S \subseteq \mathcal{S}\\
-		\alpha, \gamma &\geq 0 & & \\
-		\beta_i &\geq 0 & & \forall i
-\end{align*}
-\end{minipage}
-
-
-\vspace{1cm}
-\textbf{Setting the dual variables:}
-
-\begin{minipage}[t]{0.3\textwidth}
-\begin{align*}
-    \alpha &= \frac{\mu+1}{\mu} \max_i \left\{ u_i(\vec{b}) \right\} \\
-    \gamma &= \mu \sum_{i} b_i \\
-    \beta_i &= \frac{\mu+1}{\mu} u_i(\vec{b})
-\end{align*}
-\end{minipage}
-\begin{minipage}[t]{0.6\textwidth}
-\end{minipage}
-
-\section{A stronger formulation}
-
-\begin{minipage}[t]{0.59\textwidth}
-	\begin{align*}
-		&& \max  \sum_{S \subseteq \mathcal{S}} &c_{S}\ z_{S} \\
-		(\alpha_{i}) && \sum_{d_{i}}  x_{i,d_{i}} &= 1 & & \forall i \\
-		(\beta_{i,d_{i}}) && \sum_{S: (i,d_{i}) \in S } z_{S} &= x_{i,d_{i}} & & \\
-		(\gamma) && \sum_{S} z_{S}  &= 1	& & \\
-		&& x_{i,d_{i}}, z_{S} &\geq 0 & & \forall i, \forall S \subseteq \mathcal{S}\\
-	\end{align*}
-\end{minipage}
-\begin{minipage}[t]{0.3\textwidth}
-	\begin{align*}
-		\min \sum_{i} \alpha_{i} &+ \gamma \\
-		\alpha_{i} &\ge \beta_{i,d_{i}}  & &   \forall i,d_{i} \\
-		\sum_{(i,d_{i}) \in S} \beta_{i,d_{i}} + \gamma &\geq c_{S}  & & \forall S \subseteq \mathcal{S}\\
-\end{align*}
-\end{minipage}
-%
-One should see $d_{i}$ as the fraction that player $i$ gets in an arbitrary assignment (not necessarily in an equilibrium). 
-The first constraint is the sum over all possible fraction $d_{i}$: there should be a fraction $d_{i}$ corresponding to player $i$. 
-
-
-For the proof of PoA at least 1/2, define $\alpha_{i}$ to be the utility of player $i$, $\beta_{i,d_{i}}$ is the utility of player $i$ if he plays 
-the bid $\mu d_{i} \Gamma$ while the other players play their equilibrium bids and $\gamma = \Gamma = \sum_{i} b_{i}$. 
-
-\section{Another formulation with better bound}
+\section{Formulation}
 
 \begin{minipage}[t]{0.59\textwidth}
 	\begin{align*}
@@ -181,35 +114,39 @@ the bid $\mu d_{i} \Gamma$ while the other players play their equilibrium bids a
 \end{minipage}
 \begin{minipage}[t]{0.3\textwidth}
 	\begin{align*}
-		\min \sum_{i} \beta &+ \gamma \\
+		\min \beta &+ \gamma \\
 		\sum_{(i,d_{i}) \in S} d_{i} \beta + \gamma &\geq c_{S}  & & \forall S \subseteq \mathcal{S}\\
 \end{align*}
 \end{minipage}
 
-Let $d^{*}$ be a Nash equilibrium.  
-To get the tight bound, define $\beta = \hat{U}'(d^{*}_{i})$ (the latter term is the same for every $i$), $\gamma = \sum_{i=1}^{n} \bigl( U(d^{*}_{i}) - d^{*}_{i}\hat{U}'(d^{*}_{i}) \bigr)$. 
-The notation is taken in Chapter 21 of AGT book. 
+
+\section{Setting the dual variables:}
+
+Let $d^{*}$ be a Nash equilibrium.
+To get the tight bound, define $\beta = \hat{V}'(d^{*}_{i})$ (the latter term is the same for every $i$), $\gamma = \sum_{i=1}^{n} \bigl( 2V_i(d^{*}_{i}) - d^{*}_{i}\hat{V}'_i(d^{*}_{i}) \bigr)$.
+The notation is taken in Chapter 21 of AGT book.
 
 \subsection{Optimal bound for effective welfare}
-Consider an equilibrium $\vect{b}$. Let $d_{i}$ be the fraction received by $i$ in the equilibrium, i.e., $d^{*}_{i} = \frac{b_{i}}{\sum_{j=1}^{n} b_{j}}$.
+Consider an equilibrium $\vect{b}$. Let $d_{i}^*$ be the fraction received by $i$ in the equilibrium, i.e., $d^{*}_{i} = \frac{b_{i}}{\sum_{j=1}^{n} b_{j}}$.
 Using the KKT conditions (similar to Chapter 21 of AGT book), for any bidder $i$ with the equilibrium bid $0 < b_{i} < B_{i}$, we have
 $$
-\hat{V}'_{i}\biggl( \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr) 
-= V'_{i}\biggl( \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr) \cdot \biggl( 1 - \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr) 
+\hat{V}'_{i}\biggl( \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr)
+= V'_{i}\biggl( \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr) \cdot \biggl( 1 - \frac{b_{i}}{\sum_{j=1}^{n} b_{j}} \biggr)
 = \sum_{j=1}^{n} b_{j}
 $$
-Note that for all bidders $i$ and $i'$ such that $0 < b_{i}, b_{j} < B_{i}$ then 
-$ \hat{V}'_{i}(d^{*}_{i})  = \hat{V}'_{i'}(d_{i'})$.
+Note that for all bidders $i$ and $i'$ such that $0 < b_{i}, b_{i'} < B_{i}$ then
+$ \hat{V}'_{i}(d^{*}_{i})  = \hat{V}'_{i'}(d_{i'}^*)$.
 
-Define 
+\clearpage
+Define
 $$
-\beta = \hat{V}'_{i}(d^{*}_{i}) 
+\beta = \hat{V}'_{i}(d^{*}_{i})
 $$
 and
-$\gamma = \sum_{j=1}^{n} \gamma_{i}$
+$\gamma = \sum_{i=1}^{n} \gamma_{i}$
 where
 $$
-\gamma_{i} = \begin{cases} 
+\gamma_{i} = \begin{cases}
 			B_{i} \text{ if } V_{i}(d^{*}_{i}) \geq B_{i}, \\
 			2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})
 			\end{cases}
@@ -220,17 +157,17 @@ The dual constraints reads
 \begin{align*}
 \sum_{(i,d_{i}) \in S} d_{i} \beta + \gamma &\geq c_{S} \\
 %
-\Leftrightarrow 
-\sum_{(i,d_{i}) \in S} d_{i} \hat{V}'_{i}(d^{*}_{i})  + \sum_{i=1}^{n} \gamma_{i} &\geq \sum_{(i,d_{i}) \in S} \min\{V_{i}(d_{i}), B_{i}\} 
+\Leftrightarrow
+\sum_{(i,d_{i}) \in S} d_{i} \hat{V}'_{i}(d^{*}_{i})  + \sum_{i=1}^{n} \gamma_{i} &\geq \sum_{(i,d_{i}) \in S} \min\{V_{i}(d_{i}), B_{i}\}
 \end{align*}
 %
-We prove the above inequality for each term $i$. If $\gamma_{i} = B_{i}$ then it is trivial. Now assume that 
-$\gamma_{i} = 2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})$ (meaning that $V_{i}(d^{*}_{i}) < B_{i}$). 
+We prove the above inequality for each term $i$. If $\gamma_{i} = B_{i}$ then it is trivial. Now assume that
+$\gamma_{i} = 2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})$ (meaning that $V_{i}(d^{*}_{i}) < B_{i}$).
 We have
 %
 \begin{align*}
-\hat{V}'_{i}(d^{*}_{i})  + \gamma_{i}  
-&= d_{i} \hat{V}'_{i}(d^{*}_{i})  + 2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i}) 
+\hat{V}'_{i}(d^{*}_{i})  + \gamma_{i}
+&= d_{i} \hat{V}'_{i}(d^{*}_{i})  + 2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})
 = 2 V_{i}(d^{*}_{i}) + \hat{V}'_{i}(d^{*}_{i}) (d_{i} - d^{*}_{i}) \\
 %
 &= 2 V_{i}(d^{*}_{i}) + V'_{i}(d^{*}_{i})(1 - d^{*}_{i}) (d_{i} - d^{*}_{i}) \\
@@ -242,20 +179,29 @@ We have
 &\geq V_{i}(d_{i}) + V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i})
 \end{align*}
 The first inequality is due to the concavity of $V_{i}$ and the second holds since $d_{i} \leq 1$.
-It remains to prove that $V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i}) \geq 0$. 
-If $d_{i} \leq d^{*}_{i}$ then the inequality follows immediately. Assume that $d_{i} = \rho \cdot d^{*}_{i}$ for $\rho > 1$. 
-Therefore, 
+It remains to prove that $V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i}) \geq 0$.
+If $d_{i} \leq d^{*}_{i}$ then the inequality follows immediately. Assume that $d_{i} = \rho \cdot d^{*}_{i}$ for $\rho > 1$.
+Therefore,
 \begin{align*}
-V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i}) 
+V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i})
 &= V_{i}(d^{*}_{i})  - \frac{\rho - 1}{\rho} V'_{i}(d^{*}_{i}) d^{*}_{i} \\
 %
 &\geq V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) d^{*}_{i} \geq V_{i}(0) \geq 0
 \end{align*}
-The second inequality follows the concavity of $V_{i}$. We deduce that the feasibility holds. 
+The second inequality follows the concavity of $V_{i}$. We deduce that the feasibility holds.
 
 \paragraph{Primal and Dual.}
-The ratio between primal and dual is at most 2. 
+The ratio between primal and dual is at most 2.
 
-\paragraph{Remark.} To complete the analysis, one must consider cases where all equilibrium bids are either $B_{i}$ or 0. The PoA, in this case, is 1.  
+\begin{align*}
+	&& 2\sum_{(i,d_{i}) \in S} \min\{V_i(d_i^*), B_i \} &\ge \beta + \gamma\\
+	\forall\ i : && \min\{V_i(d_i^*), B_i \} &\ge b_i + \gamma_i \\
+	\textnormal{if } V_i(d_i^*) \ge B_i : && 2B_i &\ge b_i + B_i\\
+	\textnormal{otherwise :} && 2 V_i(d_i^*) &\ge b_i + 2 V_{i}(d^{*}_{i}) - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})\\
+	\textnormal{since : } && b_i - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i}) &= b_i - \frac{b_i}{\sum_{j=1}^{n} b_j} \sum_{j=1}^{n} b_j = 0\\
+	&& 2 V_{i}(d^{*}_{i}) &\ge 2 V_{i}(d^{*}_{i})
+\end{align*}
+
+\paragraph{Remark.} To complete the analysis, one must consider cases where all equilibrium bids are either $B_{i}$ or 0. The PoA, in this case, is 1.
 
 \end{document}
