@@ -195,7 +195,7 @@ The ratio between primal and dual is at most 2.
 
 \begin{align*}
 	&& 2\sum_{(i,d_{i}) \in S} \min\{V_i(d_i^*), B_i \} &\ge \beta + \gamma\\
-	\forall\ i : && \min\{V_i(d_i^*), B_i \} &\ge b_i + \gamma_i \\
+	\forall\ i : && 2 \min\{V_i(d_i^*), B_i \} &\ge b_i + \gamma_i \\
 	\textnormal{if } V_i(d_i^*) \ge B_i : && 2B_i &\ge b_i + B_i\\
 	\textnormal{otherwise :} && 2 V_i(d_i^*) &\ge b_i + 2 V_{i}(d^{*}_{i}) - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})\\
 	\textnormal{since : } && b_i - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i}) &= b_i - \frac{b_i}{\sum_{j=1}^{n} b_j} \sum_{j=1}^{n} b_j = 0\\
