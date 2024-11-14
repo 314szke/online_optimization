@@ -1,0 +1,83 @@
+\documentclass[format=acmsmall, review=false]{acmart}
+\usepackage{acm-ec-24}
+\usepackage{booktabs} % For formal tables
+\usepackage[ruled]{algorithm2e} % For algorithms
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+
+
+% Ours
+\usepackage{enumerate}
+\usepackage{mdframed}
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{xfrac}
+\newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}}
+
+
+% Choose a citation style by commenting/uncommenting the appropriate line:
+%\setcitestyle{acmnumeric}
+\setcitestyle{authoryear}
+
+% Title. Note the optional short title for running heads. In the interest of anonymization, please do not include any acknowledgements.
+\title[The PoA of 2 is tight for efficient welfare for proportional allocation]{The PoA of 2 is tight for efficient welfare for proportional allocation}
+
+% Anonymized submission.
+\author{Submission 42}
+
+% Abstract. Note that this must come before \maketitle.
+\input{00_abstract}
+
+
+\begin{document}
+
+% Title page for title and abstract only.
+\begin{titlepage}
+
+\maketitle
+
+% Optionally include a table of contents
+\vspace{1cm}
+\setcounter{tocdepth}{2} % adjust to 1 if desired
+\tableofcontents
+
+\end{titlepage}
+
+
+\input{01_introduction}
+\input{02_formulation}
+\input{03_proofs}
+\input{04_conclusion}
+
+
+% In the interest of anonymization, please do not include acknowledgements in your submission.
+%
+%\begin{acks}
+%
+%	The authors would like to thank Dr. Maura Turolla of Telecom
+%	Italia for providing specifications about the application scenario.
+%
+%	The work is supported by the \grantsponsor{GS501100001809}{National
+%		Natural Science Foundation of
+%		China}{http://dx.doi.org/10.13039/501100001809} under Grant
+%	No.:~\grantnum{GS501100001809}{61273304\_a}
+%	and~\grantnum[http://www.nnsf.cn/youngscientsts]{GS501100001809}{Young
+%		Scientsts' Support Program}.
+%
+%
+%\end{acks}
+
+% Bibliography
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{sample-bibliography}
+
+% Appendix
+\appendix
+
+
+
+\end{document}
