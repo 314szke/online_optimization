@@ -4,48 +4,50 @@ The dual constraints reads
 \sum_{(i,d_{i}) \in S} d_{i} \beta + \gamma &\geq c_{S} \\
 %
 \Leftrightarrow
-\sum_{(i,d_{i}) \in S} d_{i} \hat{V}'_{i}(d^{*}_{i})  + \sum_{i=1}^{n} \gamma_{i} &\geq \sum_{(i,d_{i}) \in S} \min\{V_{i}(d_{i}), B_{i}\}
+\sum_{(i,d_{i}) \in S} d_{i} \ \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]  + \sum_{i=1}^{n} \gamma_{i} &\geq \sum_{(i,d_{i}) \in S} \min\{ \mathbb{E}_{V_i \sim F}[V_{i}(d_{i})], B_{i}\}
 \end{align*}
 %
 We prove the above inequality for each term $i$. If $\gamma_{i} = B_{i}$ then it is trivial. Now assume that
-$\gamma_{i} = 2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})$ (meaning that $V_{i}(d^{*}_{i}) < B_{i}$).
+$\gamma_{i} = 2 \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] -   d^{*}_{i}\ \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]$ (meaning that $\mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] < B_{i}$).
 We have
 %
 \begin{align*}
-\hat{V}'_{i}(d^{*}_{i})  + \gamma_{i}
-&= d_{i} \hat{V}'_{i}(d^{*}_{i})  + 2 V_{i}(d^{*}_{i}) -   d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})
-= 2 V_{i}(d^{*}_{i}) + \hat{V}'_{i}(d^{*}_{i}) (d_{i} - d^{*}_{i}) \\
+\mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]  + \gamma_{i}
+&= d_{i}\ \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]  + 2\ \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] -  d^{*}_{i}\ \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]\\
+&= 2\ \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] + \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i}]) (d_{i} - d^{*}_{i}) \\
 %
-&= 2 V_{i}(d^{*}_{i}) + V'_{i}(d^{*}_{i})(1 - d^{*}_{i}) (d_{i} - d^{*}_{i}) \\
+&= 2\ \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] + \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})](1 - d^{*}_{i}) (d_{i} - d^{*}_{i}) \\
 %
-&= V_{i}(d^{*}_{i}) + V'_{i}(d^{*}_{i})(d_{i} - d^{*}_{i}) + V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) d^{*}_{i} (d_{i} - d^{*}_{i}) \\
+&= \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] + \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})](d_{i} - d^{*}_{i}) + \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] d^{*}_{i} (d_{i} - d^{*}_{i}) \\
 %
-&\geq V_{i}(d_{i}) + V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) d^{*}_{i} (d_{i} - d^{*}_{i}) \\
+&\geq \mathbb{E}_{V_i \sim F}[V_{i}(d_{i})] + \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] d^{*}_{i} (d_{i} - d^{*}_{i}) \\
 %
-&\geq V_{i}(d_{i}) + V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i})
+&\geq \mathbb{E}_{V_i \sim F}[V_{i}(d_{i})] + \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i})
 \end{align*}
-The first inequality is due to the concavity of $V_{i}$ and the second holds since $d_{i} \leq 1$.
-It remains to prove that $V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i}) \geq 0$.
+The first inequality is due to the concavity of $\mathbb{E}_{V_i \sim F}[V_{i}]$ and the second holds since $d_{i} \leq 1$.
+It remains to prove that $\mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i}) \geq 0$.
 If $d_{i} \leq d^{*}_{i}$ then the inequality follows immediately. Assume that $d_{i} = \rho \cdot d^{*}_{i}$ for $\rho > 1$.
 Therefore,
 \begin{align*}
-V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i})
-&= V_{i}(d^{*}_{i})  - \frac{\rho - 1}{\rho} V'_{i}(d^{*}_{i}) d^{*}_{i} \\
+	\mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] \frac{d^{*}_{i}}{d_{i}} (d_{i} - d^{*}_{i})
+&= \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \frac{\rho - 1}{\rho}\  \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] d^{*}_{i} \\
 %
-&\geq V_{i}(d^{*}_{i})  - V'_{i}(d^{*}_{i}) d^{*}_{i} \geq V_{i}(0) \geq 0
+&\geq \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]  - \mathbb{E}_{V_i \sim F}[V'_{i}(d^{*}_{i})] d^{*}_{i} \\
+%
+&\geq \mathbb{E}_{V_i \sim F}[V_{i}(0)] \geq 0
 \end{align*}
-The second inequality follows the concavity of $V_{i}$. We deduce that the feasibility holds.
+The second inequality follows the concavity of $\mathbb{E}_{V_i \sim F}[V_{i}]$. We deduce that the feasibility holds.
 
 \paragraph{Primal and Dual.}
 The ratio between primal and dual is at most 2.
 
 \begin{align*}
-	&& 2\sum_{(i,d_{i}) \in S} \min\{V_i(d_i^*), B_i \} &\ge \beta + \gamma\\
-	\forall\ i : && 2 \min\{V_i(d_i^*), B_i \} &\ge b_i + \gamma_i \\
-	\textnormal{if } V_i(d_i^*) \ge B_i : && 2B_i &\ge b_i + B_i\\
-	\textnormal{otherwise :} && 2 V_i(d_i^*) &\ge b_i + 2 V_{i}(d^{*}_{i}) - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i})\\
-	\textnormal{since : } && b_i - d^{*}_{i} \hat{V}'_{i}(d^{*}_{i}) &= b_i - \frac{b_i}{B} B = 0\\
-	&& 2 V_{i}(d^{*}_{i}) &\ge 2 V_{i}(d^{*}_{i})
+	&& 2\sum_{(i,d_{i}) \in S} \min\{\mathbb{E}_{V_i \sim F}[V_i(d_i^*)], B_i \} &\ge \beta + \gamma\\
+	\forall\ i : && 2 \min\{\mathbb{E}_{V_i \sim F}[V_i(d_i^*)], B_i \} &\ge b_i + \gamma_i \\
+	\textnormal{if } \mathbb{E}_{V_i \sim F}[V_i(d_i^*)] \ge B_i : && 2B_i &\ge b_i + B_i\\
+	\textnormal{otherwise :} && 2 \ \mathbb{E}_{V_i \sim F}[V_i(d_i^*)] &\ge b_i + 2\ \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] - d^{*}_{i}\  \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]\\
+	\textnormal{since : } && b_i - d^{*}_{i} \ \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})] &= b_i - \frac{b_i}{B} B = 0\\
+	&& 2\  \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] &\ge 2\  \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]
 \end{align*}
 
 \paragraph{Remark.} To complete the analysis, one must consider cases where all equilibrium bids are either $B_{i}$ or 0. The PoA, in this case, is 1.

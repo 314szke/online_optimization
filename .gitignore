@@ -5,7 +5,7 @@
 **/*.fls
 **/*.log
 **/*.out
-**/main.pdf
+**/*main.pdf
 **/*.synctex.gz
 **/OCME
 **/OCF
