@@ -1,7 +1,7 @@
 \documentclass[11pt,a4paper]{article}
 %\usepackage[pdftex]{graphicx,color}
 \usepackage{graphicx,color}
-\usepackage{amsmath,amssymb,dsfont,fullpage,epsfig,multirow,longtable}
+\usepackage{amsmath,amssymb,dsfont,fullpage,epsfig,multirow,longtable,bm}
 \usepackage{epsfig,epstopdf,hhline}
 \usepackage{cases}
 \usepackage{wrapfig}
@@ -54,9 +54,11 @@
   \right|_{#2} % this is the delimiter
   }}
 
-\newcommand{\pred}{\texttt{pred}}
-\newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\vect}[1]{\ensuremath{\bm{#1}}}
 \newcommand{\one}{\ensuremath{\mathds{1}}}
+\newcommand{\SW}{\textnormal{SW}}
+
+\newcommand{\pred}{\texttt{pred}}
 \newcommand{\PoA}{\text{PoA}}
 \newcommand{\E}{\ensuremath{\mathbb{E}}}
 % bullet dot
@@ -75,7 +77,7 @@
             plainpages=false}
 \usepackage[capitalise,noabbrev]{cleveref}
 
-
+\usepackage[numbers]{natbib}
 
 \newcommand{\comment}[1]{\textcolor{blue}{{\footnotesize
 #1}}\marginpar{\raggedright\tiny \textcolor{blue}{Comment}}}

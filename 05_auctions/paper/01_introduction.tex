@@ -1,0 +1,80 @@
+\section{Introduction}	\label{sec:welfare}
+%
+In a general mechanism design setting, each player $i$ has a set of actions $\mathcal{A}_{i}$
+for $1 \leq i \leq n$. Given an action $a_{i} \in \mathcal{A}_{i}$ chosen by each player $i$ for $1 \leq i \leq n$, which lead to the 
+action profile $\vect{a} = (a_{1}, \ldots, a_{n}) \in \mathcal{A} = \mathcal{A}_{1} \times \ldots \times \mathcal{A}_{n}$, 
+the auctioneer decides an outcome $o(\vect{a})$ among the set of feasible outcomes $\mathcal{O}$. 
+Each player $i$ has a \emph{private valuation} (or \emph{type}) $v_{i}$ taking values in a parameter space $\mathcal{V}_{i}$.
+For each outcome $o \in \mathcal{O}$, player $i$ has \emph{utility} $u_{i}(o,v_{i})$ depending on
+the outcome of the game and its valuation $v_{i}$. 
+Since the outcome $o(\vect{a})$ of the game is determined by the action profile $\vect{a}$, 
+the utility of a player $i$ is denoted as $u_{i}(\vect{a};v_{i})$. 
+We are interested in auctions that in general consist of an allocation rule and a payment rule.
+Given an action profile $\vect{a} = (a_{1}, \ldots, a_{n})$, the auctioneer decides an allocation 
+and a payment $p_{i}(\vect{a})$ for each player $i$. 
+Then, the \emph{utility} of player $i$ with valuation $v_{i}$, following the quasi-linear utility model, 
+is defined as $u_{i}(\vect{a};v_{i}) = v_{i} - p_{i}(\vect{a})$. 
+The \emph{social welfare} of an auction is defined as the total utility of all participants (the players and the auctioneer):  
+$\textsc{Sw}(\vect{a};\vect{v}) =  \sum_{i=1}^{n} u_{i}(\vect{a};v_{i}) + \sum_{i=1}^{n} p_{i}(\vect{a})$. 
+
+In the paper, we consider incomplete-information settings. 
+In contrast to the full-information settings where private valuations are deterministically determined, in 
+incomplete-informations settings the valuation vectors $\vect{v}$ (in which each component is the valuation of a player) 
+is drawn from a publicly known distribution $\vect{F}$ with density function $\vect{f}$. 
+Let $\Delta(\mathcal{A}_{i})$ be the set of probability distributions over the actions 
+in $\mathcal{A}_{i}$.  A strategy of a player is a mapping $\sigma_{i}: \mathcal{V}_{i} \rightarrow \Delta(\mathcal{A}_{i})$
+from a valuation $v_{i} \in \mathcal{V}_{i}$ to a distribution over actions $\sigma_{i}(v_{i}) \in \Delta(\mathcal{A}_{i})$.
+
+\begin{definition}[Bayes-Nash equilibrium]
+A strategy profile $\vect{\sigma} = (\sigma_{1}, \ldots, \sigma_{n})$ is a 
+\emph{Bayes-Nash equilibrium (BNE)}  if for every player $i$, for every valuation $v_{i} \in \mathcal{V}_{i}$, and 
+for every action $a'_{i} \in \mathcal{A}_{i}$:
+\begin{align*}
+\E_{\vect{v}_{-i} \sim \vect{F}_{-i}(v_{i})} \left[ \E_{\vect{a} \sim \vect{\sigma}(\vect{v})} \left[ u_{i}(\vect{a};v_{i}) \right] \right]
+\geq 
+\E_{\vect{v}_{-i} \sim \vect{F}_{-i}(v_{i})} \left[ \E_{\vect{a}_{-i} \sim \vect{\sigma}_{-i}(\vect{v}_{-i})} \left[ u_{i}(a'_{i},\vect{a}_{-i};v_{i}) \right] \right]
+\end{align*}
+\end{definition}
+%
+For a vector $\vect{w}$, we use $\vect{w}_{-i}$ to denote the vector $\vect{w}$ with the $i$-th component removed. 
+Besides, $\vect{F}_{-i}(v_{i})$ stands for the probability distribution over all players other than $i$
+conditioned on the valuation $v_{i}$ of player $i$. 
+
+The price of anarchy of Bayes-Nash equilibria of an auction is defined as 
+$$
+\inf_{\vect{F}, \vect{\sigma}} \frac{\E_{\vect{v} \sim \vect{F}}\bigl[ \E_{\vect{a} \sim \vect{\sigma}(\vect{v})}[\textsc{Sw}(\vect{a};\vect{v})] \bigr]}{\E_{\vect{v} \sim \vect{F}} \bigl[ \textsc{Opt}(\vect{v})\bigr]}
+$$
+where the infimum is taken over Bayes-Nash equilibria $\vect{\sigma}$ and 
+$\textsc{Opt}(\vect{v})$ is the optimal welfare with valuation profile $\vect{v}$.
+
+In the paper, we consider discrete settings of valuations and payments, i.e., 
+there are only a finite (large) number of possible valuations
+and payments. The main purpose of restricting to discrete settings is that we can use tools from linear programming.
+The continuous settings can be done by considering successively finer discrete spaces.   
+
+
+\subsection{Smooth Auctions}	\label{sec:smooth-auction}
+
+In this section, we show that the primal-dual approach also captures the smoothness framework in 
+studying the inefficiency of Bayes-Nash equilibria in incomplete-information settings. 
+Smooth auctions have been defined by \citet{Roughgarden15:The-price-of-anarchy} 
+and \citet{SyrgkanisTardos13:Composable-and-efficient}. The definitions are slightly different but both are inspired 
+by the original smoothness argument \cite{Roughgarden15:Intrinsic-robustness} and 
+all known smoothness-based proofs can be equivalently analyzed by one of these definitions.  
+In this section, we consider the definition of smooth auctions in \cite{Roughgarden15:The-price-of-anarchy}
+and revisit the price of anarchy bound of smooth auctions.
+In the end of the section, we show that a similar proof carries through the smooth auctions defined by
+\citet{SyrgkanisTardos13:Composable-and-efficient}.
+  
+
+\begin{definition}[\cite{Roughgarden15:The-price-of-anarchy}]	\label{def:smooth-auctions}
+For parameters $\lambda, \mu \geq 0$, an auction is $(\lambda,\mu)$-\emph{smooth} if for every valuation profile 
+$\vect{v} = (v_{1}, \ldots, v_{n})$,
+there exists action distribution $D^{*}_{1}(\vect{v}), \ldots,D^{*}_{n}(\vect{v})$ over $\mathcal{A}_{1}, \ldots, \mathcal{A}_{n}$
+such that, for every action profile $\vect{a}$,
+%
+\begin{align}	\label{eq:smooth-auctions}
+\sum_{i} \E_{a^{*}_{i} \sim D^{*}_{i}(\vect{v})} \bigl[ u_{i}(a^{*}_{i},\vect{a}_{-i}; v_{i}) \bigr]
+	\geq \lambda \cdot \textsc{Sw}(\vect{a}^{*};\vect{v}) - \mu \cdot \textsc{Sw}(\vect{a};\vect{v})  
+\end{align}
+\end{definition}
