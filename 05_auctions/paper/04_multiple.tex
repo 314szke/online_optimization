@@ -1,0 +1,47 @@
+\section{Multiple items}
+
+
+We can extend the problem to the setting where the auctioneer lists \emph{multiple} items at the sime time. In this case, the buyers propose a list of bids $\vect{b}$, where $b_{ij}$ corresponds to the bid of buyer $i$ for item $j$. However, the bids must not exceed the budget, which introduces the new constraint $\sum_{j} b_{ij} \le B_i \quad \forall\ i$. We keep the incomplete-information setting, where the buyers' valuation is drawn from a publicly known distribution $F$ with density function $f$. The drawn valuation function is item dependent and is of the form $V_{ij} : [0,1] -> \mathbb{R}^+$, which is non-decreasing and concave. Buyer $i$ receives a fraction $d_{ij} = \sfrac{b_{ij}}{B_j}$ of item $j$, where $B_j = \sum_i b_{ij}$. The utility of buyer $i$ is $U_i(\vec{b}) = \sum_{j} \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d_{ij})] - b_{ij}$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\  \sum_{j} \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d_{ij})]\}$
+
+\subsection{Formulation}
+
+The following formulation transforms the initial problem to finding the solution that maximizes the effective welfare among all possible solutions. For simplicity, the fractions of assignments are discretized ($d_{ij} \in k_{\epsilon} : 0 \le k \le \sfrac{1}{\epsilon}$). A solution $S = \{(i, j, d_{ij}) : 0 \le d_{ij} \le 1\}$ assigns a fraction of each item $j$ to each buyer $i$, such that $\sum_{(i,j,d_{ij}) \in S} d_{ij} \le 1 \quad \forall\ j$. The variable $z_S$ indicates which solution is chosen.
+
+\begin{minipage}[t]{0.59\textwidth}
+	\begin{align*}
+		&& \max  \sum_{S \subseteq \mathcal{S}} &c_{S}\ z_{S} \\
+		(\beta_j) && \sum_{i=1}^{n} \sum_{d_{ij}} d_{ij} \sum_{S: (i,j,d_{ij}) \in S } z_{S} &= 1 & & \forall \ j\\
+		(\gamma) && \sum_{S \subseteq \mathcal{S}} z_{S}  &= 1	& & \\
+		&& z_{S} &\geq 0 & & \forall\ i, \forall\ S \subseteq \mathcal{S}\\
+	\end{align*}
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+	\begin{align*}
+		\min \sum_{j} \beta_j &+ \gamma \\
+		\sum_{(i,j,d_{ij}) \in S} d_{ij} \beta_j + \gamma &\geq c_{S}  & & \forall S \subseteq \mathcal{S}\\
+\end{align*}
+\end{minipage}
+
+\subsection{Setting the dual variables}
+
+Consider a Nash equilibrium $\vect{b}$. Let $d_{ij}^*$ be the fraction received by buyer $i$ from item $j$ in the equilibrium ($d^{*}_{ij}~=~\sfrac{b_{ij}}{B_j}$).
+Using the KKT conditions (similar to Chapter 21 of AGT book), for any bidder $i$ with the equilibrium bid $0 < \sum_{j} b_{ij} < B_{i}$, we have
+$$
+\mathbb{E}_{V_{ij} \sim F}\left[\hat{V}'_{ij}\biggl( \frac{b_{ij}}{B_j} \biggr)\right]
+=  \mathbb{E}_{V_{ij} \sim F}\left[V'_{ij}\biggl( \frac{b_{ij}}{B_j} \biggr)\right] \cdot \biggl( 1 - \frac{b_{ij}}{B_j} \biggr)
+= (1+\lambda_i) B_j
+$$
+where $B_j = \sum_{i=1}^{n} b_{ij}$ is the sum of the bids for item $j$.
+Note that for all bidders $i$ and $i'$ such that $0 < b_{ij} < B_{i}$ and $0 < b_{i'j} < B_{i'}$ then
+$  \mathbb{E}_{V_{ij} \sim F}[\hat{V}'_{ij}(d^{*}_{ij})]  =  \mathbb{E}_{V_{ij} \sim F}[\hat{V}'_{i'j}(d_{i'j}^*)]$.
+%
+Let us define the dual variables $\beta_j$ and $\gamma$ as the following:
+\begin{align*}
+    \beta_{j} &= \begin{cases}
+        B_{j} \qquad \text{ if }  \exists \ i' \textnormal{ s.t. } b_{i'j} > 0 \\
+	    0 \end{cases}\\
+	\gamma &= \sum_{i \text{ is tight}} B_i \sum_{i \text{ is not tight}} \gamma_{ij}\\
+	\gamma_{ij} &= \begin{cases}
+        B_{i} \qquad \text{ if }  \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d^{*}_{ij})] \geq B_{i}, \\
+	    2 \ \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d^{*}_{ij})] - d^{*}_{ij} \ \mathbb{E}_{V_{ij} \sim F}[\hat{V}'_{ij}(d^{*}_{ij})] \end{cases}
+\end{align*}

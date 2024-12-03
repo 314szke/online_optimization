@@ -1,7 +1,0 @@
-\contentsline {section}{Contents}{0}{section*.1}%
-\contentsline {section}{\numberline {1}Problem}{1}{section.1}%
-\contentsline {section}{\numberline {2}Formulation}{1}{section.2}%
-\contentsline {section}{\numberline {3}Setting the dual variables}{1}{section.3}%
-\contentsline {paragraph}{Feasibility.}{2}{section*.2}%
-\contentsline {paragraph}{Primal and Dual.}{2}{section*.3}%
-\contentsline {paragraph}{Remark.}{2}{section*.4}%

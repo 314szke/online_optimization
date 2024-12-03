@@ -1,9 +1,9 @@
-\section{Problem}
+\section{Single item}
 
 The problem consists of $n$ buyers, where each buyer $i$ has a budget $B_i$.
 We consider an incomplete-information setting, where the buyers' valuation is not deterministically set, but drawn from a publicly known distribution $F$ with density function $f$. The drawn valuation function is of the form $V_i : [0,1] -> \mathbb{R}^+$, which is non-decreasing and concave. The auctioneer lists one item only, for which the buyers can submit a private bid $b_i$, such that $0 \le b_i \le B_i$. From the bid $b_i$, buyer $i$ receives a fraction $d_i = \sfrac{b_i}{B}$ of the item, where $B = \sum_i b_i$. The utility of buyer $i$ is $U_i(\vec{b}) = \mathbb{E}_{V_i \sim F}[V_i(d_i)] - b_i$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\  \mathbb{E}_{V_i \sim F}[V_i(d_i)]\}$
 
-\section{Formulation}
+\subsection{Formulation}
 
 The following formulation transforms the initial problem to finding the solution that maximizes the effective welfare among all possible solutions. For simplicity, the fractions of assignments are discretized ($d_i \in k_{\epsilon} : 0 \le k \le \sfrac{1}{\epsilon}$). A solution $S = \{(i, d_i) : 0 \le d_i \le 1\}$ assigns a fraction to each buyer, such that $\sum_{(i,d_{i}) \in S} d_{i} \le 1$. The variable $z_S$ indicates which solution is chosen.
 
@@ -11,8 +11,8 @@ The following formulation transforms the initial problem to finding the solution
 	\begin{align*}
 		&& \max  \sum_{S \subseteq \mathcal{S}} &c_{S}\ z_{S} \\
 		(\beta) && \sum_{i=1}^{n} \sum_{d_{i}} d_{i} \sum_{S: (i,d_{i}) \in S } z_{S} &= 1 & & \\
-		(\gamma) && \sum_{S} z_{S}  &= 1	& & \\
-		&& z_{S} &\geq 0 & & \forall i, \forall S \subseteq \mathcal{S}\\
+		(\gamma) && \sum_{S \subseteq \mathcal{S}} z_{S}  &= 1	& & \\
+		&& z_{S} &\geq 0 & & \forall\ i, \forall\ S \subseteq \mathcal{S}\\
 	\end{align*}
 \end{minipage}
 \begin{minipage}[t]{0.3\textwidth}
@@ -23,7 +23,7 @@ The following formulation transforms the initial problem to finding the solution
 \end{minipage}
 
 
-\section{Setting the dual variables}
+\subsection{Setting the dual variables}
 
 Consider a Nash equilibrium $\vect{b}$. Let $d_{i}^*$ be the fraction received by $i$ in the equilibrium ($d^{*}_{i}~=~\sfrac{b_{i}}{B}$).
 Using the KKT conditions (similar to Chapter 21 of AGT book), for any bidder $i$ with the equilibrium bid $0 < b_{i} < B_{i}$, we have
@@ -32,7 +32,7 @@ $$
 =  \mathbb{E}_{V_i \sim F}\left[V'_{i}\biggl( \frac{b_{i}}{B} \biggr)\right] \cdot \biggl( 1 - \frac{b_{i}}{B} \biggr)
 = B
 $$
-where $B = \sum_{j=1}^{n} b_{j}$ is the sum of the bids.
+where $B = \sum_{i=1}^{n} b_{i}$ is the sum of the bids.
 Note that for all bidders $i$ and $i'$ such that $0 < b_{i}, b_{i'} < B_{i}$ then
 $  \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]  =  \mathbb{E}_{V_i \sim F}[\hat{V}'_{i'}(d_{i'}^*)]$.
 %
@@ -41,7 +41,7 @@ Let us define the dual variables $\beta$ and $\gamma$ as the following:
 	\beta &=  \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})] = B\\
 	\gamma &= \sum_{i=1}^{n} \gamma_{i}\\
 \gamma_{i} &= \begin{cases}
-	B_{i} \text{ if }  \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] \geq B_{i}, \\
+	B_{i} \qquad \text{ if }  \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] \geq B_{i}, \\
 	2 \ \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] - d^{*}_{i} \ \mathbb{E}_{V_i \sim F}[\hat{V}'_{i}(d^{*}_{i})]
 \end{cases}
 \end{align*}
