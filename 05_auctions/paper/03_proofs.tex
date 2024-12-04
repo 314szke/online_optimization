@@ -1,5 +1,5 @@
 \paragraph{Feasibility.}
-The dual constraints reads
+The dual constraint reads
 \begin{align*}
 \sum_{(i,d_{i}) \in S} d_{i} \beta + \gamma &\geq c_{S} \\
 %
@@ -50,4 +50,6 @@ The ratio between primal and dual is at most 2.
 	&& 2\  \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})] &\ge 2\  \mathbb{E}_{V_i \sim F}[V_{i}(d^{*}_{i})]
 \end{align*}
 
-\paragraph{Remark.} To complete the analysis, one must consider cases where all equilibrium bids are either $B_{i}$ or 0. The PoA, in this case, is 1.
+\paragraph{Remark.} To complete the analysis, one must consider cases where all equilibrium bids are either $B_{i}$ or 0. In this case, the PoA is 1. The proof can no longer rely on the KKT conditions, so we set the dual variables the following way:
+$\beta = 0$ and $\gamma = \sum_{i\ :\ b_i = B_i} b_i$. For the feasibility of the dual, we only have to show $\gamma \ge c_S \ \forall \ S \subseteq \mathcal{S}$. With the assumption that $V_i(0) = 0$ for any $i$, the effective welfare of buyers with zero bids is zero. The effective welfare of buyers who bid their full budget is at most $B_i$ due to the definition of the effective welfare. Therefore, the constraint $\gamma \ge c_S$ holds for all $S$.
+

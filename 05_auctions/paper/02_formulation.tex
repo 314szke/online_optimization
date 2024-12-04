@@ -2,7 +2,7 @@
 \section{Single item}
 
 The problem consists of $n$ buyers, where each buyer $i$ has a budget $B_i$.
-We consider an incomplete-information setting, where the buyers' valuation is not deterministically set, but drawn from a publicly known distribution $F$ with density function $f$. The drawn valuation function is of the form $V_i : [0,1] -> \mathbb{R}^+$, which is non-decreasing and concave. The auctioneer lists one item only, for which the buyers can submit a private bid $b_i$, such that $0 \le b_i \le B_i$. From the bid $b_i$, buyer $i$ receives a fraction $d_i = \sfrac{b_i}{B}$ of the item, where $B = \sum_i b_i$. The utility of buyer $i$ is $U_i(\vec{b}) = \mathbb{E}_{V_i \sim F}[V_i(d_i)] - b_i$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\  \mathbb{E}_{V_i \sim F}[V_i(d_i)]\}$
+We consider an incomplete-information setting, where the buyers' valuation is not deterministically set, but drawn from a publicly known distribution $F$ with density function $f$. The drawn valuation function is of the form $V_i : [0,1] \rightarrow \mathbb{R}^+$, which is non-decreasing and concave. The auctioneer lists one item only, for which the buyers can submit a private bid $b_i$, such that $0 \le b_i \le B_i$. From the bid $b_i$, buyer $i$ receives a fraction $d_i = \sfrac{b_i}{B}$ of the item, where $B = \sum_i b_i$. The utility of buyer $i$ is $U_i(\vec{b}) = \mathbb{E}_{V_i \sim F}[V_i(d_i)] - b_i$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\  \mathbb{E}_{V_i \sim F}[V_i(d_i)]\}$
 
 \subsection{Formulation}
 
