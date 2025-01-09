@@ -1,11 +1,11 @@
 \section{Multiple items}
 
 
-We can extend the problem to the setting where the auctioneer lists \emph{multiple} items at the sime time. In this case, the buyers propose a list of bids $\vect{b}$, where $b_{ij}$ corresponds to the bid of buyer $i$ for item $j$. However, the bids must not exceed the budget, which introduces the new constraint $\sum_{j} b_{ij} \le B_i \quad \forall\ i$. We keep the incomplete-information setting, where the buyers' valuation is drawn from a publicly known distribution $F$ with density function $f$. The drawn valuation function is item dependent and is of the form $V_{ij} : [0,1] \rightarrow \mathbb{R}^+$, which is non-decreasing and concave. Buyer $i$ receives a fraction $d_{ij} = \sfrac{b_{ij}}{Q_j}$ of item $j$, where $Q_j = \sum_i b_{ij}$. The utility of buyer $i$ is $U_i(\vec{b}) = \sum_{j} \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d_{ij})] - b_{ij}$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\  \sum_{j} \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d_{ij})]\}$
+We can extend the problem to the setting where the auctioneer lists \emph{multiple} items at the same time. In this case, the buyers propose a list of bids $\vect{b}$, where $b_{ij}$ corresponds to the bid of buyer $i$ for item $j$. However, the bids must not exceed the budget, which introduces the new constraint $\sum_{j} b_{ij} \le B_i \quad \forall\ i$. We keep the incomplete-information setting, where the buyers' valuation is drawn from a publicly known distribution $F$ with density function $f$. The drawn valuation function is of the form $V_{i} : [0,1]^m \rightarrow \mathbb{R}^+$, which is non-decreasing and concave. Buyer $i$ receives a fraction $d_{ij} = \sfrac{b_{ij}}{\sum_{i'} b_{i'j}}$ of item $j$. The utility of buyer $i$ is $U_i(\vec{b}) = \mathbb{E}_{V_{i} \sim F}[V_{i}(d_{i})] - \sum_{j} b_{ij}$. The goal is to maximize the effective welfare of the buyers: $EW_i(\vec{b}) = \min\{B_i,\  \mathbb{E}_{V_{i} \sim F}[V_{i}(d_{i})]\}$
 
 \subsection{Formulation}
 
-The following formulation transforms the initial problem to finding the solution that maximizes the effective welfare among all possible solutions. For simplicity, the fractions of assignments are discretized ($d_{ij} \in k_{\epsilon} : 0 \le k \le \sfrac{1}{\epsilon}$). A solution $S = \{(i, j, d_{ij}) : 0 \le d_{ij} \le 1\}$ assigns a fraction of each item $j$ to each buyer $i$, such that $\sum_{(i,j,d_{ij}) \in S} d_{ij} \le 1 \quad \forall\ j$. The variable $z_S$ indicates which solution is chosen.
+The following formulation transforms the initial problem to finding the solution that maximizes the effective welfare among all possible solutions. For simplicity, the fractions of assignments are discretized ($d_{ij} \in k_{\epsilon} : 0 \le k \le \sfrac{1}{\epsilon}$). A solution $S = \{(i, j, d_{ij}) : 0 \le d_{ij} \le 1\}$ assigns a fraction of each item $j$ to each buyer $i$, such that $\sum_{i : (i,j,d_{ij}) \in S} d_{ij} \le 1 \quad \forall\ j$. The variable $z_S$ indicates which solution is chosen.
 
 \begin{minipage}[t]{0.59\textwidth}
 	\begin{align*}
@@ -24,23 +24,23 @@ The following formulation transforms the initial problem to finding the solution
 
 \subsection{Setting the dual variables}
 
-Consider a Nash equilibrium $\vect{b}$. Let $d_{ij}^*$ be the fraction received by buyer $i$ from item $j$ in the equilibrium ($d^{*}_{ij}~=~\sfrac{b_{ij}}{Q_j}$).
-Using the KKT conditions (similar to Chapter 21 of AGT book), for any bidder $i$ with the equilibrium bid $0 < \sum_{j} b_{ij} < B_{i}$, we have
+Consider a Nash equilibrium $\vect{b}$. Let $d_{ij}^*$ be the fraction received by buyer $i$ from item $j$ in the equilibrium ($d^{*}_{ij}~=~b_{ij}/\sum_{i'}b_{i'j}$).
+In the multiple item setting we have a new constraint for every bidder $i$ that is $0 < \sum_{j} b_{ij} < B_{i}$. We name its corresponding dual variable $\lambda_i$. Using the KKT conditions (similar to Chapter 21 of AGT book), we have
 $$
-\mathbb{E}_{V_{ij} \sim F}\left[\hat{V}'_{ij}\biggl( \frac{b_{ij}}{Q_j} \biggr)\right]
-=  \mathbb{E}_{V_{ij} \sim F}\left[V'_{ij}\biggl( \frac{b_{ij}}{Q_j} \biggr)\right] \cdot \biggl( 1 - \frac{b_{ij}}{Q_j} \biggr)
-= (1+\lambda_i) Q_j
+\hat{V}_{ij}
+= \frac{\partial U_i(\vect{b})}{\partial b_{ij}}
+= \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_i\biggl(\frac{b_{i1}}{\sum_{i'} b_{i'1}}, \dots, \frac{b_{im}}{\sum_{i'} b_{i'm}}\biggr)}{\partial b_{ij}}\right] - \left(1 - \frac{b_{ij}}{\sum_{i'}b_{i'j}} \right)
+= (1 + \lambda_i) \sum_{i'}b_{i'j}
 $$
-where recall that $Q_j = \sum_{i=1}^{n} b_{ij}$ is the sum of the bids for item $j$.
-Note that for all bidders $i$ and $i'$ such that $0 < \sum_{j} b_{ij} < B_{i}$ and $0 < \sum_{j} b_{i'j} < B_{i'}$ then
-$\sum_{j} \mathbb{E}_{V_{ij} \sim F}[\hat{V}'_{ij}(d^{*}_{ij})]  = \sum_{j} \mathbb{E}_{V_{ij} \sim F}[\hat{V}'_{i'j}(d_{i'j}^*)]$.
+Note that for all bidders $i$ and $i'$ such that $\sum_{j} b_{ij} < B_{i}$ and $\sum_{j} b_{i'j} < B_{i'}$ and for all $j$ such that $0 < b_{ij} < B_{i}$ and $0 < b_{i'j} < B_{i'}$ we have
+$\hat{V}_{ij}  = \hat{V}_{i'j}$.
 %
-We call a buyer tight, if $\sum_{j} b_{ij} = B_i$. The set $T$ contains the indices off every tight buyer.
+We call a buyer tight, if $\sum_{j} b_{ij} = B_i$. The set $T$ contains the indices of every tight buyer.
 Let us define the dual variables $\beta_j$ and $\gamma$ as the following:
 \begin{align*}
     \beta_{j} &= \begin{cases}
-        Q_{j} \hspace{0.78cm} \text{ if }  \exists \ i \text{ s.t. } i \in T \text{ and } b_{ij} > 0 \\
-	    0 \hspace{1cm} \text{ otherwise} \end{cases}\\
+        \sum_{i} b_{ij} \hspace{1cm} \text{ if }  \exists \ i \text{ s.t. } i \notin T \text{ and } b_{ij} > 0 \\
+	    0 \hspace{1.8cm} \text{ otherwise} \end{cases}\\
 	\gamma &= \sum_{i\ :\ i \in T} B_i  + \sum_{i \ : \ i \notin T} \gamma_{i}\\
-	\gamma_{i} &= \sum_{j} 2 \ \mathbb{E}_{V_{ij} \sim F}[V_{ij}(d^{*}_{ij})] - d^{*}_{ij} \ \mathbb{E}_{V_{ij} \sim F}[\hat{V}'_{ij}(d^{*}_{ij})]
+	\gamma_{i} &= 2 \ \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] - \sum_{j} d_{ij}^* \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] (1 - d_{ij}^*)
 \end{align*}

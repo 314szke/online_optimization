@@ -3,4 +3,28 @@
 The dual constraint reads
 \begin{align*}
     \sum_{(i,j,d_{ij}) \in S} d_{ij} \beta_j + \gamma &\geq c_{S} \\
+    \sum_{(i,j,d_{ij}) \in S} d_{ij} \beta_j + \gamma &\geq \sum_{i} \min \{B_i, \mathbb{E}_{V_{i} \sim F}[V_i(\vect{d_i^*})] \}  \\
+    \sum_{j} \sum_{i} d_{ij} \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_i\biggl(\frac{b_{i1}^*}{\sum_{i'} b_{i'1}^*}, \dots, \frac{b_{im}^*}{\sum_{i'} b_{i'm}^*}\biggr)}{\partial b_{ij}^*}\right] - \left(1 - \frac{b_{ij^*}}{\sum_{i'}b_{i'j}^*} \right) + \gamma &\geq \sum_{i} \min \{B_i, \mathbb{E}_{V_{i} \sim F}[V_i(\vect{d_i^*})] \}  \\
 \end{align*}
+%
+Let us fix $i \notin T$. Then,
+%
+\begin{align*}
+    &\sum_{j : (i,j,d_{ij}) \in S} d_{ij} \beta_j + \gamma_i \geq 2 \ \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] - \sum_{j} \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] (1 - d_{ij}^*)(d_{ij}-d_{ij}^*) \\
+    &= \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] + \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] (\vect{d_i} - \vect{d_i}^*) + \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] - \sum_{j} d_{ij}^* \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] (d_{ij} - d_{ij}^*)
+\end{align*}
+%
+since
+%
+\[
+    \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] + \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] (\vect{d_i} - \vect{d_i}^*) \ge \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d_{i}})] \\
+\]
+%
+end
+\begin{align*}
+    \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] - \sum_{j} d_{ij}^* \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] (d_{ij} - d_{ij}^*)
+    & \ge \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{d^{*}_{i}})] - \sum_{j} \mathbb{E}_{V_{i} \sim F}\left[\frac{\partial V_{i}(\vect{d^{*}_{i}})}{\partial d_{ij}}\right] \\
+    & \ge \mathbb{E}_{V_{i} \sim F}[V_{i}(\vect{0})]
+\end{align*}
+%
+the dual constraint holds.
